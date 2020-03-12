@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/icons/after.png</file>
+        <file>res/icons/export.png</file>
+        <file>res/icons/font.png</file>
+        <file>res/icons/import.png</file>
+        <file>res/icons/kanyun.png</file>
+        <file>res/icons/move.png</file>
+        <file>res/icons/setting.png</file>
+    </qresource>
+</RCC>
