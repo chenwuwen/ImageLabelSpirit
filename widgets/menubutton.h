@@ -1,14 +1,20 @@
-#ifndef MENUBUTTON_H
-#define MENUBUTTON_H
+#ifndef MEUNBUTTON_H
+#define MEUNBUTTON_H
 
-#include <QPushButton>
+#include <QWidget>
+#include <QString>
 
-
-
-class menubutton:QPushButton
+class MenuButton : public QWidget
 {
+    Q_OBJECT
 public:
-    menubutton();
+    explicit MenuButton(QWidget *parent = nullptr);
+
+    explicit MenuButton(QString img ,QString name,QWidget *parent = nullptr );
+
+signals:
+
+public slots:
 };
 
-#endif // MENUBUTTON_H
+#endif // MEUNBUTTON_H
