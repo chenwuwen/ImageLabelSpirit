@@ -1,3 +1,4 @@
+#include "bform.h"
 #include "mainwidget.h"
 #include "ui_mainwidget.h"
 #include <widgets/menubutton.h>
@@ -6,7 +7,17 @@
 #include <QDebug>
 #include <QScreen>
 #include <QGridLayout>
+#include <QFile>
+#include <QDir>
 
+static void initQssFile(QString path,QWidget *widget)
+{
+    qDebug() << "设置qss样式";
+    QFile file(path.arg(QDir::currentPath()));
+    file.open(QFile::ReadOnly);
+    widget->setStyleSheet(file.readAll());
+    file.close();
+}
 
 
 mainwidget::mainwidget(QWidget *parent) :
@@ -82,7 +93,9 @@ mainwidget::mainwidget(QWidget *parent) :
 //    setLayout(mainLayout);
 
 // =======这些已在Qt 设计师中设计了===========
+    initQssFile(QString(":/res/style/menu_frame_style.qss"),ui->menu_frame);
 
+//    定义按钮
     MenuButton *openDir = new MenuButton(":/res/icons/open.png","打开",ui->menu_frame);
     MenuButton *fontButton = new MenuButton(":/res/icons/font.png","前一个",ui->menu_frame);
     MenuButton *afterButton = new MenuButton(":/res/icons/after.png","后一个",ui->menu_frame);
@@ -90,8 +103,26 @@ mainwidget::mainwidget(QWidget *parent) :
     MenuButton *moveButton = new MenuButton(":/res/icons/move.png","移动",ui->menu_frame);
     MenuButton *importButton = new MenuButton(":/res/icons/import.png","导入",ui->menu_frame);
     MenuButton *exportButton = new MenuButton(":/res/icons/export.png","导出",ui->menu_frame);
+//    分隔线
+    QFrame * line = new QFrame;
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
+
+//    将按钮添加进menu_frame中
+    ui->menu_frame->layout()->addWidget(moveButton);
+    ui->menu_frame->layout()->addWidget(line);
+    ui->menu_frame->layout()->addWidget(openDir);
+    ui->menu_frame->layout()->addWidget(fontButton);
+    ui->menu_frame->layout()->addWidget(afterButton);
+    ui->menu_frame->layout()->addWidget(settingButton);
+
+    ui->menu_frame->layout()->addWidget(importButton);
+    ui->menu_frame->layout()->addWidget(exportButton);
+
 
 }
+
+
 
 mainwidget::~mainwidget()
 {

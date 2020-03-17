@@ -7,5 +7,6 @@
         <file>res/icons/kanyun.png</file>
         <file>res/icons/move.png</file>
         <file>res/icons/setting.png</file>
+        <file>res/icons/open.png</file>
     </qresource>
 </RCC>
