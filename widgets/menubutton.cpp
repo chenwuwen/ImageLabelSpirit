@@ -20,11 +20,6 @@ MenuButton::MenuButton(QString img,QString name,QWidget *parent) : QWidget(paren
     nameLabel = new QLabel(menuButtonWidget);
 
 
-//    imgLabel->setSizePolicy()
-//    imgLabel->resize(32,32);
-//    menuButtonWidget->resize(80,80);
-
-
 //    创建QPixmap对象
     QPixmap pix;
 //    加载图片
@@ -42,15 +37,15 @@ MenuButton::MenuButton(QString img,QString name,QWidget *parent) : QWidget(paren
     nameLabel->setAlignment(Qt::AlignCenter);
     imgLabel->setAlignment(Qt::AlignCenter);
 
-//    定义垂直布局
+//    定义垂直布局 并且设置为当前定义的布局
     QVBoxLayout *vlayout = new QVBoxLayout(menuButtonWidget);
 //    向布局中添加组件
     vlayout->addWidget(imgLabel);
     vlayout->addWidget(nameLabel);
-
-    menuButtonWidget->show();
+    vlayout->setAlignment(Qt::AlignCenter);
 
 //    设置当前widget布局为垂直布局
 //    this->setLayout(vlayout);
 
+    qDebug()<< "自定义控件尺寸["<<menuButtonWidget->width()<<","<<menuButtonWidget->height()<<"],父窗体尺寸["<<parent->width()<<","<<parent->height()<<"]";
 }

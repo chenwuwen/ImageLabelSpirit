@@ -8,5 +8,12 @@
         <file>res/icons/move.png</file>
         <file>res/icons/setting.png</file>
         <file>res/icons/open.png</file>
+        <file>res/style/menu_frame_style.qss</file>
+        <file>res/style/annotation_frame_style.qss</file>
+        <file>res/style/file_frame_style.qss</file>
+        <file>res/style/progressbar_style.qss</file>
+        <file>res/icons/enlarge.png</file>
+        <file>res/icons/narrow.png</file>
+        <file>res/icons/full_screen.png</file>
     </qresource>
 </RCC>

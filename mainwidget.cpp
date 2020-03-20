@@ -9,11 +9,16 @@
 #include <QGridLayout>
 #include <QFile>
 #include <QDir>
-
-static void initQssFile(QString path,QWidget *widget)
+/**
+  设置widget的样式
+ * @brief setQssStyle
+ * @param path  资源文件 :/** 形式
+ * @param widget  哪个widget
+ */
+static void setQssStyle(QString path,QWidget *widget)
 {
     qDebug() << "设置qss样式";
-    QFile file(path.arg(QDir::currentPath()));
+    QFile file(path);
     file.open(QFile::ReadOnly);
     widget->setStyleSheet(file.readAll());
     file.close();
@@ -93,7 +98,10 @@ mainwidget::mainwidget(QWidget *parent) :
 //    setLayout(mainLayout);
 
 // =======这些已在Qt 设计师中设计了===========
-    initQssFile(QString(":/res/style/menu_frame_style.qss"),ui->menu_frame);
+    setQssStyle(QString(":/res/style/menu_frame_style.qss"),ui->menu_frame);
+    setQssStyle(QString(":/res/style/annotation_frame_style.qss"),ui->annotation_frame);
+    setQssStyle(QString(":/res/style/file_frame_style.qss"),ui->file_frame);
+    setQssStyle(QString(":/res/style/progressbar_style.qss"),ui->progressBar);
 
 //    定义按钮
     MenuButton *openDir = new MenuButton(":/res/icons/open.png","打开",ui->menu_frame);
@@ -118,6 +126,9 @@ mainwidget::mainwidget(QWidget *parent) :
 
     ui->menu_frame->layout()->addWidget(importButton);
     ui->menu_frame->layout()->addWidget(exportButton);
+
+    qDebug()<< ui->menu_frame->width()<<ui->file_frame->height();
+// ui->menu_frame->layout()->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
 
 }
