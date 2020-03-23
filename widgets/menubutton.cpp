@@ -16,8 +16,8 @@ MenuButton::MenuButton(QString img,QString name,QWidget *parent) : QWidget(paren
 
 //    实例化头文件中定义的三个个私有指针
     menuButtonWidget = new QWidget(this);
-    imgLabel = new QLabel(menuButtonWidget);
-    nameLabel = new QLabel(menuButtonWidget);
+    imgLabel = new QLabel();
+    nameLabel = new QLabel();
 
 
 //    创建QPixmap对象
@@ -32,10 +32,12 @@ MenuButton::MenuButton(QString img,QString name,QWidget *parent) : QWidget(paren
 
     imgLabel->setPixmap(pix);
     nameLabel->setText(name);
+    qDebug()<< "imgLabel尺寸["<<imgLabel->width()<<","<<imgLabel->height()<<"]";
+    qDebug()<< "nameLabel尺寸["<<nameLabel->width()<<","<<nameLabel->height()<<"]";
 
 //    设置QLabel的对齐方式，对齐方式分为水平和垂直的左右居中三种方式
-    nameLabel->setAlignment(Qt::AlignCenter);
-    imgLabel->setAlignment(Qt::AlignCenter);
+//    nameLabel->setAlignment(Qt::AlignCenter);
+//    imgLabel->setAlignment(Qt::AlignCenter);
 
 //    定义垂直布局 并且设置为当前定义的布局
     QVBoxLayout *vlayout = new QVBoxLayout(menuButtonWidget);
@@ -48,4 +50,17 @@ MenuButton::MenuButton(QString img,QString name,QWidget *parent) : QWidget(paren
 //    this->setLayout(vlayout);
 
     qDebug()<< "自定义控件尺寸["<<menuButtonWidget->width()<<","<<menuButtonWidget->height()<<"],父窗体尺寸["<<parent->width()<<","<<parent->height()<<"]";
+}
+
+void MenuButton::mousePressEvent(QMouseEvent *)
+{
+    qDebug()<< "MenuButton被按下";
+    update();
+    emit clicked();
+}
+
+void MenuButton::mouseReleaseEvent(QMouseEvent *)
+{
+    qDebug()<< "MenuButton按下被松开";
+     update();
 }
