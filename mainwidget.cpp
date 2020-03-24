@@ -1,4 +1,3 @@
-#include "bform.h"
 #include "mainwidget.h"
 
 #include "ui_mainwidget.h"
@@ -26,6 +25,20 @@ static void setQssStyle(QString path,QWidget *widget)
     file.open(QFile::ReadOnly);
     widget->setStyleSheet(file.readAll());
     file.close();
+}
+
+/**
+ * 获取指定路径下的图片文件信息列表
+ * @brief getImageFileInfoList
+ * @param dirPath
+ * @return
+ */
+static QFileInfoList getImageFileInfoList(const QString& dirPath)
+{
+    QDir dir(dirPath);
+    QStringList nameFilters;
+    nameFilters << "*.png" << "*.bmp" << "*.jpg" << "*.jpeg";
+    return dir.entryInfoList(nameFilters, QDir::Files|QDir::Readable, QDir::Name);
 }
 
 
@@ -106,7 +119,12 @@ MainWidget::MainWidget(QWidget *parent) :
     setQssStyle(QString(":/res/style/menu_frame_style.qss"),ui->menu_frame);
     setQssStyle(QString(":/res/style/annotation_frame_style.qss"),ui->annotation_frame);
     setQssStyle(QString(":/res/style/file_frame_style.qss"),ui->file_frame);
-    setQssStyle(QString(":/res/style/progressbar_style.qss"),ui->progressBar);
+    setQssStyle(QString(":/res/style/main_frame_style.qss"),ui->main_frame);
+    setQssStyle(QString(":/res/style/progressbar_style.qss"),ui->progress_bar);
+//    进度条文本颜色
+    QPalette palette;
+    palette.setColor(QPalette::Text,Qt::green);
+    ui->progress_bar->setPalette(palette);
 
     //    定义按钮
     MenuButton *openDirButton = new MenuButton(":/res/icons/open.png","新建",ui->menu_frame);
@@ -197,23 +215,48 @@ void MainWidget::on_openDirButton_clicked()
     QString dirPath = QFileDialog::getExistingDirectory(this, QString("选择文件夹"),
                                                   QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
                                                   QFileDialog::ShowDirsOnly);
+    QFileInfoList imgInfoFiles = getImageFileInfoList(dirPath);
+    imgCount =  imgInfoFiles.size();
+    qDebug()<<"共找到" << imgCount<<"张图片";
+    imgFilesItemModel = new QStandardItemModel;
+    imgFilesItemModel->setRowCount(imgCount);
+    imgFilesItemModel->setColumnCount(1);
+    for(auto info : imgInfoFiles)
+        {
+//            定义QStandardItem对象
+            QStandardItem *imageItem = new QStandardItem;
+//            为单元项设置属性
+//            设置Icon属性
+            imageItem->setIcon(QIcon(info.absoluteFilePath()));
+//            设置文字属性
+//            imageItem->setText(info.fileName());
 
-    if(!dirPath.isEmpty()){
-        QDir dir(dirPath);
-        QStringList nameFilters;
-        nameFilters<<"*.jpg" << "*.png";
-        QList<QString> files = dir.entryList(nameFilters, QDir::Files|QDir::Readable, QDir::Name);
-        qDebug()<<files;
-        QStandardItem *item;
-        imgFilesItemModel->setRowCount(files.size());
-        imgFilesItemModel->setColumnCount(1);
-        for (QString img: files) {
-             qDebug()<<img;
-//             创建item
-             item=new QStandardItem(img);
-             imgFilesItemModel->appendRow(item);
+            imgFilesItemModel->appendRow(imageItem);
         }
-    }
-    ui->file_list_view->setModel(imgFilesItemModel);
 
+//    设置数据
+    ui->file_list_view->setModel(imgFilesItemModel);
+//    设置框选矩形框可见
+    ui->file_list_view->setSelectionRectVisible(true);
+//    设置选择模式，该模式为最常用模式，其他选择模式请自行查看帮助说明
+//    按住ctrl可多选，按住shift可连续多选
+//    当点击另一个item，其他被选中的item会取消选中状态
+//    ui->file_list_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
+//    设置QStandardItem中单元项的图片大小
+    ui->file_list_view->setIconSize(QSize(90,95));
+//    设置QStandardItem中单元项的间距
+    ui->file_list_view->setSpacing(10);
+//    设置不显示滚动条
+    ui->file_list_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->file_list_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setProcessInfo(1);
+}
+
+void MainWidget::setProcessInfo(int current){
+    QString info = QString("已标注%1/ 总%2   当前位置：%3").arg(hasMarkCount).arg(imgCount).arg(current);
+    ui->progress_info->setText(info);
+//    设置进度条最大值
+    ui->progress_bar->setMaximum(imgCount);
+//    设置进度条当前的运行值
+    ui->progress_bar->setValue(hasMarkCount);
 }
