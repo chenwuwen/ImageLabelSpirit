@@ -12,6 +12,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QStandardPaths>
+#include <QGraphicsRectItem>
 /**
   设置widget的样式
  * @brief setQssStyle
@@ -68,12 +69,20 @@ MainWidget::MainWidget(QWidget *parent) :
     //     resize(screenRect.width(),screenRect.height());
 
     //    推荐的方法
-    QList<QScreen *> screens = QGuiApplication::screens();
-    QScreen* screen = screens.first();
-    QSize size = screen->size();
+//    QList<QScreen *> screens = QGuiApplication::screens();
+//    QScreen* screen = screens.first();
+//    QSize size = screen->size();
 
     qDebug()<<"重新设置窗体大小";
-    resize(size.width(),size.height());
+
+//    最大化显示函数(相当于点了最大化按钮)
+    showMaximized();
+//    实例化QStandardItemModel
+    imgFilesItemModel = new QStandardItemModel;
+
+//      全屏显示函数 此函数将导致窗口占满屏幕且不显示系统状态栏
+//    showFullScreen();
+
 
     //    QGridLayout *g = new QGridLayout;
     //    this->setLayout(g);
@@ -163,8 +172,27 @@ MainWidget::MainWidget(QWidget *parent) :
     qDebug()<< ui->menu_frame->width()<<ui->file_frame->height();
     // ui->menu_frame->layout()->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
-    //    定义连接函数
+//    定义连接函数
     connect(openDirButton,&MenuButton::clicked,this,&MainWidget::on_openDirButton_clicked);
+    connect(settingButton,&MenuButton::clicked,this,&MainWidget::on_settingButton_clicked);
+    connect(moveButton,&MenuButton::clicked,this,&MainWidget::on_moveButton_clicked);
+    connect(importButton,&MenuButton::clicked,this,&MainWidget::on_importButton_clicked);
+    connect(exportButton,&MenuButton::clicked,this,&MainWidget::on_exportButton_clicked);
+//    下面两个连接函数使用了lambda表达式
+    connect(fontButton,&MenuButton::clicked,this,[=]{
+        if(currentImg>0){
+            qDebug() << "前一个按钮被点击";
+            currentImg--;
+            displayImg();
+        }
+    });
+    connect(afterButton,&MenuButton::clicked,this,[=]{
+        if(currentImg<imgCount){
+            qDebug() << "后一个按钮被点击";
+            currentImg++;
+            displayImg();
+        }
+    });
 
 }
 
@@ -182,6 +210,109 @@ void MainWidget::on_pushButton_clicked()
 
 }
 
+
+
+void MainWidget::on_openDirButton_clicked()
+{
+//    文件夹选择对话框是使用getExistingDirectory()函数 来自头文件QFileDialog
+//    第一个参数 父对象（一般是this）
+//    第二个参数 对话框标题
+//    第三个参数 对话框开始目录
+//    第四个参数 默认是只显示目录 如果要别的参数可以参考以下表格 https://doc.qt.io/qt-5/qfiledialog.html#Option-enum
+    QString dirPath = QFileDialog::getExistingDirectory(this, QString("选择文件夹"),
+                                                  QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
+                                                  QFileDialog::ShowDirsOnly);
+    QFileInfoList imgInfoFiles = getImageFileInfoList(dirPath);
+    imgCount =  imgInfoFiles.size();
+    qDebug()<<"共找到" << imgCount<<"张图片";
+//    设置数据之前,先清空旧数据
+    imgFilesItemModel->clear();
+    imgFilesItemModel->setRowCount(imgCount);
+    imgFilesItemModel->setColumnCount(1);
+    int row = 0;
+    for(auto info : imgInfoFiles)
+        {
+//            定义QStandardItem对象
+            QStandardItem *imageItem = new QStandardItem(row++);
+//            为单元项设置属性
+//            设置Icon属性
+            imageItem->setIcon(QIcon(info.absoluteFilePath()));
+//            将文件的路径设置到data中
+            imageItem->setData(info.absoluteFilePath());
+//            设置tooltip,不能直接使用
+//            imageItem->setToolTip(info.absoluteFilePath());
+//            设置文字属性 这里不需要展示文字
+//            imageItem->setText(info.fileName());
+
+            imgFilesItemModel->appendRow(imageItem);
+        }
+
+//    设置数据
+    ui->file_list_view->setModel(imgFilesItemModel);
+//    设置框选矩形框可见
+    ui->file_list_view->setSelectionRectVisible(true);
+//    设置选择模式，该模式为最常用模式，其他选择模式请自行查看帮助说明
+//    按住ctrl可多选，按住shift可连续多选
+//    当点击另一个item，其他被选中的item会取消选中状态
+//    ui->file_list_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
+//    设置QStandardItem中单元项的图片大小
+    ui->file_list_view->setIconSize(QSize(90,95));
+//    设置QStandardItem中单元项的间距
+    ui->file_list_view->setSpacing(10);
+//    设置不显示滚动条
+    ui->file_list_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->file_list_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    currentImg = 0;
+    setProcessInfo();
+    displayImg();
+}
+
+void MainWidget::setProcessInfo(){
+    QString info = QString("已标注%1/ 总%2   当前位置：%3").arg(hasMarkCount).arg(imgCount).arg(currentImg+1);
+    ui->progress_info->setText(info);
+//    设置进度条最大值
+    ui->progress_bar->setMaximum(imgCount);
+//    设置进度条当前的运行值
+    ui->progress_bar->setValue(hasMarkCount);
+}
+
+void MainWidget::displayImg(){
+    qDebug() << "主界面展示图片";
+
+    QStandardItem *item = imgFilesItemModel->item(currentImg + 1);
+     qDebug()<<"当前展示的图片路径是："<<item->data(102);
+    QModelIndex index = imgFilesItemModel->index(currentImg+1,0);
+    QString currentFilePath =  imgFilesItemModel->data(index).toString();
+//    item->icon();
+//    item->data();
+//    QModelIndex index;
+//    index.row(currentImg);
+//    imgFilesItemModel->itemData();
+//    得到存储在item中的data数据
+//    QVariant variant = item->data();
+//    当前图片文件路径
+//    QString currentFilePath = variant.toString();
+    qDebug()<<"当前展示的图片路径是："<<currentFilePath;
+//    QPixmap pixmap ;
+//    pixmap.load(currentFilePath);
+//    QGraphicsScene scene ;
+//    QGraphicsRectItem *itemrect=new QGraphicsRectItem(0,0,100,100);
+
+//    scene.addPixmap(pixmap);
+//    scene.addItem(itemrect);
+//    ui->graphicsView->setScene(&scene);
+//    ui->graphicsView->show();
+}
+
+void MainWidget::on_settingButton_clicked()
+{
+}
+void MainWidget::on_exportButton_clicked()
+{
+}
+void MainWidget::on_moveButton_clicked()
+{
+}
 void MainWidget::on_importButton_clicked()
 {
     QFile file;
@@ -203,60 +334,4 @@ void MainWidget::on_importButton_clicked()
         }
         file.close();
     }
-}
-
-void MainWidget::on_openDirButton_clicked()
-{
-//    文件夹选择对话框是使用getExistingDirectory()函数 来自头文件QFileDialog
-//    第一个参数 父对象（一般是this）
-//    第二个参数 对话框标题
-//    第三个参数 对话框开始目录
-//    第四个参数 默认是只显示目录 如果要别的参数可以参考以下表格 https://doc.qt.io/qt-5/qfiledialog.html#Option-enum
-    QString dirPath = QFileDialog::getExistingDirectory(this, QString("选择文件夹"),
-                                                  QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
-                                                  QFileDialog::ShowDirsOnly);
-    QFileInfoList imgInfoFiles = getImageFileInfoList(dirPath);
-    imgCount =  imgInfoFiles.size();
-    qDebug()<<"共找到" << imgCount<<"张图片";
-    imgFilesItemModel = new QStandardItemModel;
-    imgFilesItemModel->setRowCount(imgCount);
-    imgFilesItemModel->setColumnCount(1);
-    for(auto info : imgInfoFiles)
-        {
-//            定义QStandardItem对象
-            QStandardItem *imageItem = new QStandardItem;
-//            为单元项设置属性
-//            设置Icon属性
-            imageItem->setIcon(QIcon(info.absoluteFilePath()));
-//            设置文字属性
-//            imageItem->setText(info.fileName());
-
-            imgFilesItemModel->appendRow(imageItem);
-        }
-
-//    设置数据
-    ui->file_list_view->setModel(imgFilesItemModel);
-//    设置框选矩形框可见
-    ui->file_list_view->setSelectionRectVisible(true);
-//    设置选择模式，该模式为最常用模式，其他选择模式请自行查看帮助说明
-//    按住ctrl可多选，按住shift可连续多选
-//    当点击另一个item，其他被选中的item会取消选中状态
-//    ui->file_list_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
-//    设置QStandardItem中单元项的图片大小
-    ui->file_list_view->setIconSize(QSize(90,95));
-//    设置QStandardItem中单元项的间距
-    ui->file_list_view->setSpacing(10);
-//    设置不显示滚动条
-    ui->file_list_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->file_list_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setProcessInfo(1);
-}
-
-void MainWidget::setProcessInfo(int current){
-    QString info = QString("已标注%1/ 总%2   当前位置：%3").arg(hasMarkCount).arg(imgCount).arg(current);
-    ui->progress_info->setText(info);
-//    设置进度条最大值
-    ui->progress_bar->setMaximum(imgCount);
-//    设置进度条当前的运行值
-    ui->progress_bar->setValue(hasMarkCount);
 }
