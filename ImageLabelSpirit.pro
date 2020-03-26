@@ -27,15 +27,20 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwidget.cpp \
-        widgets/menubutton.cpp
+        widgets/menubutton.cpp \
+    commonutil.cpp \
+    importdialog.cpp
 
 HEADERS += \
         mainwidget.h \
-        widgets/menubutton.h
+        widgets/menubutton.h \
+    commonutil.h \
+    importdialog.h
 
 
 FORMS += \
-        mainwidget.ui
+        mainwidget.ui \
+    importdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

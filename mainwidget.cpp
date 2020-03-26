@@ -1,3 +1,5 @@
+#include "commonutil.h"
+#include "importdialog.h"
 #include "mainwidget.h"
 
 #include "ui_mainwidget.h"
@@ -13,34 +15,9 @@
 #include <QFileDialog>
 #include <QStandardPaths>
 #include <QGraphicsRectItem>
-/**
-  设置widget的样式
- * @brief setQssStyle
- * @param path  资源文件 :/** 形式
- * @param widget  哪个widget
- */
-static void setQssStyle(QString path,QWidget *widget)
-{
-    qDebug() << "设置qss样式";
-    QFile file(path);
-    file.open(QFile::ReadOnly);
-    widget->setStyleSheet(file.readAll());
-    file.close();
-}
 
-/**
- * 获取指定路径下的图片文件信息列表
- * @brief getImageFileInfoList
- * @param dirPath
- * @return
- */
-static QFileInfoList getImageFileInfoList(const QString& dirPath)
-{
-    QDir dir(dirPath);
-    QStringList nameFilters;
-    nameFilters << "*.png" << "*.bmp" << "*.jpg" << "*.jpeg";
-    return dir.entryInfoList(nameFilters, QDir::Files|QDir::Readable, QDir::Name);
-}
+
+
 
 
 MainWidget::MainWidget(QWidget *parent) :
@@ -125,11 +102,11 @@ MainWidget::MainWidget(QWidget *parent) :
     //    setLayout(mainLayout);
 
     // =======这些已在Qt 设计师中设计了===========
-    setQssStyle(QString(":/res/style/menu_frame_style.qss"),ui->menu_frame);
-    setQssStyle(QString(":/res/style/annotation_frame_style.qss"),ui->annotation_frame);
-    setQssStyle(QString(":/res/style/file_frame_style.qss"),ui->file_frame);
-    setQssStyle(QString(":/res/style/main_frame_style.qss"),ui->main_frame);
-    setQssStyle(QString(":/res/style/progressbar_style.qss"),ui->progress_bar);
+    CommonUtil::setQssStyle(QString(":/res/style/menu_frame_style.qss"),ui->menu_frame);
+    CommonUtil::setQssStyle(QString(":/res/style/annotation_frame_style.qss"),ui->annotation_frame);
+    CommonUtil::setQssStyle(QString(":/res/style/file_frame_style.qss"),ui->file_frame);
+    CommonUtil::setQssStyle(QString(":/res/style/main_frame_style.qss"),ui->main_frame);
+    CommonUtil::setQssStyle(QString(":/res/style/progressbar_style.qss"),ui->progress_bar);
 //    进度条文本颜色
     QPalette palette;
     palette.setColor(QPalette::Text,Qt::green);
@@ -180,18 +157,24 @@ MainWidget::MainWidget(QWidget *parent) :
     connect(exportButton,&MenuButton::clicked,this,&MainWidget::on_exportButton_clicked);
 //    下面两个连接函数使用了lambda表达式
     connect(fontButton,&MenuButton::clicked,this,[=]{
+        qDebug() << "前一个按钮被点击";
         if(currentImg>0){
-            qDebug() << "前一个按钮被点击";
-            currentImg--;
-            displayImg();
+            currentImg--;   
+        }else{
+            currentImg = imgCount-1;
         }
+        setProcessInfo();
+        displayImg();
     });
     connect(afterButton,&MenuButton::clicked,this,[=]{
-        if(currentImg<imgCount){
-            qDebug() << "后一个按钮被点击";
+        qDebug() << "后一个按钮被点击";
+        if(currentImg<imgCount-1){
             currentImg++;
-            displayImg();
+        }else{
+            currentImg = 0;
         }
+        setProcessInfo();
+        displayImg();
     });
 
 }
@@ -222,18 +205,17 @@ void MainWidget::on_openDirButton_clicked()
     QString dirPath = QFileDialog::getExistingDirectory(this, QString("选择文件夹"),
                                                   QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
                                                   QFileDialog::ShowDirsOnly);
-    QFileInfoList imgInfoFiles = getImageFileInfoList(dirPath);
+    QFileInfoList imgInfoFiles = CommonUtil::getImageFileInfoList(dirPath);
     imgCount =  imgInfoFiles.size();
     qDebug()<<"共找到" << imgCount<<"张图片";
 //    设置数据之前,先清空旧数据
     imgFilesItemModel->clear();
-    imgFilesItemModel->setRowCount(imgCount);
-    imgFilesItemModel->setColumnCount(1);
-    int row = 0;
+//    这里不能设置行数,因为此处如果设置了行数,会与下面appendRow()产生干扰,如实际是1行,先setRowCount(1),然后又appendRow()了一次,那么当以后使用imgFilesItemModel.rowCount()时,将返回2,因此此处不能设置
+//    imgFilesItemModel->setRowCount(imgCount);
     for(auto info : imgInfoFiles)
         {
-//            定义QStandardItem对象
-            QStandardItem *imageItem = new QStandardItem(row++);
+//            定义QStandardItem对象 , 构造方法参数1.行数,2.列数 有默认值
+            QStandardItem *imageItem = new QStandardItem(1);
 //            为单元项设置属性
 //            设置Icon属性
             imageItem->setIcon(QIcon(info.absoluteFilePath()));
@@ -244,6 +226,7 @@ void MainWidget::on_openDirButton_clicked()
 //            设置文字属性 这里不需要展示文字
 //            imageItem->setText(info.fileName());
 
+            qDebug() << "设置的Item:"<< imageItem;
             imgFilesItemModel->appendRow(imageItem);
         }
 
@@ -278,30 +261,24 @@ void MainWidget::setProcessInfo(){
 
 void MainWidget::displayImg(){
     qDebug() << "主界面展示图片";
+    qDebug() <<"imgFilesItemModel 总行数："<<imgFilesItemModel->rowCount();
+    QStandardItem *item = imgFilesItemModel->item(currentImg);
 
-    QStandardItem *item = imgFilesItemModel->item(currentImg + 1);
-     qDebug()<<"当前展示的图片路径是："<<item->data(102);
-    QModelIndex index = imgFilesItemModel->index(currentImg+1,0);
-    QString currentFilePath =  imgFilesItemModel->data(index).toString();
-//    item->icon();
-//    item->data();
-//    QModelIndex index;
-//    index.row(currentImg);
-//    imgFilesItemModel->itemData();
+    qDebug() << "获取的Item:"<< item;
+
 //    得到存储在item中的data数据
-//    QVariant variant = item->data();
+    QVariant variant = item->data();
 //    当前图片文件路径
-//    QString currentFilePath = variant.toString();
+    QString currentFilePath = variant.toString();
     qDebug()<<"当前展示的图片路径是："<<currentFilePath;
-//    QPixmap pixmap ;
-//    pixmap.load(currentFilePath);
-//    QGraphicsScene scene ;
-//    QGraphicsRectItem *itemrect=new QGraphicsRectItem(0,0,100,100);
+    QPixmap pixmap ;
+    pixmap.load(currentFilePath);
+    QGraphicsScene *scene =new QGraphicsScene(this);
 
-//    scene.addPixmap(pixmap);
-//    scene.addItem(itemrect);
-//    ui->graphicsView->setScene(&scene);
-//    ui->graphicsView->show();
+
+    scene->addPixmap(pixmap);
+    ui->main_graphics_view->setScene(scene);
+    ui->main_graphics_view->show();
 }
 
 void MainWidget::on_settingButton_clicked()
@@ -315,23 +292,8 @@ void MainWidget::on_moveButton_clicked()
 }
 void MainWidget::on_importButton_clicked()
 {
-    QFile file;
-//    定义文件对话框
-//    第一个参数parent，用于指定父组件。注意，很多Qt组件的构造函数都会有这么一个parent参数，并提供一个默认值0；
-//    第二个参数caption，是对话框的标题；
-//    第三个参数dir，是对话框显示时默认打开的目录 ：https://www.bbsmax.com/A/A2dmQLn7de/
-//    第四个参数filter，是对话框的后缀名过滤器
-//    第五个参数selectedFilter，是默认选择的过滤器
-//    第六个参数options，是对话框的一些参数设定，比如只显示文件夹等等，它的取值是enum QFileDialog::Option，每个选项可以使用 | 运算组合起来
-    QString f = QFileDialog::getOpenFileName(this, QString("选择文件"),QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),QString("TEXT(*.txt)"));
-    file.setFileName(f);
-    if(file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        QByteArray t ;
-        while(!file.atEnd())
-        {
-            t += file.readLine();
-        }
-        file.close();
-    }
+    ImportDialog *importDialog = new ImportDialog(this);
+//    设置dialog为模态框
+    importDialog->setModal(true);
+    importDialog->exec();
 }

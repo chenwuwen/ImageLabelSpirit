@@ -1,0 +1,18 @@
+QPushButton#determine_import_button{
+    background-color: rgb(17,124,216);
+    color: rgb(255, 255, 255);
+}
+
+QWidget{
+   background-color: rgb(255, 255, 255);
+}
+
+QLabel#label_2{
+    color: rgb(0, 0, 0);
+    font: 75 10pt "Microsoft YaHei UI";
+}
+
+QLabel#label_1{
+    color: rgb(93,93,93);
+    font: 75 10pt "Microsoft YaHei UI";
+}

@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QPixmap>
 #include <QDebug>
+#include <QMouseEvent>
 MenuButton::MenuButton(QWidget *parent) : QWidget(parent)
 {
 
@@ -52,15 +53,22 @@ MenuButton::MenuButton(QString img,QString name,QWidget *parent) : QWidget(paren
     qDebug()<< "自定义控件尺寸["<<menuButtonWidget->width()<<","<<menuButtonWidget->height()<<"],父窗体尺寸["<<parent->width()<<","<<parent->height()<<"]";
 }
 
-void MenuButton::mousePressEvent(QMouseEvent *)
+void MenuButton::mousePressEvent(QMouseEvent *event)
 {
     qDebug()<< "MenuButton被按下";
-    update();
-    emit clicked();
+    // 如果是鼠标左键按下
+    if(event->button()==Qt::LeftButton){
+        update();
+        emit clicked();
+    }
+
 }
 
-void MenuButton::mouseReleaseEvent(QMouseEvent *)
+void MenuButton::mouseReleaseEvent(QMouseEvent *event)
 {
     qDebug()<< "MenuButton按下被松开";
-     update();
+    // 如果是鼠标左键松开
+    if(event->button()==Qt::LeftButton){
+        update();
+    }
 }

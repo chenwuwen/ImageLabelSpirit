@@ -16,5 +16,6 @@
         <file>res/icons/narrow.png</file>
         <file>res/icons/full_screen.png</file>
         <file>res/style/main_frame_style.qss</file>
+        <file>res/style/import_dialog_style.qss</file>
     </qresource>
 </RCC>
