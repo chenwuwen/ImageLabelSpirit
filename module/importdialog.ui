@@ -93,6 +93,9 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="2,8,1">
+     <property name="spacing">
+      <number>1</number>
+     </property>
      <item>
       <spacer name="horizontalSpacer_4">
        <property name="orientation">
@@ -107,7 +110,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QFrame" name="frame">
+      <widget class="QFrame" name="file_button_frame">
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>
@@ -115,15 +118,39 @@
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="9,1">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item>
-         <widget class="QLabel" name="label_3">
+         <widget class="QPushButton" name="import_file_button_2">
           <property name="text">
-           <string>TextLabel</string>
+           <string>PushButton</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="import_file_button">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
           <property name="text">
            <string>...</string>
           </property>

@@ -1,5 +1,4 @@
-#include "commonutil.h"
-#include "importdialog.h"
+
 #include "mainwidget.h"
 
 #include "ui_mainwidget.h"
@@ -15,6 +14,11 @@
 #include <QFileDialog>
 #include <QStandardPaths>
 #include <QGraphicsRectItem>
+
+#include <common/commonutil.h>
+
+#include <module/exportdialog.h>
+#include <module/importdialog.h>
 
 
 
@@ -32,7 +36,8 @@ MainWidget::MainWidget(QWidget *parent) :
     setWindowIcon(QIcon(":/res/icons/kanyun.png"));
     setWindowTitle("看云图片标注精灵");
     //    隐藏标题栏
-    //    setWindowFlags(Qt::SplashScreen);
+//        setWindowFlags(Qt::SplashScreen);
+//        setWindowFlags(Qt::FramelessWindowHint|Qt::Dialog);
 
     //     获取桌面信息
     //     QDesktopWidget* desktopWidget = QApplication::desktop();
@@ -286,6 +291,10 @@ void MainWidget::on_settingButton_clicked()
 }
 void MainWidget::on_exportButton_clicked()
 {
+    ExportDialog *exportDialog = new ExportDialog(this);
+//    设置dialog为模态框
+    exportDialog->setModal(true);
+    exportDialog->exec();
 }
 void MainWidget::on_moveButton_clicked()
 {
