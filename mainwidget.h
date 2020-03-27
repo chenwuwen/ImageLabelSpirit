@@ -5,6 +5,8 @@
 #include <QStandardItemModel>
 #include <QWidget>
 
+#include <module/importdialog.h>
+
 namespace Ui {
 class MainWidget;
 }
@@ -28,6 +30,7 @@ private slots:
     void on_settingButton_clicked();
     void on_exportButton_clicked();
     void on_moveButton_clicked();
+    void on_import_function(QString);
 
 
 
@@ -41,6 +44,8 @@ private:
     int currentImg;
 //    已标记图片数量
     int hasMarkCount = 0;
+
+    ImportDialog *importDialog;
 
 };
 

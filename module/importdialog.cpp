@@ -17,11 +17,10 @@ ImportDialog::ImportDialog(QWidget *parent) :
     setWindowTitle("导入文件");
     CommonUtil::setQssStyle(":/res/style/import_dialog_style.qss",this);
 //    去掉QPushButton阴影
-    ui->import_file_button->setFlat(true);
-    ui->import_file_button_2->setFlat(true);
-    ui->import_file_button->setFocus();
-//    ui->import_file_button_2->setFocus();
-    connect(ui->import_file_button,&QPushButton::clicked,this,&ImportDialog::on_importFileButton_clicked);
+//    ui->determine_import_button->setFlat(true);
+    fileButton  = new FileButton(ui->file_button_widget);
+    fileButton->setObjectName(QString::fromUtf8("import_file_button"));
+    connect(fileButton,&FileButton::clicked,this,&ImportDialog::on_importFileButton_clicked);
 
 }
 
@@ -53,11 +52,20 @@ void ImportDialog::on_importFileButton_clicked(){
 
 //    }
 
-    QString dirPath = QFileDialog::getExistingDirectory(this, QString("选择文件夹"),
+    dirPath = QFileDialog::getExistingDirectory(this, QString("选择文件夹"),
                                                   QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
                                                   QFileDialog::ShowDirsOnly);
-//     ui->label_3->setText(dirPath);
+    fileButton->draw_path(dirPath);
 
 
 }
 
+
+void ImportDialog::on_determine_import_button_clicked()
+{
+    if(!dirPath.isEmpty()){
+        emit sendData(dirPath);
+        this->close();
+    }
+
+}

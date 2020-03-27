@@ -28,15 +28,17 @@ SOURCES += \
         main.cpp \
         mainwidget.cpp \
         widgets/menubutton.cpp \
-    common\commonutil.cpp \
-    module\importdialog.cpp \
+        widgets/filebutton.cpp \
+    common/commonutil.cpp \
+    module/importdialog.cpp \
     module/exportdialog.cpp
 
 HEADERS += \
         mainwidget.h \
         widgets/menubutton.h \
-     common\commonutil.h \
-     module\importdialog.h \
+        widgets/filebutton.h \
+     common/commonutil.h \
+     module/importdialog.h \
     module/exportdialog.h
 
 

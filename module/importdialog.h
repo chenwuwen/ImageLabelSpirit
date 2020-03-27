@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+#include <widgets/filebutton.h>
+
 namespace Ui {
 class ImportDialog;
 }
@@ -17,10 +19,17 @@ public:
     void on_importFileButton_clicked();
 
 private slots:
-    void on_pushButton_clicked();
+
+    void on_determine_import_button_clicked();
+
+signals:
+//    自定义信号,发送数据给父窗口
+    void sendData(QString);
 
 private:
     Ui::ImportDialog *ui;
+    FileButton *fileButton;
+    QString dirPath ;
 };
 
 #endif // IMPORTDIALOG_H

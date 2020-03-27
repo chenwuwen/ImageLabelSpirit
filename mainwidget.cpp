@@ -182,6 +182,7 @@ MainWidget::MainWidget(QWidget *parent) :
         displayImg();
     });
 
+
 }
 
 
@@ -301,8 +302,15 @@ void MainWidget::on_moveButton_clicked()
 }
 void MainWidget::on_importButton_clicked()
 {
-    ImportDialog *importDialog = new ImportDialog(this);
+    importDialog = new ImportDialog(this);
 //    设置dialog为模态框
     importDialog->setModal(true);
+//  Qt5信号槽：  https://www.bbsmax.com/A/Gkz1RVnJR6/
+    connect(importDialog,static_cast<void (ImportDialog::*)(QString)>(&ImportDialog::sendData),this,&MainWidget::on_import_function);
     importDialog->exec();
+}
+
+void MainWidget::on_import_function(QString path)
+{
+    qDebug()<< "接收到importDialog窗口返回值："<<path;
 }

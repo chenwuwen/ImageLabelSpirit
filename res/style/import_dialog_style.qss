@@ -18,12 +18,5 @@ QLabel#label_1{
 }
 
 QPushButton{
-    border-top-color:transparent;
-    border-bottom-color:transparent;
-    border-bottom-right:transparent;
     background-color:transparent;
-}
-
-QFrame#file_button_frame{
-    border:1px solid rgb(0,255,0)
 }
