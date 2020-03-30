@@ -39,7 +39,7 @@ private:
 //   图片 model对象
     QStandardItemModel *imgFilesItemModel;
 //    图片总数
-    int imgCount;
+    int imgCount = 0;
 //    当前图片索引位置,从0开始
     int currentImg;
 //    已标记图片数量

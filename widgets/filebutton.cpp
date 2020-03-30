@@ -3,9 +3,11 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QDebug>
+#include <QGraphicsDropShadowEffect>
 FileButton::FileButton(QWidget *parent) : QWidget(parent)
 {
-
+//    设置鼠标样式 为手型 ,当鼠标移入控件中时,鼠标样式将更改,移出时,鼠标恢复
+    setCursor(Qt::PointingHandCursor);
 }
 
 void FileButton::paintEvent(QPaintEvent *){
@@ -31,13 +33,14 @@ void FileButton::paintEvent(QPaintEvent *){
 
 //    画大矩形
     QRect bigRect = QRect(this->x(),this->y(),this->width(),this->height());
-    p.drawRoundRect(bigRect,10,10);
+//    drawRoundRect() 画圆角矩形,后两个参数为设置圆角,但有点难看
+    p.drawRoundRect(bigRect,5,5);
 
     int maxX = this->x() + this->width();
     int maxY = this->y() + this->height();
     qDebug("maxX: %d,maxY: %d",maxX,maxY);
 
-    int smallX = maxX - (this->width()/5);
+    int smallX = maxX - (this->width()/10);
     int smallY = this->y();
     int smallWidth = maxX-smallX;
     qDebug("smallX: %d,smallY: %d",smallX,smallY);
@@ -64,12 +67,11 @@ void FileButton::paintEvent(QPaintEvent *){
     p.drawText(smallRect,Qt::AlignVCenter|Qt::AlignCenter,"...");
     if(!pathInfo.isEmpty()){
 //        文本过长,将文本截取多余部分显示成省略号
-       QString str = fontMetrics().elidedText(pathInfo, Qt::ElideRight,width()-smallWidth );
+       QString str = p.fontMetrics().elidedText(pathInfo, Qt::ElideRight,width()-smallWidth,Qt::TextShowMnemonic);
        p.drawText(bigRect,Qt::AlignVCenter,str);
     }
 
-
-    //画背景图
+//    画背景图
 //    p.drawPixmap(0,0,width(),height(), QPixmap("C:\\Users\\KANYUN\\Desktop\\5900f3b6ccf32_610.jpg"));
 //    p.end();
 }

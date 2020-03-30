@@ -117,6 +117,13 @@ MainWidget::MainWidget(QWidget *parent) :
     palette.setColor(QPalette::Text,Qt::green);
     ui->progress_bar->setPalette(palette);
 
+    QVBoxLayout *menuVerticalLayout = new QVBoxLayout(ui->menu_frame);
+    menuVerticalLayout->setSpacing(6);
+    menuVerticalLayout->setContentsMargins(0,0,0,0);
+
+//    menuVerticalLayout->setAlignment(Qt::AlignVCenter);
+//    menuVerticalLayout->setSizeConstraint()
+
     //    定义按钮
     MenuButton *openDirButton = new MenuButton(":/res/icons/open.png","新建",ui->menu_frame);
     MenuButton *fontButton = new MenuButton(":/res/icons/font.png","前一个",ui->menu_frame);
@@ -125,6 +132,7 @@ MainWidget::MainWidget(QWidget *parent) :
     MenuButton *moveButton = new MenuButton(":/res/icons/move.png","移动",ui->menu_frame);
     MenuButton *importButton = new MenuButton(":/res/icons/import.png","导入",ui->menu_frame);
     MenuButton *exportButton = new MenuButton(":/res/icons/export.png","导出",ui->menu_frame);
+//    openDirButton->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     //    分隔线
     QFrame * line = new QFrame;
     line->setFrameShape(QFrame::HLine);
@@ -163,6 +171,7 @@ MainWidget::MainWidget(QWidget *parent) :
 //    下面两个连接函数使用了lambda表达式
     connect(fontButton,&MenuButton::clicked,this,[=]{
         qDebug() << "前一个按钮被点击";
+        if(imgCount==0) return ;
         if(currentImg>0){
             currentImg--;   
         }else{
@@ -173,6 +182,7 @@ MainWidget::MainWidget(QWidget *parent) :
     });
     connect(afterButton,&MenuButton::clicked,this,[=]{
         qDebug() << "后一个按钮被点击";
+        if(imgCount==0) return ;
         if(currentImg<imgCount-1){
             currentImg++;
         }else{

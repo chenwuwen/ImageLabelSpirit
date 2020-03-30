@@ -19,7 +19,7 @@ public:
 //    表示鼠标释放的事件
     void mouseReleaseEvent(QMouseEvent *event);
 
-//    表示鼠标移动事件(按住移动)
+//    表示鼠标移动事件(鼠标在控件内按住移动会触发该方法,如果不需要按住移动,需要在控件构造方法中添加 setMouseTracking(true);这样鼠标不按住移动也会触发该方法)
     void mouseMoveEvent(QMouseEvent *event);
 
 protected:

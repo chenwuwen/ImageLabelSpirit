@@ -18,8 +18,11 @@ ImportDialog::ImportDialog(QWidget *parent) :
     CommonUtil::setQssStyle(":/res/style/import_dialog_style.qss",this);
 //    去掉QPushButton阴影
 //    ui->determine_import_button->setFlat(true);
+    QLayout *verticalLayout = new QVBoxLayout(ui->file_button_widget);
+    verticalLayout->setContentsMargins(0, 0, 0, 0);
     fileButton  = new FileButton(ui->file_button_widget);
     fileButton->setObjectName(QString::fromUtf8("import_file_button"));
+    verticalLayout->addWidget(fileButton);
     connect(fileButton,&FileButton::clicked,this,&ImportDialog::on_importFileButton_clicked);
 
 }

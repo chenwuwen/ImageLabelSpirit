@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,2">
+  <layout class="QGridLayout" name="gridLayout" rowstretch="2,0,1,4">
    <property name="verticalSpacing">
     <number>6</number>
    </property>
@@ -55,7 +55,7 @@
     </layout>
    </item>
    <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,10,1">
+    <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,10,2">
      <property name="spacing">
       <number>0</number>
      </property>
@@ -98,7 +98,7 @@
     </layout>
    </item>
    <item row="2" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="2,10,1">
+    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="2,10,2">
      <property name="spacing">
       <number>0</number>
      </property>
@@ -145,6 +145,9 @@
    </item>
    <item row="3" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <property name="topMargin">
+      <number>10</number>
+     </property>
      <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
