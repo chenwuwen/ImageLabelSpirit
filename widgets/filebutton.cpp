@@ -4,10 +4,13 @@
 #include <QPainter>
 #include <QDebug>
 #include <QGraphicsDropShadowEffect>
+#include <QStyleOption>
 FileButton::FileButton(QWidget *parent) : QWidget(parent)
 {
 //    设置鼠标样式 为手型 ,当鼠标移入控件中时,鼠标样式将更改,移出时,鼠标恢复
     setCursor(Qt::PointingHandCursor);
+//    设置控件qss样式 [这里注释的原因是一些效果已经通过代码实现了,但是显然还是通过qss设置更高一些]
+//    setStyleSheet("FileButton{border-radius:10px;border:2px solid rgb(6,168,255);}");
 }
 
 void FileButton::paintEvent(QPaintEvent *){
@@ -15,6 +18,12 @@ void FileButton::paintEvent(QPaintEvent *){
     qDebug("尺寸[%d,%d]",width(),height());
 //     创建画家对象 并指定当前窗口为画图设备
     QPainter p(this);
+
+//    配置自定义控件,使其可以使用qss样式
+    QStyleOption opt;
+    opt.init(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+
 //    抗锯齿和使用平滑转换算法
 //    p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     QPen pen;

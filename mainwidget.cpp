@@ -14,6 +14,7 @@
 #include <QFileDialog>
 #include <QStandardPaths>
 #include <QGraphicsRectItem>
+#include <QButtonGroup>
 
 #include <common/commonutil.h>
 
@@ -57,8 +58,10 @@ MainWidget::MainWidget(QWidget *parent) :
 
     qDebug()<<"重新设置窗体大小";
 
-//    最大化显示函数(相当于点了最大化按钮)
+//    最大化显示函数(相当于点了最大化按钮,单独设置这个可能不会生效,参考：https://blog.csdn.net/KayChanGEEK/article/details/77923848)
     showMaximized();
+    QWidget::setWindowFlags(Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
+
 //    实例化QStandardItemModel
     imgFilesItemModel = new QStandardItemModel;
 
@@ -121,36 +124,38 @@ MainWidget::MainWidget(QWidget *parent) :
     menuVerticalLayout->setSpacing(6);
     menuVerticalLayout->setContentsMargins(0,0,0,0);
 
-//    menuVerticalLayout->setAlignment(Qt::AlignVCenter);
-//    menuVerticalLayout->setSizeConstraint()
+//    该方法并不能让该布局中的组件水平居中,除非该布局中的组件只有一个,否则多个组件会挤在一块,因此如果多个组件需要水平居中,需要在addWidget时进行指定
+//    menuVerticalLayout->setAlignment(Qt::AlignHCenter);
 
-    //    定义按钮
-    MenuButton *openDirButton = new MenuButton(":/res/icons/open.png","新建",ui->menu_frame);
-    MenuButton *fontButton = new MenuButton(":/res/icons/font.png","前一个",ui->menu_frame);
-    MenuButton *afterButton = new MenuButton(":/res/icons/after.png","后一个",ui->menu_frame);
-    MenuButton *settingButton = new MenuButton(":/res/icons/setting.png","设置",ui->menu_frame);
-    MenuButton *moveButton = new MenuButton(":/res/icons/move.png","移动",ui->menu_frame);
-    MenuButton *importButton = new MenuButton(":/res/icons/import.png","导入",ui->menu_frame);
-    MenuButton *exportButton = new MenuButton(":/res/icons/export.png","导出",ui->menu_frame);
-//    openDirButton->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-    //    分隔线
+//    定义按钮
+    MenuButton *openDirButton = new MenuButton(":/res/icons/open.png","新建",false);
+    MenuButton *fontButton = new MenuButton(":/res/icons/font.png","前一个",false);
+    MenuButton *afterButton = new MenuButton(":/res/icons/after.png","后一个",false);
+    MenuButton *settingButton = new MenuButton(":/res/icons/setting.png","设置",false);
+    MenuButton *moveButton = new MenuButton(":/res/icons/move.png","移动",true);
+    MenuButton *rectButton = new MenuButton(":/res/icons/rect.png","矩形框",true);
+    MenuButton *importButton = new MenuButton(":/res/icons/import.png","导入",false);
+    MenuButton *exportButton = new MenuButton(":/res/icons/export.png","导出",false);
+    openDirButton->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+//    分隔线
     QFrame * line = new QFrame;
     line->setFrameShape(QFrame::HLine);
     line->setFrameShadow(QFrame::Sunken);
 
-    //    将按钮添加进menu_frame中
-    ui->menu_frame->layout()->addWidget(moveButton);
-    ui->menu_frame->layout()->addWidget(line);
-    ui->menu_frame->layout()->addWidget(openDirButton);
-    ui->menu_frame->layout()->addWidget(fontButton);
-    ui->menu_frame->layout()->addWidget(afterButton);
-    ui->menu_frame->layout()->addWidget(settingButton);
+//    将按钮添加进menu_frame中
+    menuVerticalLayout->addWidget(moveButton,0,Qt::AlignHCenter);
+    menuVerticalLayout->addWidget(line);
+    menuVerticalLayout->addWidget(rectButton,0,Qt::AlignHCenter);
+    menuVerticalLayout->addWidget(openDirButton,0,Qt::AlignHCenter);
+    menuVerticalLayout->addWidget(fontButton,0,Qt::AlignHCenter);
+    menuVerticalLayout->addWidget(afterButton,0,Qt::AlignHCenter);
+    menuVerticalLayout->addWidget(settingButton,0,Qt::AlignHCenter);
 
-    ui->menu_frame->layout()->addWidget(importButton);
-    ui->menu_frame->layout()->addWidget(exportButton);
+    menuVerticalLayout->addWidget(importButton,0,Qt::AlignHCenter);
+    menuVerticalLayout->addWidget(exportButton,0,Qt::AlignHCenter);
 
-    //    设置按钮对象的名称方便后续可以根据组件名称写槽函数(利用QMetaObject::connectSlotsByName(QObject *o)),而不必每个按钮都去写connect()函数
-    //    原来想的是通过规范命名,即可不必再写connect()连接函数,结果对于自定义的控件来说,并不能实现,需要注意,因此还需要手动写connect()函数
+//   设置按钮对象的名称方便后续可以根据组件名称写槽函数(利用QMetaObject::connectSlotsByName(QObject *o)),而不必每个按钮都去写connect()函数
+//   原来想的是通过规范命名,即可不必再写connect()连接函数,结果对于自定义的控件来说,并不能实现,需要注意,因此还需要手动写connect()函数
     openDirButton->setObjectName(QString::fromUtf8("openDirButton"));
     fontButton->setObjectName(QString::fromUtf8("fontButton"));
     afterButton->setObjectName(QString::fromUtf8("afterButton"));
@@ -159,8 +164,17 @@ MainWidget::MainWidget(QWidget *parent) :
     importButton->setObjectName(QString::fromUtf8("importButton"));
     exportButton->setObjectName(QString::fromUtf8("exportButton"));
 
+//    设置该按钮为默认选中状态
+    rectButton->setChecked(true);
+
+//    添加按钮组,加入按钮实现按钮互斥
+    QButtonGroup *menuButtonGroup = new QButtonGroup(ui->menu_frame);
+    menuButtonGroup->addButton(moveButton);
+    menuButtonGroup->addButton(rectButton);
+//    设置按钮互斥
+    menuButtonGroup->setExclusive(true);
+
     qDebug()<< ui->menu_frame->width()<<ui->file_frame->height();
-    // ui->menu_frame->layout()->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
 //    定义连接函数
     connect(openDirButton,&MenuButton::clicked,this,&MainWidget::on_openDirButton_clicked);
@@ -221,9 +235,11 @@ void MainWidget::on_openDirButton_clicked()
     QString dirPath = QFileDialog::getExistingDirectory(this, QString("选择文件夹"),
                                                   QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
                                                   QFileDialog::ShowDirsOnly);
+    if(dirPath.isEmpty()) return;
     QFileInfoList imgInfoFiles = CommonUtil::getImageFileInfoList(dirPath);
     imgCount =  imgInfoFiles.size();
-    qDebug()<<"共找到" << imgCount<<"张图片";
+    qDebug()<<"选择的路径是："<<dirPath <<"  共找到" << imgCount<<"张图片";
+    if(imgCount == 0) return;
 //    设置数据之前,先清空旧数据
     imgFilesItemModel->clear();
 //    这里不能设置行数,因为此处如果设置了行数,会与下面appendRow()产生干扰,如实际是1行,先setRowCount(1),然后又appendRow()了一次,那么当以后使用imgFilesItemModel.rowCount()时,将返回2,因此此处不能设置

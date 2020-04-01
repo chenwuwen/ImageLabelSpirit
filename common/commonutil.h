@@ -14,6 +14,7 @@ public:
     CommonUtil();
     static void setQssStyle(QString path,QWidget *widget);
     static QFileInfoList getImageFileInfoList(const QString& dirPath);
+    static QString readQssFile(const QString& filePath);
 };
 
 #endif // COMMONUTIL_H

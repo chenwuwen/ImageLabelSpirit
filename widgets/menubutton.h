@@ -1,46 +1,39 @@
-#ifndef MEUNBUTTON_H
-#define MEUNBUTTON_H
+#ifndef MENUBUTTON_H
+#define MENUBUTTON_H
 
+#include <QAbstractButton>
+#include <QObject>
 #include <QWidget>
-#include <QString>
-#include <QtWidgets/QLabel>
+#include <QPushButton>
 
-class MenuButton : public QWidget
+class MenuButton : public QPushButton
 {
-    Q_OBJECT
+     Q_OBJECT
+
 public:
+   explicit MenuButton(QWidget *parent = nullptr);
+   explicit MenuButton(QString img,QString text,bool check_able = false ,QWidget *parent = nullptr);
+    ~MenuButton();
 
+protected:
+    void paintEvent(QPaintEvent *);
 
-    explicit MenuButton(QWidget *parent = nullptr);
-
-    explicit MenuButton(QString img ,QString name,QWidget *parent = nullptr );
-
-    //表示一个矩形
-
-    QRect _rect;
-
-//    用来表示是否按下了的布尔值
-    bool _pressed;
-
-//    表示鼠标按下的事件
-    void mousePressEvent(QMouseEvent *);
-
-//    表示鼠标释放的事件
-    void mouseReleaseEvent(QMouseEvent *);
-
-
-signals:
-//    信号，点击的信号,这里为什么定义了一个clicked()的信号？因为我们继承的是QWidget,其本身并没有clicked信号,所以
-//    在上面我们定义了鼠标按下和松开的方法,当鼠标按下时即 发射 clicked信号
-    void clicked();
+//    当按钮已在选中状态时,再次点击时的操作
+//    void nextCheckState();
 
 public slots:
 
+
 private:
-    QLabel *nameLabel;
-    QLabel *imgLabel;
-    QWidget *menuButtonWidget;
+//    按钮背景图片路径
+    QString img;
+//    按钮名称
+    QString text;
+//    默认内边距
+    int defaultPadding = 4;
+
+
+
 };
 
-
-#endif // MEUNBUTTON_H
+#endif // MENUBUTTON_H

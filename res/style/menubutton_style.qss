@@ -1,0 +1,40 @@
+/*按钮静止无操作样式*/
+MenuButton
+{
+    /*
+    background-color:rgb(255,255,255);
+    border:0px solid rgb(255,255,255);
+    font-size:14px;
+    border-radius:10px;
+    */
+}
+
+/*鼠标悬停在按钮*/
+MenuButton:hover
+{
+    /*
+    background-color: rgb(212,243,255);
+    color:rgb(6,168,255);
+    border:2px solid rgb(6,168,255);
+    border-radius:14px;
+    */
+}
+
+/*鼠标按下按钮*/
+MenuButton:pressed
+{
+    /*
+    background-color: rgb(175,232,255);
+    color:white;
+    border:2px solid rgb(6,168,255);
+    border-radius:14px;
+    */
+}
+
+/*按钮被选中*/
+MenuButton:checked
+{
+    background-color:rgb(186,186,186);
+    border:2px solid rgb(186,186,186);
+    border-radius:14px;
+}

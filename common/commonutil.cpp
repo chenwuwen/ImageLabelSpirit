@@ -12,7 +12,7 @@ CommonUtil::CommonUtil()
 
 }
 /**
-  设置widget的样式
+ * 设置widget的样式
  * @brief setQssStyle
  * @param path  资源文件 :/** 形式
  * @param widget  哪个widget
@@ -24,6 +24,24 @@ void CommonUtil::setQssStyle(QString path,QWidget *widget)
     file.open(QFile::ReadOnly);
     widget->setStyleSheet(file.readAll());
     file.close();
+}
+
+/**
+ * 读取qss样式文件
+ * @brief CommonUtil::readQssFile
+ * @param filePath
+ * @return
+ */
+QString CommonUtil::readQssFile(const QString& filePath)
+{
+    QString strStyleSheet = "";
+    QFile file(filePath);
+    file.open(QFile::ReadOnly);
+    if (file.isOpen())
+    {
+        strStyleSheet = QLatin1String(file.readAll());
+    }
+    return  strStyleSheet;
 }
 
 /**

@@ -2,4 +2,4 @@
         background-color: rgb(232, 232, 232);
         border-right: 3px solid qlineargradient(spread:pad,x0:0,x1:1,stop:0 #D8D8D8,stop:1 #000000);
 }
-MenuButton:hover { color: white }
+
