@@ -17,10 +17,14 @@ public:
     explicit ImportDialog(QWidget *parent = nullptr);
     ~ImportDialog();
     void on_importFileButton_clicked();
+    bool eventFilter(QObject *obj, QEvent *event);
+
+    void closeEvent(QCloseEvent *event);
 
 private slots:
 
     void on_determine_import_button_clicked();
+
 
 signals:
 //    自定义信号,发送数据给父窗口

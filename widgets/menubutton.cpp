@@ -22,7 +22,9 @@ MenuButton::MenuButton(QString img,QString text,bool check_able,QWidget *parent)
     this->text=text;
     this->setCheckable(check_able);
 //    设置控件qss样式
-    setStyleSheet(CommonUtil::readQssFile(":/menubutton_style.qss"));
+    setStyleSheet(CommonUtil::readQssFile(":/res/style/menubutton_style.qss"));
+//    去掉QPushButton默认的边框,与qss配置使用才能达到无边框目的
+    setFlat(true);
     qDebug()<<"默认布局："<<this->layout();
 }
 

@@ -7,3 +7,13 @@ QWidget#progress_area{
 QWidget#size_area{
     background-color: rgb(195,195,195);
 }
+
+QPushButton{
+   background: transparent;
+   color:rgb(112,112,112);
+}
+
+QPushButton:hover{
+   background: transparent;
+   color:rgb(64,64,64);
+}

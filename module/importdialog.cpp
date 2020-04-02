@@ -6,6 +6,8 @@
 #include <QStandardPaths>
 
 #include <common/commonutil.h>
+#include <common/fontawesomeicons.h>
+
 
 ImportDialog::ImportDialog(QWidget *parent) :
     QDialog(parent),
@@ -13,17 +15,22 @@ ImportDialog::ImportDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 //    配置无边框
-//    setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
+    setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
     setWindowTitle("导入文件");
     CommonUtil::setQssStyle(":/res/style/import_dialog_style.qss",this);
 //    去掉QPushButton阴影
-//    ui->determine_import_button->setFlat(true);
+    ui->determine_import_button->setFlat(true);
     QLayout *verticalLayout = new QVBoxLayout(ui->file_button_widget);
     verticalLayout->setContentsMargins(0, 0, 0, 0);
     fileButton  = new FileButton(ui->file_button_widget);
     fileButton->setObjectName(QString::fromUtf8("import_file_button"));
     verticalLayout->addWidget(fileButton);
     connect(fileButton,&FileButton::clicked,this,&ImportDialog::on_importFileButton_clicked);
+
+    ui->close_label->setFont(FontAwesomeIcons::Instance().getFont());
+    ui->close_label->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_close));
+//    安装事件过滤器
+    ui->close_label->installEventFilter(this);
 
 }
 
@@ -72,3 +79,32 @@ void ImportDialog::on_determine_import_button_clicked()
     }
 
 }
+
+
+bool ImportDialog::eventFilter(QObject *obj, QEvent *event)
+{
+//    指定某个QLabel
+    if (obj == ui->close_label) {
+//          mouse button pressed
+           if (event->type() == QEvent::MouseButtonPress){
+               QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+               if(mouseEvent->button() == Qt::LeftButton) {
+//                   关闭该dialog
+                    this->close();
+                    return true;
+               }else{
+                   return false;
+               }
+           }else{
+               return false;
+           }
+    }else{
+        return false;
+    }
+}
+
+void ImportDialog::closeEvent(QCloseEvent *event)
+{
+
+}
+

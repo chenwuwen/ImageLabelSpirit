@@ -1,6 +1,9 @@
 QPushButton#determine_import_button{
     background-color: rgb(17,124,216);
     color: rgb(255, 255, 255);
+    border: 7px solid rgb(17,124,216);
+    padding-left:10px;
+    padding-right:10px;
 }
 
 QWidget{
@@ -9,12 +12,21 @@ QWidget{
 
 QLabel#label_2{
     color: rgb(0, 0, 0);
-    font: 75 10pt "Microsoft YaHei UI";
+    font-weight:bold;
 }
 
 QLabel#label_1{
     color: rgb(93,93,93);
+    size: 4;
     font: 75 10pt "Microsoft YaHei UI";
+}
+
+QLabel#close_label:hover{
+    background-color:rgba(170, 0, 127, 230);
+    color:white;
+}
+QLabel#close_label{
+    color:rgba(112,112,112);
 }
 
 QPushButton{

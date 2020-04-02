@@ -31,7 +31,8 @@ SOURCES += \
         widgets/filebutton.cpp \
     common/commonutil.cpp \
     module/importdialog.cpp \
-    module/exportdialog.cpp
+    module/exportdialog.cpp \
+    common/fontawesomeicons.cpp
 
 HEADERS += \
         mainwidget.h \
@@ -39,7 +40,8 @@ HEADERS += \
         widgets/filebutton.h \
      common/commonutil.h \
      module/importdialog.h \
-    module/exportdialog.h
+    module/exportdialog.h \
+    common/fontawesomeicons.h
 
 
 FORMS += \

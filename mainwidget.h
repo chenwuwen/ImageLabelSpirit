@@ -18,10 +18,14 @@ class MainWidget : public QWidget
 public:
     explicit MainWidget(QWidget *parent = nullptr);
     ~MainWidget();
+//    全局变量,即dialog弹出时父窗口蒙版指针
+    static QWidget *g_masking ;
 //    设置进度信息
     void setProcessInfo();
 //    在主界面展示图片
     void displayImg();
+//    初始化界面内容
+    void initContent();
 
 private slots:
     void on_pushButton_clicked();
@@ -30,6 +34,9 @@ private slots:
     void on_settingButton_clicked();
     void on_exportButton_clicked();
     void on_moveButton_clicked();
+    void on_narrowButton_clicked();
+    void on_enlargeButton_clicked();
+    void on_fullScreenButton_clicked();
     void on_import_function(QString);
 
 

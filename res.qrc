@@ -12,12 +12,10 @@
         <file>res/style/annotation_frame_style.qss</file>
         <file>res/style/file_frame_style.qss</file>
         <file>res/style/progressbar_style.qss</file>
-        <file>res/icons/enlarge.png</file>
-        <file>res/icons/narrow.png</file>
-        <file>res/icons/full_screen.png</file>
         <file>res/style/main_frame_style.qss</file>
         <file>res/style/import_dialog_style.qss</file>
         <file>res/style/menubutton_style.qss</file>
         <file>res/icons/rect.png</file>
+        <file>res/font/fontawesome-webfont.ttf</file>
     </qresource>
 </RCC>

@@ -17,13 +17,14 @@
 #include <QButtonGroup>
 
 #include <common/commonutil.h>
+#include <common/fontawesomeicons.h>
 
 #include <module/exportdialog.h>
 #include <module/importdialog.h>
 
 
-
-
+//蒙版全局变量初始化
+QWidget *MainWidget::g_masking = NULL;
 
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
@@ -31,8 +32,15 @@ MainWidget::MainWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    initContent();
 
-    //    设置图标( 窗口图标,(操作系统)状态栏图标)
+
+}
+
+
+void MainWidget::initContent()
+{
+//    设置图标( 窗口图标,(操作系统)状态栏图标)
     qDebug()<<"重新设置窗体标题/图标";
     setWindowIcon(QIcon(":/res/icons/kanyun.png"));
     setWindowTitle("看云图片标注精灵");
@@ -174,6 +182,18 @@ MainWidget::MainWidget(QWidget *parent) :
 //    设置按钮互斥
     menuButtonGroup->setExclusive(true);
 
+    ui->narrow_btn->setFlat(true);
+    ui->full_screen_btn->setFlat(true);
+    ui->enlarge_btn->setFlat(true);
+    QFont font = FontAwesomeIcons::Instance().getFont();
+//    font.setPointSize(32);
+    ui->full_screen_btn->setFont(font);
+    ui->narrow_btn->setFont(font);
+    ui->enlarge_btn->setFont(font);
+    ui->full_screen_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_fullscreen));
+    ui->narrow_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_search_minus));
+    ui->enlarge_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_search_plus));
+
     qDebug()<< ui->menu_frame->width()<<ui->file_frame->height();
 
 //    定义连接函数
@@ -182,12 +202,16 @@ MainWidget::MainWidget(QWidget *parent) :
     connect(moveButton,&MenuButton::clicked,this,&MainWidget::on_moveButton_clicked);
     connect(importButton,&MenuButton::clicked,this,&MainWidget::on_importButton_clicked);
     connect(exportButton,&MenuButton::clicked,this,&MainWidget::on_exportButton_clicked);
+
+    connect(ui->narrow_btn,&QPushButton::clicked,this,&MainWidget::on_narrowButton_clicked);
+    connect(ui->enlarge_btn,&QPushButton::clicked,this,&MainWidget::on_enlargeButton_clicked);
+    connect(ui->full_screen_btn,&QPushButton::clicked,this,&MainWidget::on_fullScreenButton_clicked);
 //    下面两个连接函数使用了lambda表达式
     connect(fontButton,&MenuButton::clicked,this,[=]{
         qDebug() << "前一个按钮被点击";
         if(imgCount==0) return ;
         if(currentImg>0){
-            currentImg--;   
+            currentImg--;
         }else{
             currentImg = imgCount-1;
         }
@@ -207,9 +231,14 @@ MainWidget::MainWidget(QWidget *parent) :
     });
 
 
+//    父窗口蒙版
+    g_masking=new QWidget(this,Qt::FramelessWindowHint);
+    g_masking->resize(maximumSize());
+    g_masking->setObjectName("g_masking");
+    g_masking->setStyleSheet("#g_masking{background-color:rgb(10,10,10,100)}");
+    g_masking->hide();
+
 }
-
-
 
 MainWidget::~MainWidget()
 {
@@ -333,10 +362,27 @@ void MainWidget::on_importButton_clicked()
     importDialog->setModal(true);
 //  Qt5信号槽：  https://www.bbsmax.com/A/Gkz1RVnJR6/
     connect(importDialog,static_cast<void (ImportDialog::*)(QString)>(&ImportDialog::sendData),this,&MainWidget::on_import_function);
+    MainWidget::g_masking->show();
     importDialog->exec();
+    MainWidget::g_masking->hide();
 }
 
 void MainWidget::on_import_function(QString path)
 {
     qDebug()<< "接收到importDialog窗口返回值："<<path;
+}
+
+void MainWidget::on_narrowButton_clicked()
+{
+    qDebug()<< "图片缩小...";
+}
+
+void MainWidget::on_enlargeButton_clicked()
+{
+    qDebug()<< "图片放大.......";
+}
+
+void MainWidget::on_fullScreenButton_clicked()
+{
+    qDebug()<< "图片全屏......";
 }
