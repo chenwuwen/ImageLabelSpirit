@@ -37,14 +37,20 @@ private slots:
     void on_narrowButton_clicked();
     void on_enlargeButton_clicked();
     void on_fullScreenButton_clicked();
+    void on_reviewButton_clicked();
+    void on_saveButton_clicked();
     void on_import_function(QString);
 
 
 
 private:
     Ui::MainWidget *ui;
-//   图片 model对象
-    QStandardItemModel *imgFilesItemModel;
+//   尚未浏览的图片 model对象
+    QStandardItemModel *notReviewImgFilesItemModel;
+//    已经浏览的图片 model对象
+    QStandardItemModel *hasReviewImgFilesItemModel;
+//    当前的Item指针对象
+   QStandardItem *currentItem;
 //    图片总数
     int imgCount = 0;
 //    当前图片索引位置,从0开始

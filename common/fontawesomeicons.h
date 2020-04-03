@@ -80,7 +80,7 @@ public:
         icon_tint=0xf043,
         icon_edit=0xf044,
         icon_share=0xf045,
-        icon_check=0xf046,
+        icon_check_square_o=0xf046,
         icon_move=0xf047,
         icon_step_backward=0xf048,
         icon_fast_backward=0xf049,
@@ -391,7 +391,9 @@ public:
         icon_renren=0xf18b,
         icon_search_plus=0xf00e,
         icon_search_minus=0xf010,
-        icon_close=0xf00d
+        icon_close=0xf00d,
+        icon_bars=0xf0c9,
+        icon_check=0xf00c
 
     };
 
