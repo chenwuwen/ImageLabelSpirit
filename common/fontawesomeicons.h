@@ -393,7 +393,10 @@ public:
         icon_search_minus=0xf010,
         icon_close=0xf00d,
         icon_bars=0xf0c9,
-        icon_check=0xf00c
+        icon_check=0xf00c,
+        icon_window_minimize=0xf2d1,
+        icon_window_restore=0xf2d2,
+        icon_window_maximize=0xf2d0,
 
     };
 

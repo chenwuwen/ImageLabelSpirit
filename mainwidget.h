@@ -39,9 +39,18 @@ private slots:
     void on_fullScreenButton_clicked();
     void on_reviewButton_clicked();
     void on_saveButton_clicked();
+    void on_minimizeWindowButton_clicked();
+    void on_customWindowButton_clicked();
+    void on_closeWindowButton_clicked();
     void on_import_function(QString);
 
+signals:
+//    自定义信号,发送图片路径给导出窗口
+    void sendExportLocalPath(QString);
 
+protected:
+//	窗口改变监听器
+    void resizeEvent(QResizeEvent *event) ;
 
 private:
     Ui::MainWidget *ui;
@@ -57,6 +66,8 @@ private:
     int currentImg;
 //    已标记图片数量
     int hasMarkCount = 0;
+//    图片所在目录
+     QString dirPath;
 
     ImportDialog *importDialog;
 

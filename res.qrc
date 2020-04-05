@@ -17,5 +17,10 @@
         <file>res/style/menubutton_style.qss</file>
         <file>res/icons/rect.png</file>
         <file>res/font/fontawesome-webfont.ttf</file>
+        <file>res/style/head_frame_style.qss</file>
+        <file>res/style/export_dialog_style.qss</file>
+        <file>res/icons/导出到本地.png</file>
+        <file>res/icons/上传数据源.png</file>
+        <file>res/icons/export_mode_checked.png</file>
     </qresource>
 </RCC>

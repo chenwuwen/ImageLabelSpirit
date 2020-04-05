@@ -1,0 +1,55 @@
+QPushButton#determine_export_button,QPushButton#push_btn{
+    background-color: rgb(17,124,216);
+    color: rgb(255, 255, 255);
+    border: 7px solid rgb(17,124,216);
+    padding-left:10px;
+    padding-right:10px;
+}
+
+QWidget{
+   background-color: rgb(255, 255, 255);
+}
+
+QLabel#label_2,QLabel#label_3{
+    color: rgb(0, 0, 0);
+    font-weight:bold;
+}
+
+QLabel#label_1{
+    color: rgb(93,93,93);
+    size: 4;
+    font: 75 10pt "Microsoft YaHei UI";
+}
+
+QPushButton#close_export_dialog_btn:hover{
+    background-color:rgba(170, 0, 127, 230);
+    color:white;
+    border:none;
+}
+
+QPushButton#close_export_dialog_btn{
+    color:rgba(112,112,112);
+    border:none;
+    padding:2px 8px 2px 8px
+}
+
+
+
+QPushButton{
+    background-color:transparent;
+}
+
+QWidget#export_mode_option_btn QPushButton{
+    border:1px solid rgb(193,193,193);
+    padding: 2px 3px 2px 3px;
+    color:rgb(193,193,193);
+}
+
+QWidget#export_mode_option_btn QPushButton:checked{
+    border:1px solid rgb(18,150,219);
+    padding: 2px 3px 2px 3px;
+    background-image:url(':/res/icons/export_mode_checked.png');
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+    background-position:bottom right;
+}

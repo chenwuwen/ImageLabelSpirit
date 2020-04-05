@@ -44,9 +44,6 @@ void MainWidget::initContent()
     qDebug()<<"重新设置窗体标题/图标";
     setWindowIcon(QIcon(":/res/icons/kanyun.png"));
     setWindowTitle("看云图片标注精灵");
-    //    隐藏标题栏
-//        setWindowFlags(Qt::SplashScreen);
-//        setWindowFlags(Qt::FramelessWindowHint|Qt::Dialog);
 
     //     获取桌面信息
     //     QDesktopWidget* desktopWidget = QApplication::desktop();
@@ -68,7 +65,8 @@ void MainWidget::initContent()
 
 //    最大化显示函数(相当于点了最大化按钮,单独设置这个可能不会生效,参考：https://blog.csdn.net/KayChanGEEK/article/details/77923848)
     showMaximized();
-    QWidget::setWindowFlags(Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
+//    辅助窗口最大化的同时,也去掉窗口外边框
+    QWidget::setWindowFlags(Qt::FramelessWindowHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
 
 //    实例化QStandardItemModel
     notReviewImgFilesItemModel = new QStandardItemModel;
@@ -122,7 +120,9 @@ void MainWidget::initContent()
     CommonUtil::setQssStyle(QString(":/res/style/menu_frame_style.qss"),ui->menu_frame);
     CommonUtil::setQssStyle(QString(":/res/style/annotation_frame_style.qss"),ui->annotation_frame);
     CommonUtil::setQssStyle(QString(":/res/style/file_frame_style.qss"),ui->file_frame);
+    CommonUtil::setQssStyle(QString(":/res/style/head_frame_style.qss"),ui->head_frame);
     CommonUtil::setQssStyle(QString(":/res/style/main_frame_style.qss"),ui->main_frame);
+
     CommonUtil::setQssStyle(QString(":/res/style/progressbar_style.qss"),ui->progress_bar);
 //    进度条文本颜色
     QPalette palette;
@@ -131,6 +131,8 @@ void MainWidget::initContent()
 
     QVBoxLayout *menuVerticalLayout = new QVBoxLayout(ui->menu_frame);
     menuVerticalLayout->setSpacing(6);
+    menuVerticalLayout->setMargin(0);
+//    menuVerticalLayout
     menuVerticalLayout->setContentsMargins(0,0,0,0);
 
 //    该方法并不能让该布局中的组件水平居中,除非该布局中的组件只有一个,否则多个组件会挤在一块,因此如果多个组件需要水平居中,需要在addWidget时进行指定
@@ -183,6 +185,9 @@ void MainWidget::initContent()
 //    设置按钮互斥
     menuButtonGroup->setExclusive(true);
 
+//    标题栏组件居右
+    ui->head_frame->layout()->setAlignment(Qt::AlignRight);
+
 //    得到FontAwesome字体
     QFont font = FontAwesomeIcons::Instance().getFont();
 
@@ -206,6 +211,17 @@ void MainWidget::initContent()
     ui->review_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_bars));
     ui->save_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_check));
 
+//    关闭/最小化/自定义窗口尺寸 按钮
+    ui->minimize_window_btn->setFlat(true);
+    ui->close_window_btn->setFlat(true);
+    ui->custom_window_btn->setFlat(true);
+    ui->minimize_window_btn->setFont(font);
+    ui->close_window_btn->setFont(font);
+    ui->custom_window_btn->setFont(font);
+    ui->minimize_window_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_window_minimize));
+    ui->close_window_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_close));
+    ui->custom_window_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_window_restore));
+
 
     qDebug()<< ui->menu_frame->width()<<ui->file_frame->height();
 
@@ -222,18 +238,23 @@ void MainWidget::initContent()
 
     connect(ui->save_btn,&QPushButton::clicked,this,&MainWidget::on_saveButton_clicked);
     connect(ui->review_btn,&QPushButton::clicked,this,&MainWidget::on_reviewButton_clicked);
+
+    connect(ui->minimize_window_btn,&QPushButton::clicked,this,&MainWidget::on_minimizeWindowButton_clicked);
+    connect(ui->custom_window_btn,&QPushButton::clicked,this,&MainWidget::on_customWindowButton_clicked);
+    connect(ui->close_window_btn,&QPushButton::clicked,this,&MainWidget::on_closeWindowButton_clicked);
+
 //    下面两个连接函数使用了lambda表达式
     connect(fontButton,&MenuButton::clicked,this,[=]{
         qDebug() << "前一个按钮被点击";
         if(imgCount==0) return ;
         if(currentImg>0){
-//            hasReviewImgFilesItemModel->takeItem()
             notReviewImgFilesItemModel->insertRow(0,currentItem);
-            currentItem = hasReviewImgFilesItemModel->item(currentImg-1);
-            hasReviewImgFilesItemModel->takeRow(currentImg-1);
+            currentItem = hasReviewImgFilesItemModel->item(0);
+            hasReviewImgFilesItemModel->takeRow(0);
             currentImg--;
         }else{
-            currentImg = imgCount-1;
+//            currentImg = imgCount-1;
+             return ;
         }
         setProcessInfo();
         displayImg();
@@ -242,22 +263,26 @@ void MainWidget::initContent()
         qDebug() << "后一个按钮被点击";
         if(imgCount==0) return ;
         if(currentImg<imgCount-1){
-//            hasReviewImgFilesItemModel之所以使用append是因为,hasReviewImgFilesItemModel是从右向左展示顺序
-            hasReviewImgFilesItemModel->appendRow(currentItem);
+//            hasReviewImgFilesItemModel之所以使用insert是因为,hasReviewImgFilesItemModel是从右向左展示顺序,因此倒排,最远的靠近中央
+            hasReviewImgFilesItemModel->insertRow(0,currentItem);
             currentItem = notReviewImgFilesItemModel->item(0);
             notReviewImgFilesItemModel->takeRow(0);
-
             currentImg++;
         }else{
-            currentImg = 0;
+//            currentImg = 0;
+            return ;
         }
         setProcessInfo();
         displayImg();
     });
 
+    ui->head_frame->setFrameShape(QListView::NoFrame);
 //    去掉listview边框
 //    ui->left_file_listView->setFrameShape(QListView::NoFrame);
 //    ui->right_file_listView->setFrameShape(QListView::NoFrame);
+//    左边的listview展现是从右向左
+    ui->left_file_listView->setLayoutDirection(Qt::LayoutDirection::RightToLeft);
+    ui->right_file_listView->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
 
 //      设置不显示进度条文字
     ui->progress_bar->setTextVisible(false);
@@ -294,7 +319,7 @@ void MainWidget::on_openDirButton_clicked()
 //    第二个参数 对话框标题
 //    第三个参数 对话框开始目录
 //    第四个参数 默认是只显示目录 如果要别的参数可以参考以下表格 https://doc.qt.io/qt-5/qfiledialog.html#Option-enum
-    QString dirPath = QFileDialog::getExistingDirectory(this, QString("选择文件夹"),
+    dirPath = QFileDialog::getExistingDirectory(this, QString("选择文件夹"),
                                                   QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
                                                   QFileDialog::ShowDirsOnly);
     if(dirPath.isEmpty()) return;
@@ -337,11 +362,11 @@ void MainWidget::on_openDirButton_clicked()
 //    当点击另一个item，其他被选中的item会取消选中状态
 //    ui->file_list_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
 //    设置QStandardItem中单元项的图片大小
-    ui->left_file_listView->setIconSize(QSize(90,95));
-    ui->right_file_listView->setIconSize(QSize(90,95));
+    ui->left_file_listView->setIconSize(QSize(80,80));
+    ui->right_file_listView->setIconSize(QSize(80,80));
 //    设置QStandardItem中单元项的间距
-    ui->left_file_listView->setSpacing(10);
-    ui->right_file_listView->setSpacing(10);
+    ui->left_file_listView->setSpacing(6);
+    ui->right_file_listView->setSpacing(6);
     ui->left_file_listView->setViewMode(QListView::IconMode);
     ui->right_file_listView->setViewMode(QListView::IconMode);
 //    设置不显示滚动条
@@ -395,7 +420,11 @@ void MainWidget::on_exportButton_clicked()
     ExportDialog *exportDialog = new ExportDialog(this);
 //    设置dialog为模态框
     exportDialog->setModal(true);
+    connect(this,static_cast<void (MainWidget::*)(QString)>(&MainWidget::sendExportLocalPath),exportDialog,&ExportDialog::setExportLocalPath);
+    emit sendExportLocalPath(dirPath);
+    MainWidget::g_masking->show();
     exportDialog->exec();
+    MainWidget::g_masking->hide();
 }
 void MainWidget::on_moveButton_clicked()
 {
@@ -441,3 +470,33 @@ void MainWidget::on_reviewButton_clicked()
 {
     qDebug()<< "查看按钮被点击......";
 }
+
+void MainWidget::on_closeWindowButton_clicked()
+{
+   this->close();
+}
+void MainWidget::on_customWindowButton_clicked()
+{
+    if(isMaximized()){
+//        如果已经是最大化窗口,那么就缩小,否则就设置为最大化窗口
+       showNormal();
+
+    }else{
+        showMaximized();
+    }
+}
+void MainWidget::on_minimizeWindowButton_clicked()
+{
+    this->showMinimized();
+}
+
+
+void MainWidget::resizeEvent(QResizeEvent *event){
+
+    if(isMaximized()){
+        ui->custom_window_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_window_restore));
+    }else{
+         ui->custom_window_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_window_maximize));
+    }
+}
+

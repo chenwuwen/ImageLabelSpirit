@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>466</width>
+    <width>493</width>
     <height>408</height>
    </rect>
   </property>
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>mainwidget</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" rowstretch="20,3,0" columnstretch="2,18,4">
+  <layout class="QGridLayout" name="gridLayout" rowstretch="1,50,8" columnstretch="2,15,3">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -32,10 +32,116 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <property name="spacing">
-    <number>0</number>
-   </property>
-   <item row="0" column="2">
+   <item row="0" column="0" colspan="3">
+    <widget class="QFrame" name="head_frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="minimize_window_btn">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>PushButton</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="custom_window_btn">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>PushButton</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="close_window_btn">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>PushButton</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" rowspan="2">
+    <widget class="QFrame" name="menu_frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QFrame" name="main_frame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QGraphicsView" name="main_graphics_view"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="2">
     <widget class="QFrame" name="annotation_frame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -57,35 +163,7 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QFrame" name="main_frame">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0">
-       <widget class="QGraphicsView" name="main_graphics_view"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="0" rowspan="3">
-    <widget class="QFrame" name="menu_frame">
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" colspan="2">
+   <item row="2" column="1" colspan="2">
     <widget class="QFrame" name="file_frame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
@@ -187,6 +265,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="5,1,5">
          <item>
           <widget class="QListView" name="left_file_listView">
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
+           </property>
            <property name="tabKeyNavigation">
             <bool>false</bool>
            </property>
