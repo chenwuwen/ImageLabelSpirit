@@ -15,12 +15,15 @@
 #include <QStandardPaths>
 #include <QGraphicsRectItem>
 #include <QButtonGroup>
+#include <QComboBox>
 
 #include <common/commonutil.h>
 #include <common/fontawesomeicons.h>
 
 #include <module/exportdialog.h>
 #include <module/importdialog.h>
+
+#include <custom/annotationdelegate.h>
 
 
 //蒙版全局变量初始化
@@ -32,13 +35,19 @@ MainWidget::MainWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    initContent();
+    initCustomUI();
 
+//    实例化QStandardItemModel
+    notReviewImgFilesItemModel = new QStandardItemModel;
+    hasReviewImgFilesItemModel = new QStandardItemModel;
+    markInfoItemModel = new QStandardItemModel;
+    metaMarkInfoItemModel = new QStandardItemModel;
 
+    initMarkInfo();
 }
 
 
-void MainWidget::initContent()
+void MainWidget::initCustomUI()
 {
 //    设置图标( 窗口图标,(操作系统)状态栏图标)
     qDebug()<<"重新设置窗体标题/图标";
@@ -68,9 +77,7 @@ void MainWidget::initContent()
 //    辅助窗口最大化的同时,也去掉窗口外边框
     QWidget::setWindowFlags(Qt::FramelessWindowHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
 
-//    实例化QStandardItemModel
-    notReviewImgFilesItemModel = new QStandardItemModel;
-    hasReviewImgFilesItemModel = new QStandardItemModel;
+
 
 //      全屏显示函数 此函数将导致窗口占满屏幕且不显示系统状态栏
 //    showFullScreen();
@@ -132,7 +139,6 @@ void MainWidget::initContent()
     QVBoxLayout *menuVerticalLayout = new QVBoxLayout(ui->menu_frame);
     menuVerticalLayout->setSpacing(6);
     menuVerticalLayout->setMargin(0);
-//    menuVerticalLayout
     menuVerticalLayout->setContentsMargins(0,0,0,0);
 
 //    该方法并不能让该布局中的组件水平居中,除非该布局中的组件只有一个,否则多个组件会挤在一块,因此如果多个组件需要水平居中,需要在addWidget时进行指定
@@ -367,6 +373,7 @@ void MainWidget::on_openDirButton_clicked()
 //    设置QStandardItem中单元项的间距
     ui->left_file_listView->setSpacing(6);
     ui->right_file_listView->setSpacing(6);
+//    设置显示模式为IconModel
     ui->left_file_listView->setViewMode(QListView::IconMode);
     ui->right_file_listView->setViewMode(QListView::IconMode);
 //    设置不显示滚动条
@@ -490,6 +497,34 @@ void MainWidget::on_minimizeWindowButton_clicked()
     this->showMinimized();
 }
 
+void MainWidget::initMarkInfo()
+{
+//    QStandardItem *item = new QStandardItem;
+//    item->setText("11");
+
+//    markInfoItemModel->appendRow(item);
+
+
+    AnnotationDelegate *delegate = new AnnotationDelegate;
+    ui->annotation_list_view->setModel(markInfoItemModel);
+//    设置委托
+    ui->annotation_list_view->setItemDelegate(delegate);
+    for(int i = 0; i < 5; i++) {
+          QStandardItem *item = new QStandardItem(QString::number(i));
+          markInfoItemModel->appendRow(item);
+          QModelIndex index = markInfoItemModel->indexFromItem(item);
+          QComboBox *cmb =new QComboBox;
+//          setIndexWidget要生效，必须setModel(model)的后面
+          ui->annotation_list_view->setIndexWidget(index, cmb);
+      }
+
+
+}
+
+void MainWidget::addMark()
+{
+
+}
 
 void MainWidget::resizeEvent(QResizeEvent *event){
 

@@ -25,7 +25,9 @@ public:
 //    在主界面展示图片
     void displayImg();
 //    初始化界面内容
-    void initContent();
+    void initCustomUI();
+//    初始化标注信息列表
+    void initMarkInfo();
 
 private slots:
     void on_pushButton_clicked();
@@ -43,6 +45,8 @@ private slots:
     void on_customWindowButton_clicked();
     void on_closeWindowButton_clicked();
     void on_import_function(QString);
+//    新的标注
+    void addMark();
 
 signals:
 //    自定义信号,发送图片路径给导出窗口
@@ -52,14 +56,20 @@ protected:
 //	窗口改变监听器
     void resizeEvent(QResizeEvent *event) ;
 
+
+
 private:
     Ui::MainWidget *ui;
 //   尚未浏览的图片 model对象
     QStandardItemModel *notReviewImgFilesItemModel;
 //    已经浏览的图片 model对象
     QStandardItemModel *hasReviewImgFilesItemModel;
+//    标注信息 model对象
+    QStandardItemModel *markInfoItemModel;
+//    标注信息 元数据 model对象(即:预定义的标注信息)
+    QStandardItemModel *metaMarkInfoItemModel;
 //    当前的Item指针对象
-   QStandardItem *currentItem;
+    QStandardItem *currentItem;
 //    图片总数
     int imgCount = 0;
 //    当前图片索引位置,从0开始
@@ -67,7 +77,7 @@ private:
 //    已标记图片数量
     int hasMarkCount = 0;
 //    图片所在目录
-     QString dirPath;
+    QString dirPath;
 
     ImportDialog *importDialog;
 

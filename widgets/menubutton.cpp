@@ -8,6 +8,7 @@
 #include <QStyleOption>
 #include <QStylePainter>
 #include <QFile>
+#include <QLayout>
 
 #include <common/commonutil.h>
 
@@ -25,7 +26,8 @@ MenuButton::MenuButton(QString img,QString text,bool check_able,QWidget *parent)
     setStyleSheet(CommonUtil::readQssFile(":/res/style/menubutton_style.qss"));
 //    去掉QPushButton默认的边框,与qss配置使用才能达到无边框目的
     setFlat(true);
-    qDebug()<<"默认布局："<<this->layout();
+//    构造函数中,即使传递了parent,其布局也为空,打印结果为QObject(0x0)
+//    qDebug()<<"默认布局："<<this->layout();
 }
 
 
@@ -89,6 +91,9 @@ void MenuButton::paintEvent(QPaintEvent *event)
     p.drawText(textRectf,Qt::AlignCenter,text);
 
 //    上面画了一个背景图和文字,他们的内边距至少是defaultPadding
+
+//    挪动位置,使按钮居中
+    movePosition();
 }
 
 
@@ -105,7 +110,29 @@ void MenuButton::paintEvent(QPaintEvent *event)
 
 MenuButton::~MenuButton()
 {
-
+    qDebug() << "MenuButton析构函数执行";
 }
 
+void MenuButton::movePosition()
+{
+    QWidget *p = this->parentWidget();
+    QLayout *layout =  p->layout();
+    int rx = this->x();
+    int ry = this->y();
+   if(layout != NULL){
+//    得到layout对象的类名
+      QString layoutName = layout->metaObject()->className();
+      if(layoutName == "QVBoxLayout"){
+          rx = (p->width() - width())/2;
+          ry = this->y();
+      }
+
+      if(layoutName == "QHBoxLayout"){
+          rx = this->x();
+          ry = (p->height() - height())/2;
+      }
+
+      move(rx,ry);
+   }
+}
 

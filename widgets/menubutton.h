@@ -21,6 +21,8 @@ protected:
 //    当按钮已在选中状态时,再次点击时的操作
 //    void nextCheckState();
 
+//    移动位置,适用于居中处理(方法有问题,但在一些情况下可以用,还不知道要如何处理)
+    void movePosition();
 public slots:
 
 

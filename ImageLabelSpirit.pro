@@ -32,7 +32,8 @@ SOURCES += \
     common/commonutil.cpp \
     module/importdialog.cpp \
     module/exportdialog.cpp \
-    common/fontawesomeicons.cpp
+    common/fontawesomeicons.cpp \
+    custom/annotationdelegate.cpp
 
 HEADERS += \
         mainwidget.h \
@@ -41,7 +42,8 @@ HEADERS += \
      common/commonutil.h \
      module/importdialog.h \
     module/exportdialog.h \
-    common/fontawesomeicons.h
+    common/fontawesomeicons.h \
+    custom/annotationdelegate.h
 
 
 FORMS += \

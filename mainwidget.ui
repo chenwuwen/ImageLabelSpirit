@@ -149,16 +149,16 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QGroupBox" name="annotation_box">
-        <property name="title">
+       <widget class="QLabel" name="label">
+        <property name="text">
          <string>标注信息</string>
         </property>
        </widget>
+      </item>
+      <item>
+       <widget class="QListView" name="annotation_list_view"/>
       </item>
      </layout>
     </widget>
