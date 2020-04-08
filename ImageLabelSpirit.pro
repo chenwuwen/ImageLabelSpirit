@@ -43,7 +43,8 @@ HEADERS += \
      module/importdialog.h \
     module/exportdialog.h \
     common/fontawesomeicons.h \
-    custom/annotationdelegate.h
+    custom/annotationdelegate.h \
+    custom/meta.h
 
 
 FORMS += \

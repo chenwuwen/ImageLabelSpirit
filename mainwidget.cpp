@@ -24,6 +24,7 @@
 #include <module/importdialog.h>
 
 #include <custom/annotationdelegate.h>
+#include <custom/meta.h>
 
 
 //蒙版全局变量初始化
@@ -367,9 +368,11 @@ void MainWidget::on_openDirButton_clicked()
 //    按住ctrl可多选，按住shift可连续多选
 //    当点击另一个item，其他被选中的item会取消选中状态
 //    ui->file_list_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    int h = ui->left_file_listView->height();
+      qDebug() << "QListView的高度："<< h;
 //    设置QStandardItem中单元项的图片大小
-    ui->left_file_listView->setIconSize(QSize(80,80));
-    ui->right_file_listView->setIconSize(QSize(80,80));
+    ui->left_file_listView->setIconSize(QSize(h,h));
+    ui->right_file_listView->setIconSize(QSize(h,h));
 //    设置QStandardItem中单元项的间距
     ui->left_file_listView->setSpacing(6);
     ui->right_file_listView->setSpacing(6);
@@ -523,6 +526,11 @@ void MainWidget::initMarkInfo()
 
 void MainWidget::addMark()
 {
+    RectMeta rectMeta;
+//    rectMeta.x
+    QStandardItem *item;
+    item->setData(QVariant::fromValue(rectMeta));
+
 
 }
 
