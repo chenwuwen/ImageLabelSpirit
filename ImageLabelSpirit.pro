@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -33,7 +33,9 @@ SOURCES += \
     module/importdialog.cpp \
     module/exportdialog.cpp \
     common/fontawesomeicons.cpp \
-    custom/annotationdelegate.cpp
+    custom/annotationdelegate.cpp \
+    module/settingdialog.cpp \
+    splashwidget.cpp
 
 HEADERS += \
         mainwidget.h \
@@ -44,13 +46,17 @@ HEADERS += \
     module/exportdialog.h \
     common/fontawesomeicons.h \
     custom/annotationdelegate.h \
-    custom/meta.h
+    custom/meta.h \
+    module/settingdialog.h \
+    splashwidget.h
 
 
 FORMS += \
         mainwidget.ui \
      module/importdialog.ui \
-    module/exportdialog.ui
+    module/exportdialog.ui \
+    module/settingdialog.ui \
+    splashwidget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -3,6 +3,7 @@
 
 #include <QFile>
 #include <QStandardItemModel>
+#include <QStringListModel>
 #include <QWidget>
 
 #include <module/importdialog.h>
@@ -51,6 +52,8 @@ private slots:
 signals:
 //    自定义信号,发送图片路径给导出窗口
     void sendExportLocalPath(QString);
+//    自定义信号,发送图片路径给设置窗口
+    void sendImageLocalPath(QString);
 
 protected:
 //	窗口改变监听器
@@ -67,9 +70,10 @@ private:
 //    标注信息 model对象
     QStandardItemModel *markInfoItemModel;
 //    标注信息 元数据 model对象(即:预定义的标注信息)
-    QStandardItemModel *metaMarkInfoItemModel;
+    QStringListModel *metaMarkInfoItemModel;
+    QStringList metaMarkInfoList;
 //    当前的Item指针对象
-    QStandardItem *currentItem;
+    QStandardItem *currentImgItem;
 //    图片总数
     int imgCount = 0;
 //    当前图片索引位置,从0开始

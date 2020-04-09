@@ -22,5 +22,8 @@
         <file>res/icons/导出到本地.png</file>
         <file>res/icons/上传数据源.png</file>
         <file>res/icons/export_mode_checked.png</file>
+        <file>res/style/setting_dialog_style.qss</file>
+        <file>res/icons/arrow_down.png</file>
+        <file>res/icons/arrow_up.png</file>
     </qresource>
 </RCC>

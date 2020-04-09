@@ -74,7 +74,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>PushButton</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -87,7 +87,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>PushButton</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -100,7 +100,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>PushButton</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -265,6 +265,12 @@
         <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="5,1,5">
          <item>
           <widget class="QListView" name="left_file_listView">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="layoutDirection">
             <enum>Qt::RightToLeft</enum>
            </property>
@@ -325,6 +331,12 @@
          </item>
          <item>
           <widget class="QListView" name="right_file_listView">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="isWrapping" stdset="0">
             <bool>false</bool>
            </property>

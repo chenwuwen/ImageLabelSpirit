@@ -34,3 +34,28 @@ QPushButton#save_btn{
     padding: 0px 20px 0px 20px;
     color: white;
 }
+
+QListView {
+        /* 背景色 */
+        background-color:transparent;
+        /* 行与行之间交替颜色不同 */
+        /* setAlternatingRowColors(true); */
+        alternate-background-color:yellow;
+        /* 设置是否选中时,整行都高亮显示 */
+        show-decoration-selected:1;
+}
+
+QListView::item {
+    background-color:black;
+}
+
+/* 鼠标县浮在条目上 */
+QListView::item::hover {
+    top: 1px
+}
+
+/* Item 被选中*/
+QListWidget::item:selected
+{
+    /* background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc); */
+}

@@ -1,0 +1,42 @@
+QPushButton#setting_dialog_confirm_btn{
+    background-color: rgb(17,124,216);
+    color: rgb(255, 255, 255);
+    border: 7px solid rgb(17,124,216);
+    padding-left:10px;
+    padding-right:10px;
+}
+
+QWidget{
+   background-color: rgb(255, 255, 255);
+}
+
+QLabel#label_2,QLabel#label_3{
+    color: rgb(0, 0, 0);
+    font-weight:bold;
+}
+
+QLabel#setting_dialog_title_label{
+    color: rgb(93,93,93);
+    size: 4;
+    font: 75 10pt "Microsoft YaHei UI";
+}
+
+QPushButton#setting_dialog_close_btn:hover{
+    background-color:rgba(170, 0, 127, 230);
+    color:white;
+    border:none;
+}
+
+QPushButton#setting_dialog_close_btn{
+    color:rgba(112,112,112);
+    border:none;
+    padding:2px 8px 2px 8px
+}
+
+
+
+QPushButton{
+    background-color:transparent;
+}
+
+

@@ -12,6 +12,8 @@
 #include <QDebug>
 #include <QStandardPaths>
 #include <QFileDialog>
+#include <QStyle>
+
 
 ExportDialog::ExportDialog(QWidget *parent) :
     QDialog(parent),
@@ -23,12 +25,12 @@ ExportDialog::ExportDialog(QWidget *parent) :
     setWindowTitle("导入文件");
     CommonUtil::setQssStyle(":/res/style/export_dialog_style.qss",this);
     ui->close_export_dialog_btn->setFlat(true);
-    QFont font =  FontAwesomeIcons::Instance().getFont();
-    ui->close_export_dialog_btn->setFont(font);
-    ui->close_export_dialog_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_close));
+//    使用Qt内置的图标
+    QStyle* style = QApplication::style();
+    ui->close_export_dialog_btn->setIcon(style->standardIcon(QStyle::SP_TitleBarCloseButton));
 
-    //    去掉QPushButton阴影
-//    ui->determine_export_button->setFlat(true);
+//    去掉QPushButton阴影
+    ui->determine_export_button->setFlat(true);
     QLayout *verticalLayout = new QVBoxLayout(ui->file_button_widget);
     verticalLayout->setContentsMargins(0, 0, 0, 0);
     fileButton  = new FileButton(ui->file_button_widget);

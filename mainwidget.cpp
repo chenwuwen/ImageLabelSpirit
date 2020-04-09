@@ -16,12 +16,15 @@
 #include <QGraphicsRectItem>
 #include <QButtonGroup>
 #include <QComboBox>
+#include <QStyle>
+#include <QStyle>
 
 #include <common/commonutil.h>
 #include <common/fontawesomeicons.h>
 
 #include <module/exportdialog.h>
 #include <module/importdialog.h>
+#include <module/settingdialog.h>
 
 #include <custom/annotationdelegate.h>
 #include <custom/meta.h>
@@ -42,7 +45,9 @@ MainWidget::MainWidget(QWidget *parent) :
     notReviewImgFilesItemModel = new QStandardItemModel;
     hasReviewImgFilesItemModel = new QStandardItemModel;
     markInfoItemModel = new QStandardItemModel;
-    metaMarkInfoItemModel = new QStandardItemModel;
+    metaMarkInfoItemModel = new QStringListModel;
+    metaMarkInfoList<<"虫"<<"鱼"<<"鸟";
+    metaMarkInfoItemModel->setStringList(metaMarkInfoList);
 
     initMarkInfo();
 }
@@ -209,6 +214,8 @@ void MainWidget::initCustomUI()
     ui->narrow_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_search_minus));
     ui->enlarge_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_search_plus));
 
+
+
 //    保存/查看 按钮
     ui->review_btn->setFlat(true);
     ui->save_btn->setFlat(true);
@@ -222,12 +229,11 @@ void MainWidget::initCustomUI()
     ui->minimize_window_btn->setFlat(true);
     ui->close_window_btn->setFlat(true);
     ui->custom_window_btn->setFlat(true);
-    ui->minimize_window_btn->setFont(font);
-    ui->close_window_btn->setFont(font);
-    ui->custom_window_btn->setFont(font);
-    ui->minimize_window_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_window_minimize));
-    ui->close_window_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_close));
-    ui->custom_window_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_window_restore));
+//    使用Qt内置的图标
+    QStyle* style = QApplication::style();
+    ui->close_window_btn->setIcon(style->standardIcon(QStyle::SP_TitleBarCloseButton));
+    ui->custom_window_btn->setIcon(style->standardIcon(QStyle::SP_TitleBarNormalButton));
+    ui->minimize_window_btn->setIcon(style->standardIcon(QStyle::SP_TitleBarMinButton));
 
 
     qDebug()<< ui->menu_frame->width()<<ui->file_frame->height();
@@ -255,8 +261,8 @@ void MainWidget::initCustomUI()
         qDebug() << "前一个按钮被点击";
         if(imgCount==0) return ;
         if(currentImg>0){
-            notReviewImgFilesItemModel->insertRow(0,currentItem);
-            currentItem = hasReviewImgFilesItemModel->item(0);
+            notReviewImgFilesItemModel->insertRow(0,currentImgItem);
+            currentImgItem = hasReviewImgFilesItemModel->item(0);
             hasReviewImgFilesItemModel->takeRow(0);
             currentImg--;
         }else{
@@ -271,8 +277,8 @@ void MainWidget::initCustomUI()
         if(imgCount==0) return ;
         if(currentImg<imgCount-1){
 //            hasReviewImgFilesItemModel之所以使用insert是因为,hasReviewImgFilesItemModel是从右向左展示顺序,因此倒排,最远的靠近中央
-            hasReviewImgFilesItemModel->insertRow(0,currentItem);
-            currentItem = notReviewImgFilesItemModel->item(0);
+            hasReviewImgFilesItemModel->insertRow(0,currentImgItem);
+            currentImgItem = notReviewImgFilesItemModel->item(0);
             notReviewImgFilesItemModel->takeRow(0);
             currentImg++;
         }else{
@@ -363,19 +369,25 @@ void MainWidget::on_openDirButton_clicked()
     ui->left_file_listView->setModel(hasReviewImgFilesItemModel);
     ui->right_file_listView->setModel(notReviewImgFilesItemModel);
 //    设置框选矩形框可见
-    ui->left_file_listView->setSelectionRectVisible(true);
+    ui->left_file_listView->setSelectionRectVisible(false);
+    ui->right_file_listView->setSelectionRectVisible(false);
 //    设置选择模式，该模式为最常用模式，其他选择模式请自行查看帮助说明
 //    按住ctrl可多选，按住shift可连续多选
 //    当点击另一个item，其他被选中的item会取消选中状态
 //    ui->file_list_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    int h = ui->left_file_listView->height();
-      qDebug() << "QListView的高度："<< h;
-//    设置QStandardItem中单元项的图片大小
-    ui->left_file_listView->setIconSize(QSize(h,h));
-    ui->right_file_listView->setIconSize(QSize(h,h));
-//    设置QStandardItem中单元项的间距
+
+//   设置QStandardItem中单元项的间距
     ui->left_file_listView->setSpacing(6);
     ui->right_file_listView->setSpacing(6);
+
+    int h = ui->left_file_listView->height();
+    int w = ui->left_file_listView->width();
+    qDebug() << "QListView的高度："<< h << "  宽度："<<w;
+    QSize size(h-23,h-23);
+//    设置QStandardItem中单元项的图片大小
+    ui->left_file_listView->setIconSize(size);
+    ui->right_file_listView->setIconSize(size);
+
 //    设置显示模式为IconModel
     ui->left_file_listView->setViewMode(QListView::IconMode);
     ui->right_file_listView->setViewMode(QListView::IconMode);
@@ -387,8 +399,12 @@ void MainWidget::on_openDirButton_clicked()
 //    设置listview展示方向
     ui->left_file_listView->setFlow(QListView::LeftToRight);
     ui->right_file_listView->setFlow(QListView::LeftToRight);
+//    控件不允许拖动
+    ui->left_file_listView->setDragEnabled(false);
+    ui->right_file_listView->setDragEnabled(false);
+
     currentImg = 0;
-    currentItem = notReviewImgFilesItemModel->item(currentImg);
+    currentImgItem = notReviewImgFilesItemModel->item(currentImg);
     notReviewImgFilesItemModel->takeRow(currentImg);
     setProcessInfo();
     displayImg();
@@ -406,10 +422,10 @@ void MainWidget::setProcessInfo(){
 void MainWidget::displayImg(){
     qDebug() << "主界面展示图片";
 
-    qDebug() << "获取的Item:"<< currentItem;
+    qDebug() << "获取的Item:"<< currentImgItem;
 
 //    得到存储在item中的data数据
-    QVariant variant = currentItem->data();
+    QVariant variant = currentImgItem->data();
 //    当前图片文件路径
     QString currentFilePath = variant.toString();
     qDebug()<<"当前展示的图片路径是："<<currentFilePath;
@@ -424,6 +440,14 @@ void MainWidget::displayImg(){
 
 void MainWidget::on_settingButton_clicked()
 {
+    SettingDialog *settingDialog = new SettingDialog(this);
+//    设置dialog为模态框
+    settingDialog->setModal(true);
+    connect(this,static_cast<void (MainWidget::*)(QString)>(&MainWidget::sendImageLocalPath),settingDialog,&SettingDialog::setImageLocalPath);
+    emit sendImageLocalPath(dirPath);
+    MainWidget::g_masking->show();
+    settingDialog->exec();
+    MainWidget::g_masking->hide();
 }
 void MainWidget::on_exportButton_clicked()
 {
@@ -502,21 +526,28 @@ void MainWidget::on_minimizeWindowButton_clicked()
 
 void MainWidget::initMarkInfo()
 {
-//    QStandardItem *item = new QStandardItem;
-//    item->setText("11");
-
-//    markInfoItemModel->appendRow(item);
-
 
     AnnotationDelegate *delegate = new AnnotationDelegate;
     ui->annotation_list_view->setModel(markInfoItemModel);
 //    设置委托
-    ui->annotation_list_view->setItemDelegate(delegate);
+//    ui->annotation_list_view->setItemDelegate(delegate);
+//    QListView默认是可以编辑的，可以用setEditTrigers设置QListView的条目是否可以编辑，以及如何进入编辑状态，比如表示在双击，或者选择并单击列表项目,也可以设置不可编辑QAbstractItemView::NoEditTriggers
+    ui->annotation_list_view->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::SelectedClicked);
+    ui->annotation_list_view->setSpacing(5);
+
+    int rows = markInfoItemModel->rowCount();
     for(int i = 0; i < 5; i++) {
           QStandardItem *item = new QStandardItem(QString::number(i));
+//          设置每个Item的尺寸,这里控制的是QComboBox的宽度和高度。
+          item->setSizeHint(QSize(100,50));
           markInfoItemModel->appendRow(item);
           QModelIndex index = markInfoItemModel->indexFromItem(item);
+//        设置listview中的控件为QComboBox
           QComboBox *cmb =new QComboBox;
+//          设置QComboBox是否可编辑
+          cmb->setEditable(true);
+          cmb->setModel(metaMarkInfoItemModel);
+          cmb->setEditText("看云");
 //          setIndexWidget要生效，必须setModel(model)的后面
           ui->annotation_list_view->setIndexWidget(index, cmb);
       }
@@ -535,11 +566,12 @@ void MainWidget::addMark()
 }
 
 void MainWidget::resizeEvent(QResizeEvent *event){
-
+//    使用Qt内置的图标
+    QStyle* style = QApplication::style();
     if(isMaximized()){
-        ui->custom_window_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_window_restore));
+         ui->custom_window_btn->setIcon(style->standardIcon(QStyle::SP_TitleBarNormalButton));
     }else{
-         ui->custom_window_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_window_maximize));
+        ui->custom_window_btn->setIcon(style->standardIcon(QStyle::SP_TitleBarMaxButton));
     }
 }
 

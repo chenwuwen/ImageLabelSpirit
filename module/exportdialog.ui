@@ -28,7 +28,7 @@
    </property>
    <item>
     <widget class="QWidget" name="head_widget" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,2,1">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,3,1">
       <property name="topMargin">
        <number>0</number>
       </property>
@@ -67,7 +67,7 @@
          <enum>Qt::LeftToRight</enum>
         </property>
         <property name="text">
-         <string>关闭</string>
+         <string/>
         </property>
         <property name="flat">
          <bool>true</bool>
