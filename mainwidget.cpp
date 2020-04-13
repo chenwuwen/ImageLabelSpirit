@@ -17,7 +17,6 @@
 #include <QButtonGroup>
 #include <QComboBox>
 #include <QStyle>
-#include <QStyle>
 
 #include <common/commonutil.h>
 #include <common/fontawesomeicons.h>
@@ -27,6 +26,7 @@
 #include <module/settingdialog.h>
 
 #include <custom/annotationdelegate.h>
+#include <custom/markgraphicspixmapitem.h>
 #include <custom/meta.h>
 
 
@@ -376,9 +376,9 @@ void MainWidget::on_openDirButton_clicked()
 //    当点击另一个item，其他被选中的item会取消选中状态
 //    ui->file_list_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-//   设置QStandardItem中单元项的间距
-    ui->left_file_listView->setSpacing(6);
-    ui->right_file_listView->setSpacing(6);
+//   设置ListViw中单元项的间距(但是发现在ListView中setSpacing()不仅影响了控件间的距离还影响了控件与其父容器之间的距离,因此改用qss处理)
+//    ui->left_file_listView->setSpacing(6);
+//    ui->right_file_listView->setSpacing(6);
 
     int h = ui->left_file_listView->height();
     int w = ui->left_file_listView->width();
@@ -431,10 +431,14 @@ void MainWidget::displayImg(){
     qDebug()<<"当前展示的图片路径是："<<currentFilePath;
     QPixmap pixmap ;
     pixmap.load(currentFilePath);
-    QGraphicsScene *scene =new QGraphicsScene(this);
-
-    scene->addPixmap(pixmap);
+    double proportion = CommonUtil::compressProportion(pixmap,ui->main_graphics_view->size());
+    ui->scale->setText(QString("%1%").arg(QString::number(proportion*100,'f',2)));
+    QGraphicsScene *scene =new QGraphicsScene(ui->main_graphics_view);
+//    scene->addPixmap(pixmap);
+    MarkGraphicsPixmapItem *graphicsPixmapItem = new MarkGraphicsPixmapItem(currentFilePath);
+    scene->addItem(graphicsPixmapItem);
     ui->main_graphics_view->setScene(scene);
+//    ui->main_graphics_view->centerOn(graphicsPixmapItem);
     ui->main_graphics_view->show();
 }
 

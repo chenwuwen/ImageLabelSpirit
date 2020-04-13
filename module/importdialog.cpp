@@ -63,8 +63,8 @@ void ImportDialog::on_importFileButton_clicked(){
 //    }
 
     dirPath = QFileDialog::getExistingDirectory(this, QString("选择文件夹"),
-                                                  QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
-                                                  QFileDialog::ShowDirsOnly);
+                                                QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
+                                                QFileDialog::ShowDirsOnly);
     fileButton->draw_path(dirPath);
 
 

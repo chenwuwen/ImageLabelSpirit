@@ -5,7 +5,7 @@
 
 AnnotationDelegate::AnnotationDelegate(QObject *parent ):QStyledItemDelegate(parent)
 {
-    qDebug() << "AnnotationDelegate自定义委托构造函数执行";
+    qDebug()<<"AnnotationDelegate自定义委托构造函数执行";
 }
 
 

@@ -35,7 +35,9 @@ SOURCES += \
     common/fontawesomeicons.cpp \
     custom/annotationdelegate.cpp \
     module/settingdialog.cpp \
-    splashwidget.cpp
+    splashwidget.cpp \
+    widgets/markgraphicsview.cpp \
+    custom/markgraphicspixmapitem.cpp
 
 HEADERS += \
         mainwidget.h \
@@ -48,7 +50,9 @@ HEADERS += \
     custom/annotationdelegate.h \
     custom/meta.h \
     module/settingdialog.h \
-    splashwidget.h
+    splashwidget.h \
+    widgets/markgraphicsview.h \
+    custom/markgraphicspixmapitem.h
 
 
 FORMS += \

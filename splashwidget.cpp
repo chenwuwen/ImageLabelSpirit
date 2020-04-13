@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QMovie>
 
+//https://zhuanlan.zhihu.com/p/74561278
 
 SplashWidget::SplashWidget(QWidget *parent) :
     QWidget(parent),
@@ -13,8 +14,10 @@ SplashWidget::SplashWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-//     配置无边框
-    QWidget::setWindowFlags(Qt::FramelessWindowHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
+//     配置无边框 + 隐藏任务栏图标
+    QWidget::setWindowFlags(Qt::ToolTip|Qt::FramelessWindowHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
+//    隐藏任务栏图标 https://zhuanlan.zhihu.com/p/33799859
+//    setWindowFlags(Qt::ToolTip);
 
 //    QTimer使用方式包括两种
 //    1.重复定时,每次时间到,都会执行对应槽函数

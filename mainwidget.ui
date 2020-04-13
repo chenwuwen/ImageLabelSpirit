@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>493</width>
+    <width>603</width>
     <height>408</height>
    </rect>
   </property>
@@ -136,7 +136,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="0" column="0">
-       <widget class="QGraphicsView" name="main_graphics_view"/>
+       <widget class="MarkGraphicsView" name="main_graphics_view"/>
       </item>
      </layout>
     </widget>
@@ -180,7 +180,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,7,1">
+     <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,8,1">
       <property name="spacing">
        <number>6</number>
       </property>
@@ -351,7 +351,7 @@
       <item>
        <widget class="QWidget" name="size_area" native="true">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -360,14 +360,17 @@
          <property name="spacing">
           <number>2</number>
          </property>
+         <property name="sizeConstraint">
+          <enum>QLayout::SetDefaultConstraint</enum>
+         </property>
          <property name="leftMargin">
-          <number>9</number>
+          <number>2</number>
          </property>
          <property name="topMargin">
           <number>2</number>
          </property>
          <property name="rightMargin">
-          <number>9</number>
+          <number>2</number>
          </property>
          <property name="bottomMargin">
           <number>2</number>
@@ -457,6 +460,13 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>MarkGraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header>widgets/markgraphicsview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

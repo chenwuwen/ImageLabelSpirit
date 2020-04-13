@@ -93,15 +93,15 @@ void FileButton::draw_path(QString path){
 }
 
  void FileButton::mousePressEvent(QMouseEvent *event){
-     {
-         qDebug()<< "FileButton被按下";
-         // 如果是鼠标左键按下
+{
+         qDebug()<<"FileButton被按下";
+//         如果是鼠标左键按下
          if(event->button()==Qt::LeftButton){
              update();
              emit clicked();
          }
 
-     }
+}
  }
 
  void FileButton::mouseReleaseEvent(QMouseEvent *event){

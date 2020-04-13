@@ -22,7 +22,7 @@ QLabel#label_1{
 }
 
 QLabel#close_label:hover{
-    background-color:rgba(170, 0, 127, 230);
+    background-color:rgb(112, 184, 240);
     color:white;
 }
 QLabel#close_label{
