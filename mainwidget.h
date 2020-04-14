@@ -2,11 +2,15 @@
 #define MAINWIDGET_H
 
 #include <QFile>
+#include <QGraphicsScene>
 #include <QStandardItemModel>
 #include <QStringListModel>
 #include <QWidget>
 
 #include <module/importdialog.h>
+
+#include <custom/markgraphicspixmapitem.h>
+#include <custom/markgraphicsscene.h>
 
 namespace Ui {
 class MainWidget;
@@ -30,6 +34,10 @@ public:
 //    初始化标注信息列表
     void initMarkInfo();
 
+public slots:
+//    设置缩放比例的文字信息
+    void setSizeProportionText();
+
 private slots:
     void on_pushButton_clicked();
     void on_openDirButton_clicked();
@@ -39,7 +47,7 @@ private slots:
     void on_moveButton_clicked();
     void on_narrowButton_clicked();
     void on_enlargeButton_clicked();
-    void on_fullScreenButton_clicked();
+    void on_adaptWindowButton_clicked();
     void on_reviewButton_clicked();
     void on_saveButton_clicked();
     void on_minimizeWindowButton_clicked();
@@ -74,6 +82,8 @@ private:
     QStringList metaMarkInfoList;
 //    当前的Item指针对象
     QStandardItem *currentImgItem;
+//    MarkGraphicsScene *scene;
+//    MarkGraphicsPixmapItem *graphicsPixmapItem;
 //    图片总数
     int imgCount = 0;
 //    当前图片索引位置,从0开始

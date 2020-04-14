@@ -2,7 +2,7 @@
 #define FILEBUTTON_H
 
 #include <QPaintEvent>
-
+#include <QStyleOption>
 #include <QWidget>
 
 

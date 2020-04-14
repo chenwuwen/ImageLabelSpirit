@@ -15,7 +15,7 @@ public:
     static void setQssStyle(QString path,QWidget *widget);
     static QFileInfoList getImageFileInfoList(const QString& dirPath);
     static QString readQssFile(const QString& filePath);
-    static double compressProportion(QPixmap& pixmap,QSize targetSize);
+    static qreal compressProportion(QPixmap& pixmap,QSize targetSize);
 };
 
 #endif // COMMONUTIL_H

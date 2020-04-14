@@ -37,7 +37,8 @@ SOURCES += \
     module/settingdialog.cpp \
     splashwidget.cpp \
     widgets/markgraphicsview.cpp \
-    custom/markgraphicspixmapitem.cpp
+    custom/markgraphicspixmapitem.cpp \
+    custom/markgraphicsscene.cpp
 
 HEADERS += \
         mainwidget.h \
@@ -52,7 +53,8 @@ HEADERS += \
     module/settingdialog.h \
     splashwidget.h \
     widgets/markgraphicsview.h \
-    custom/markgraphicspixmapitem.h
+    custom/markgraphicspixmapitem.h \
+    custom/markgraphicsscene.h
 
 
 FORMS += \

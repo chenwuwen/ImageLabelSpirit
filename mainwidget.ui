@@ -433,7 +433,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="full_screen_btn">
+          <widget class="QPushButton" name="adapt_window_btn">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>

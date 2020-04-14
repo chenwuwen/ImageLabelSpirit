@@ -50,6 +50,8 @@ MainWidget::MainWidget(QWidget *parent) :
     metaMarkInfoItemModel->setStringList(metaMarkInfoList);
 
     initMarkInfo();
+
+    connect(ui->main_graphics_view,&MarkGraphicsView::scaleChange,this,&MainWidget::setSizeProportionText);
 }
 
 
@@ -205,12 +207,12 @@ void MainWidget::initCustomUI()
 
 //    放大/缩小/全屏按钮
     ui->narrow_btn->setFlat(true);
-    ui->full_screen_btn->setFlat(true);
+    ui->adapt_window_btn->setFlat(true);
     ui->enlarge_btn->setFlat(true);
-    ui->full_screen_btn->setFont(font);
+    ui->adapt_window_btn->setFont(font);
     ui->narrow_btn->setFont(font);
     ui->enlarge_btn->setFont(font);
-    ui->full_screen_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_fullscreen));
+    ui->adapt_window_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_fullscreen));
     ui->narrow_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_search_minus));
     ui->enlarge_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_search_plus));
 
@@ -247,7 +249,7 @@ void MainWidget::initCustomUI()
 
     connect(ui->narrow_btn,&QPushButton::clicked,this,&MainWidget::on_narrowButton_clicked);
     connect(ui->enlarge_btn,&QPushButton::clicked,this,&MainWidget::on_enlargeButton_clicked);
-    connect(ui->full_screen_btn,&QPushButton::clicked,this,&MainWidget::on_fullScreenButton_clicked);
+    connect(ui->adapt_window_btn,&QPushButton::clicked,this,&MainWidget::on_adaptWindowButton_clicked);
 
     connect(ui->save_btn,&QPushButton::clicked,this,&MainWidget::on_saveButton_clicked);
     connect(ui->review_btn,&QPushButton::clicked,this,&MainWidget::on_reviewButton_clicked);
@@ -431,15 +433,19 @@ void MainWidget::displayImg(){
     qDebug()<<"当前展示的图片路径是："<<currentFilePath;
     QPixmap pixmap ;
     pixmap.load(currentFilePath);
-    double proportion = CommonUtil::compressProportion(pixmap,ui->main_graphics_view->size());
-    ui->scale->setText(QString("%1%").arg(QString::number(proportion*100,'f',2)));
-    QGraphicsScene *scene =new QGraphicsScene(ui->main_graphics_view);
+
+
+    MarkGraphicsScene *scene =new MarkGraphicsScene(ui->main_graphics_view);
+
 //    scene->addPixmap(pixmap);
-    MarkGraphicsPixmapItem *graphicsPixmapItem = new MarkGraphicsPixmapItem(currentFilePath);
+   MarkGraphicsPixmapItem *graphicsPixmapItem = new MarkGraphicsPixmapItem(currentFilePath);
+
     scene->addItem(graphicsPixmapItem);
     ui->main_graphics_view->setScene(scene);
 //    ui->main_graphics_view->centerOn(graphicsPixmapItem);
+    ui->main_graphics_view->clearMask();
     ui->main_graphics_view->show();
+    setSizeProportionText();
 }
 
 void MainWidget::on_settingButton_clicked()
@@ -466,6 +472,7 @@ void MainWidget::on_exportButton_clicked()
 }
 void MainWidget::on_moveButton_clicked()
 {
+    qDebug() << "移动操作";
 }
 void MainWidget::on_importButton_clicked()
 {
@@ -487,16 +494,22 @@ void MainWidget::on_import_function(QString path)
 void MainWidget::on_narrowButton_clicked()
 {
     qDebug()<< "图片缩小...";
+    ui->main_graphics_view->narrow();
+    setSizeProportionText();
 }
 
 void MainWidget::on_enlargeButton_clicked()
 {
     qDebug()<< "图片放大.......";
+    ui->main_graphics_view->enlarge();
+    setSizeProportionText();
 }
 
-void MainWidget::on_fullScreenButton_clicked()
+void MainWidget::on_adaptWindowButton_clicked()
 {
     qDebug()<< "图片全屏......";
+    ui->main_graphics_view->enlarge();
+    setSizeProportionText();
 }
 
 void MainWidget::on_saveButton_clicked()
@@ -577,5 +590,27 @@ void MainWidget::resizeEvent(QResizeEvent *event){
     }else{
         ui->custom_window_btn->setIcon(style->standardIcon(QStyle::SP_TitleBarMaxButton));
     }
+}
+
+void MainWidget::setSizeProportionText()
+{
+//        得到存储在item中的data数据
+        QVariant variant = currentImgItem->data();
+//        当前图片文件路径
+        QString currentFilePath = variant.toString();
+        qDebug()<<"当前展示的图片路径是："<<currentFilePath;
+        QPixmap srcPixmap(currentFilePath);
+        QSize srcSize = srcPixmap.size();
+        qDebug() << "原图尺寸："<< srcSize;
+
+        QSize currentSize(ui->main_graphics_view->scene()->width(),ui->main_graphics_view->scene()->height());
+        qDebug() << "场景尺寸："<< srcSize;
+        qDebug() << "视图尺寸："<< ui->main_graphics_view->size();
+
+//        当前缩放比例
+        qreal proportion = ui->main_graphics_view->matrix().m11();
+//        得到的比例是qreal类型,先乘以100,再保留两位小数
+        ui->scale->setText(QString("%1%").arg(QString::number(proportion*100,'f',2)));
+
 }
 

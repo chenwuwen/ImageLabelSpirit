@@ -1,6 +1,8 @@
 #include "markgraphicsview.h"
 
 
+
+
 MarkGraphicsView::MarkGraphicsView(QWidget *parent):QGraphicsView(parent)
 {
 
@@ -9,17 +11,20 @@ MarkGraphicsView::MarkGraphicsView(QWidget *parent):QGraphicsView(parent)
 
 void MarkGraphicsView::mousePressEvent(QMouseEvent *event)
 {
-
+    QGraphicsView::mousePressEvent(event);
+    qDebug() << "MarkGraphicsView类 mousePressEvent方法执行";
 }
 
 void MarkGraphicsView::mouseMoveEvent(QMouseEvent *event)
 {
     qDebug() << "MarkGraphicsView类 mouseMoveEvent方法执行";
+//    如果重构了事件函数,并且需要事件传递,需要添加次方法。
+    QGraphicsView::mouseMoveEvent(event);
 //    当空格键按下时,鼠标移动才生效
     if (!spaceActive) return;
 //    左键按下移动才生效
     if (event->button()!=Qt::LeftButton) return;
-    QPoint point =  event->pos();
+    QPoint point = event->pos();
 
 }
 
@@ -46,11 +51,12 @@ void MarkGraphicsView::wheelEvent(QWheelEvent *event)
        qreal scaleFactor = this->matrix().m11();
        int wheelDeltaValue = event->delta();
        if (wheelDeltaValue > 0){
-//            向上滚动，放大;
-           this->scale(1.2, 1.2);
+//            向前滚动，放大;
+           this->scale(DEFAULT_PROPORTION, DEFAULT_PROPORTION);
        } else{
-//            向下滚动，缩小;
-           this->scale(1.0 / 1.2, 1.0 / 1.2);
+//            向后滚动，缩小;
+           this->scale(1.0 / DEFAULT_PROPORTION, 1.0 / DEFAULT_PROPORTION);
+
        }
 
        // 将scene坐标转换为放大缩小后的坐标;
@@ -59,7 +65,9 @@ void MarkGraphicsView::wheelEvent(QWheelEvent *event)
 //          horizontalScrollBar()->setValue(int(viewPoint.x() - viewWidth * hScale));
 //          verticalScrollBar()->setValue(int(viewPoint.y() - viewHeight * vScale));
 
-
+//        发射缩放比例改变的信号
+        emit scaleChange();
+        QGraphicsView::wheelEvent(event);
 }
 
 void MarkGraphicsView::keyPressEvent(QKeyEvent *event)
@@ -71,10 +79,10 @@ void MarkGraphicsView::keyPressEvent(QKeyEvent *event)
 //        qDebug()<<"Ctrl被按下,当前ctrlActive："<<ctrlActive;
     }
 
-    //    如果是空格键
+//    如果是空格键
     if(key_code == Qt::Key_Space){
         spaceActive = !spaceActive;
-    //        qDebug()<<"Space被释放,当前ctrlActive："<<ctrlActive;
+//        qDebug()<<"Space被释放,当前ctrlActive："<<ctrlActive;
     }
 }
 
@@ -96,6 +104,21 @@ void MarkGraphicsView::keyReleaseEvent(QKeyEvent *event)
 
 }
 
+void MarkGraphicsView::enlarge()
+{
+    scale(DEFAULT_PROPORTION,DEFAULT_PROPORTION);
+}
+
+void MarkGraphicsView::narrow()
+{
+    scale(1.0 / DEFAULT_PROPORTION, 1.0 / DEFAULT_PROPORTION);
+}
+
+
+void MarkGraphicsView::adapt()
+{
+    scale(1.0 / DEFAULT_PROPORTION, 1.0 / DEFAULT_PROPORTION);
+}
 
 MarkGraphicsView::~MarkGraphicsView()
 {

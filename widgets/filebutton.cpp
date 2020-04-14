@@ -1,10 +1,10 @@
 #include "filebutton.h"
-#include <QWidget>
+
 #include <QPaintEvent>
 #include <QPainter>
 #include <QDebug>
 #include <QGraphicsDropShadowEffect>
-#include <QStyleOption>
+
 FileButton::FileButton(QWidget *parent) : QWidget(parent)
 {
 //    设置鼠标样式 为手型 ,当鼠标移入控件中时,鼠标样式将更改,移出时,鼠标恢复

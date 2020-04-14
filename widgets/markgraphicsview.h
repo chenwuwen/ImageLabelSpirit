@@ -6,15 +6,31 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QScrollBar>
+#include <mainwidget.h>
 
 
 
 class MarkGraphicsView:public QGraphicsView
 {
+
+      Q_OBJECT
+
 public:
     explicit MarkGraphicsView(QWidget *parent = nullptr);
     ~MarkGraphicsView();
 
+
+
+//    放大,固定比例。点击放大按钮执行
+   void enlarge();
+//    缩小,固定比例。点击缩小按钮执行
+   void narrow();
+//   适应窗口大小
+   void adapt();
+
+signals:
+//   自定义信号,缩放比例改变。信号
+   void scaleChange();
 
 protected:
     void mousePressEvent(QMouseEvent *event);
@@ -32,6 +48,10 @@ private:
     bool ctrlActive = false;
 //     空格键是否是按下状态
     bool spaceActive = false;
+
+//    固定比例 https://www.zhihu.com/question/35614219
+    constexpr const static double DEFAULT_PROPORTION = 1.2;
+
 
 };
 

@@ -1,3 +1,9 @@
 .QFrame {
         background-color: rgb(232, 232, 232);
 }
+
+MarkGraphicsView{
+    /*QGraphicsView默认带有内边距和边界*/
+    padding: 0px;
+    border: 0px;
+}
