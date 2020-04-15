@@ -84,3 +84,23 @@ qreal CommonUtil::compressProportion(QPixmap& pixmap,QSize targetSize)
     pixmap =  pixmap.scaled(targetSize, Qt::KeepAspectRatio);
     return proportion;
 }
+
+/**
+ * 加载图片得到图片尺寸,同时知道了目标的尺寸,从而计算出默认的展示尺寸
+ * @brief CommonUtil::defaultDisplayQRectF
+ * @param pixmapPath
+ * @param targetSize 目标的尺寸
+ * @return
+ */
+QRectF CommonUtil::defaultDisplayQRectF(const QString pixmapPath,QSize targetSize)
+{
+    QPixmap pixmap(pixmapPath);
+    QSize originalSize = pixmap.size();
+
+    if(targetSize.width()>originalSize.width() && targetSize.height()>originalSize.height()){
+        return  pixmap.rect();
+    }
+//    缩放并保留长宽比
+    pixmap = pixmap.scaled(targetSize, Qt::KeepAspectRatio);
+    return  pixmap.rect();
+}

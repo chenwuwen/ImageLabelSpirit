@@ -9,8 +9,10 @@
 
 
 
-class MarkGraphicsPixmapItem:public QGraphicsPixmapItem
+class MarkGraphicsPixmapItem:public QObject,public QGraphicsPixmapItem
 {
+
+    Q_OBJECT
 
 public:
     MarkGraphicsPixmapItem(const QPixmap &pixmap, QGraphicsItem *parent = nullptr);
@@ -18,6 +20,7 @@ public:
 
 protected:
      void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+     void mousePressEvent(QGraphicsSceneMouseEvent *event);
      void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 //    鼠标移入事件
@@ -29,6 +32,11 @@ protected:
     void keyPressEvent(QKeyEvent *event) ;
 //    键盘松开事件
     void keyReleaseEvent(QKeyEvent *event) ;
+
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
+
 
 private:
     QPixmap currentPixmap;

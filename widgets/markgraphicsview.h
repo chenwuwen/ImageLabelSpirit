@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QScrollBar>
 #include <mainwidget.h>
+#include <QList>
 
 
 
@@ -28,6 +29,9 @@ public:
 //   适应窗口大小
    void adapt();
 
+
+   void defaultDisplay();
+
 signals:
 //   自定义信号,缩放比例改变。信号
    void scaleChange();
@@ -41,6 +45,10 @@ protected:
     void keyPressEvent(QKeyEvent *event) ;
 //    键盘松开事件
     void keyReleaseEvent(QKeyEvent *event) ;
+//    鼠标移入事件
+    void enterEvent(QEvent *);
+//    鼠标移出事件
+    void leaveEvent(QEvent *);
 
 private:
 
@@ -51,6 +59,8 @@ private:
 
 //    固定比例 https://www.zhihu.com/question/35614219
     constexpr const static double DEFAULT_PROPORTION = 1.2;
+
+    QPoint lastMousePos;
 
 
 };

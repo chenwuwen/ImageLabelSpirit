@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QCursor>
+#include <QGraphicsView>
 
 
 class MarkGraphicsScene : public QGraphicsScene
@@ -23,7 +24,8 @@ protected:
     void keyReleaseEvent(QKeyEvent  *event);
 
 private:
-
+    bool ctrlActive = false;
+    bool spaceActive = false;
 
 };
 

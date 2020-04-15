@@ -431,9 +431,9 @@ void MainWidget::displayImg(){
 //    当前图片文件路径
     QString currentFilePath = variant.toString();
     qDebug()<<"当前展示的图片路径是："<<currentFilePath;
-    QPixmap pixmap ;
-    pixmap.load(currentFilePath);
 
+//    设置图元在容器中的展示位置
+    ui->main_graphics_view->setAlignment(Qt::AlignCenter);
 
     MarkGraphicsScene *scene =new MarkGraphicsScene(ui->main_graphics_view);
 
@@ -442,7 +442,11 @@ void MainWidget::displayImg(){
 
     scene->addItem(graphicsPixmapItem);
     ui->main_graphics_view->setScene(scene);
+//   会将图元展示到正中央,如果图元比较高,那么展示为图元中间的位置
 //    ui->main_graphics_view->centerOn(graphicsPixmapItem);
+//    ui->main_graphics_view->rect();
+//    使图元充满容器,但是会导致图元变形,因为默认的fitInView方法并不是等比例压缩的(但是可以设置填充方式为等比例),fitview有3个重载的方法,因此可以传入等比压缩的矩形区域来展示
+    ui->main_graphics_view->fitInView(graphicsPixmapItem,Qt::KeepAspectRatio);
     ui->main_graphics_view->clearMask();
     ui->main_graphics_view->show();
     setSizeProportionText();
@@ -507,8 +511,8 @@ void MainWidget::on_enlargeButton_clicked()
 
 void MainWidget::on_adaptWindowButton_clicked()
 {
-    qDebug()<< "图片全屏......";
-    ui->main_graphics_view->enlarge();
+    qDebug()<< "图片回归初始展示......";
+    ui->main_graphics_view->adapt();
     setSizeProportionText();
 }
 
@@ -606,6 +610,7 @@ void MainWidget::setSizeProportionText()
         QSize currentSize(ui->main_graphics_view->scene()->width(),ui->main_graphics_view->scene()->height());
         qDebug() << "场景尺寸："<< srcSize;
         qDebug() << "视图尺寸："<< ui->main_graphics_view->size();
+
 
 //        当前缩放比例
         qreal proportion = ui->main_graphics_view->matrix().m11();
