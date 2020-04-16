@@ -49,6 +49,8 @@ protected:
     void enterEvent(QEvent *);
 //    鼠标移出事件
     void leaveEvent(QEvent *);
+//    拖拽首先进入QGraphicsView触发其dragEnterEvent事件
+    void dragEnterEvent(QDragEnterEvent *event);
 
 private:
 

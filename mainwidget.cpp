@@ -52,6 +52,7 @@ MainWidget::MainWidget(QWidget *parent) :
     initMarkInfo();
 
     connect(ui->main_graphics_view,&MarkGraphicsView::scaleChange,this,&MainWidget::setSizeProportionText);
+    connect(scene,static_cast<void (MarkGraphicsScene::*)(QGraphicsRectItem)>(&MarkGraphicsScene::addMarkItem),this,&MainWidget::addRectMarkInfo);
 }
 
 
@@ -370,7 +371,8 @@ void MainWidget::on_openDirButton_clicked()
 //    设置数据
     ui->left_file_listView->setModel(hasReviewImgFilesItemModel);
     ui->right_file_listView->setModel(notReviewImgFilesItemModel);
-//    设置框选矩形框可见
+
+//    设置框选矩形框可见性
     ui->left_file_listView->setSelectionRectVisible(false);
     ui->right_file_listView->setSelectionRectVisible(false);
 //    设置选择模式，该模式为最常用模式，其他选择模式请自行查看帮助说明
@@ -435,16 +437,15 @@ void MainWidget::displayImg(){
 //    设置图元在容器中的展示位置
     ui->main_graphics_view->setAlignment(Qt::AlignCenter);
 
-    MarkGraphicsScene *scene =new MarkGraphicsScene(ui->main_graphics_view);
+    scene =new MarkGraphicsScene(ui->main_graphics_view);
 
 //    scene->addPixmap(pixmap);
-   MarkGraphicsPixmapItem *graphicsPixmapItem = new MarkGraphicsPixmapItem(currentFilePath);
+   graphicsPixmapItem = new MarkGraphicsPixmapItem(currentFilePath);
 
     scene->addItem(graphicsPixmapItem);
     ui->main_graphics_view->setScene(scene);
-//   会将图元展示到正中央,如果图元比较高,那么展示为图元中间的位置
+//   会将图元展示到正中央,如果图元比较高,那么展示为图元中间的位置,也就是图片展示的不完整
 //    ui->main_graphics_view->centerOn(graphicsPixmapItem);
-//    ui->main_graphics_view->rect();
 //    使图元充满容器,但是会导致图元变形,因为默认的fitInView方法并不是等比例压缩的(但是可以设置填充方式为等比例),fitview有3个重载的方法,因此可以传入等比压缩的矩形区域来展示
     ui->main_graphics_view->fitInView(graphicsPixmapItem,Qt::KeepAspectRatio);
     ui->main_graphics_view->clearMask();
@@ -576,13 +577,9 @@ void MainWidget::initMarkInfo()
 
 }
 
-void MainWidget::addMark()
+void MainWidget::addRectMarkInfo(QGraphicsRectItem *item)
 {
     RectMeta rectMeta;
-//    rectMeta.x
-    QStandardItem *item;
-    item->setData(QVariant::fromValue(rectMeta));
-
 
 }
 

@@ -1,5 +1,7 @@
 #include "markgraphicspixmapitem.h"
 
+#include <QDrag>
+
 //QGraphicsItem的mouseMoveEvent()函数必须鼠标按下的情况下进行move才会触发。
 //QWidget的mouseMoveEvent()函数可以通过设置setMouseTracking(true)在鼠标不需要按下的情况下，触发鼠标move事件。
 //QGraphicsItem要实现鼠标不按下的情况下，获取鼠标move事件，可通过QGraphicsItem::setAcceptHoverEvents ()来实现，可通过设置setAcceptHoverEvents(true)使其生效
@@ -9,9 +11,13 @@ MarkGraphicsPixmapItem::MarkGraphicsPixmapItem(const QPixmap &pixmap, QGraphicsI
 {
     setPixmap(pixmap);
     currentPixmap = pixmap;
+//    获得拖拽支持
+    setAcceptDrops(true);
 //    setAcceptHoverEvents(true);
-//    可选择、可移动
-//    setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+//    可选择
+//    setFlags(QGraphicsItem::ItemIsSelectable | );
+//    可移动
+    setFlags(QGraphicsItem::ItemIsMovable);
 }
 
 MarkGraphicsPixmapItem::MarkGraphicsPixmapItem(const QString imgPath, QGraphicsItem *parent):QGraphicsPixmapItem(parent)
@@ -20,22 +26,33 @@ MarkGraphicsPixmapItem::MarkGraphicsPixmapItem(const QString imgPath, QGraphicsI
     pixmap.load(imgPath);
     setPixmap(pixmap);
     currentPixmap = pixmap;
+//    获得拖拽支持
+    setAcceptDrops(true);
 //    setAcceptHoverEvents(true);
-//    可选择、可移动
-//    setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+//    可选择
+//    setFlags(QGraphicsItem::ItemIsSelectable);
+//   可移动
+    setFlags(QGraphicsItem::ItemIsMovable);
 }
 
 void MarkGraphicsPixmapItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     qDebug()<< "MarkGraphicsPixmapItem类 的 mouseMoveEvent() 方法执行";
     QGraphicsItem::mouseMoveEvent(event);
+//    if(spaceActive) {
+//        如果是空格键按下状态鼠标移动则是拖拽事件
+//        QDrag *drag = new QDrag(event->widget());
+//        drag->start();
+//    }else{
+//        QGraphicsRectItem *rectItem = new QGraphicsRectItem;
+//    }
 }
 
 
 void MarkGraphicsPixmapItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     qDebug()<< "MarkGraphicsPixmapItem类 的 mousePressEvent() 方法执行";
-    QGraphicsItem::mousePressEvent(event);
+//    QGraphicsItem::mousePressEvent(event);
 }
 
 void MarkGraphicsPixmapItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)

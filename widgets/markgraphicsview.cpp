@@ -1,11 +1,15 @@
 #include "markgraphicsview.h"
 
+#include <QDrag>
+
 
 
 
 MarkGraphicsView::MarkGraphicsView(QWidget *parent):QGraphicsView(parent)
 {
       defaultDisplay();
+//      设置允许拖拽
+      setAcceptDrops(true);
 }
 
 
@@ -13,6 +17,9 @@ void MarkGraphicsView::mousePressEvent(QMouseEvent *event)
 {
     QGraphicsView::mousePressEvent(event);
     qDebug() << "MarkGraphicsView类 mousePressEvent方法执行";
+    if (event->button()!=Qt::LeftButton) return;
+    lastMousePos = event->pos();
+    qDebug() << "点击了鼠标左键,同时设定了laseMousePos";
 }
 
 void MarkGraphicsView::mouseMoveEvent(QMouseEvent *event)
@@ -20,24 +27,6 @@ void MarkGraphicsView::mouseMoveEvent(QMouseEvent *event)
     qDebug() << "MarkGraphicsView类 mouseMoveEvent方法执行";
 //    如果重构了事件函数,并且需要事件传递,需要添加次方法。
     QGraphicsView::mouseMoveEvent(event);
-     qDebug() << "开始平移===";
-//    当空格键按下时,鼠标移动才生效
-    if (!spaceActive) return;
-//    左键按下移动才生效
-//    if (event->button()!=Qt::LeftButton) return;
-    qDebug() << "开始平移";
-//    获取每次鼠标在场景坐标系下的平移量
-      QPointF mouseDelta = mapToScene(event->pos()) - mapToScene(this->lastMousePos);
-//    如果是在缩放之后，调用的平移方法，那么平移量先要乘上缩放比，transform是view的变换矩阵，m11可以用为缩放比
-      mouseDelta *= this->transform().m11();
-//    调用平移方法
-      this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-      this->centerOn(this->mapToScene(QPoint(this->viewport()->rect().width()/ 2 - mouseDelta.x(),
-                                                                             this->viewport()->rect().height()/ 2 - mouseDelta.y())));
-      this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
-
-      lastMousePos = event->pos();
-
 }
 
 void MarkGraphicsView::wheelEvent(QWheelEvent *event)
@@ -132,6 +121,13 @@ void MarkGraphicsView::leaveEvent(QEvent *event)
 //    在QGraphicsView子类中使用viewport()->setCursor()，才可以真正的改变鼠标的形状。同时，update()也是如此，需要调用viewport()->update()。
 //    viewport()->setCursor(QCursor(Qt::ArrowCursor));
     QGraphicsView::leaveEvent(event);
+}
+
+
+void MarkGraphicsView::dragEnterEvent(QDragEnterEvent *event)
+{
+    qDebug() << "MarkGraphicsView类 dragEnterEvent方法执行";
+    event->accept();
 }
 
 

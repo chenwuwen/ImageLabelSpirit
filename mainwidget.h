@@ -55,7 +55,7 @@ private slots:
     void on_closeWindowButton_clicked();
     void on_import_function(QString);
 //    新的标注
-    void addMark();
+    void addRectMarkInfo(QGraphicsRectItem *);
 
 signals:
 //    自定义信号,发送图片路径给导出窗口
@@ -82,8 +82,8 @@ private:
     QStringList metaMarkInfoList;
 //    当前的Item指针对象
     QStandardItem *currentImgItem;
-//    MarkGraphicsScene *scene;
-//    MarkGraphicsPixmapItem *graphicsPixmapItem;
+    MarkGraphicsScene *scene;
+    MarkGraphicsPixmapItem *graphicsPixmapItem;
 //    图片总数
     int imgCount = 0;
 //    当前图片索引位置,从0开始
@@ -92,7 +92,7 @@ private:
     int hasMarkCount = 0;
 //    图片所在目录
     QString dirPath;
-
+//    引入窗口
     ImportDialog *importDialog;
 
 };
