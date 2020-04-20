@@ -38,7 +38,8 @@ SOURCES += \
     splashwidget.cpp \
     widgets/markgraphicsview.cpp \
     custom/markgraphicspixmapitem.cpp \
-    custom/markgraphicsscene.cpp
+    custom/markgraphicsscene.cpp \
+    widgets/qtoast.cpp
 
 HEADERS += \
         mainwidget.h \
@@ -54,7 +55,8 @@ HEADERS += \
     splashwidget.h \
     widgets/markgraphicsview.h \
     custom/markgraphicspixmapitem.h \
-    custom/markgraphicsscene.h
+    custom/markgraphicsscene.h \
+    widgets/qtoast.h
 
 
 FORMS += \

@@ -1,3 +1,4 @@
+﻿#pragma execution_character_set("utf-8")
 #ifndef SPLASHWIDGET_H
 #define SPLASHWIDGET_H
 

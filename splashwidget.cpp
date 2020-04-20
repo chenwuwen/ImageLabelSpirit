@@ -1,4 +1,4 @@
-#include "mainwidget.h"
+﻿#include "mainwidget.h"
 #include "splashwidget.h"
 #include "ui_splashwidget.h"
 
@@ -18,6 +18,10 @@ SplashWidget::SplashWidget(QWidget *parent) :
     QWidget::setWindowFlags(Qt::ToolTip|Qt::FramelessWindowHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
 //    隐藏任务栏图标 https://zhuanlan.zhihu.com/p/33799859
 //    setWindowFlags(Qt::ToolTip);
+
+//    不设置此flag,调用close方法不会执行析构函数 https://blog.csdn.net/theArcticOcean/article/details/83591821
+//       TODO 但是在这里加会报错,暂时注释掉
+//    setAttribute( Qt::WA_DeleteOnClose, true );
 
 //    QTimer使用方式包括两种
 //    1.重复定时,每次时间到,都会执行对应槽函数
@@ -82,8 +86,7 @@ void SplashWidget::stopMovieAndStartMainWidget(int i)
     if(i == 0){
         MainWidget *w = new MainWidget;
         w->show();
-        this->close();
         movie->stop();
-
+        this->close();
     }
 }

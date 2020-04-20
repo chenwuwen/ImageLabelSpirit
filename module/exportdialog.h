@@ -1,3 +1,4 @@
+﻿#pragma execution_character_set("utf-8")
 #ifndef EXPORTDIALOG_H
 #define EXPORTDIALOG_H
 

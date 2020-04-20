@@ -1,4 +1,4 @@
-#include "markgraphicspixmapitem.h"
+﻿#include "markgraphicspixmapitem.h"
 
 #include <QDrag>
 
@@ -37,7 +37,7 @@ MarkGraphicsPixmapItem::MarkGraphicsPixmapItem(const QString imgPath, QGraphicsI
 
 void MarkGraphicsPixmapItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug()<< "MarkGraphicsPixmapItem类 的 mouseMoveEvent() 方法执行";
+    qDebug() << "MarkGraphicsPixmapItem类的 mouseMoveEvent() 方法执行";
     QGraphicsItem::mouseMoveEvent(event);
 //    if(spaceActive) {
 //        如果是空格键按下状态鼠标移动则是拖拽事件
@@ -51,7 +51,7 @@ void MarkGraphicsPixmapItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void MarkGraphicsPixmapItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug()<< "MarkGraphicsPixmapItem类 的 mousePressEvent() 方法执行";
+    qDebug() << "MarkGraphicsPixmapItem类 的 mousePressEvent() 方法执行";
 //    QGraphicsItem::mousePressEvent(event);
 }
 
@@ -100,4 +100,9 @@ void MarkGraphicsPixmapItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void MarkGraphicsPixmapItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
 //    qDebug()<< "MarkGraphicsPixmapItem类 的 hoverMoveEvent() 方法执行";
+}
+
+QSize MarkGraphicsPixmapItem::getOriginalSize()
+{
+    return currentPixmap.size();
 }

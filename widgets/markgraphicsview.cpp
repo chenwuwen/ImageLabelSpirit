@@ -1,4 +1,4 @@
-#include "markgraphicsview.h"
+﻿#include "markgraphicsview.h"
 
 #include <QDrag>
 
@@ -7,7 +7,6 @@
 
 MarkGraphicsView::MarkGraphicsView(QWidget *parent):QGraphicsView(parent)
 {
-      defaultDisplay();
 //      设置允许拖拽
       setAcceptDrops(true);
 }
@@ -77,13 +76,13 @@ void MarkGraphicsView::keyPressEvent(QKeyEvent *event)
 //    如果是ctrl键
     if(key_code == Qt::Key_Control){
         ctrlActive = true;
-        qDebug()<<"Ctrl被按下,当前ctrlActive："<< ctrlActive;
+        qDebug() << "Ctrl被按下,当前ctrlActive："<< ctrlActive;
     }
 
 //    如果是空格键
     if(key_code == Qt::Key_Space){
         spaceActive = true;
-        qDebug()<<"Space被按下,当前spaceActive："<< spaceActive;
+        qDebug() << "Space被按下,当前spaceActive："<< spaceActive;
     }
 
     QGraphicsView::keyPressEvent(event);
@@ -147,15 +146,26 @@ void MarkGraphicsView::adapt()
     QList<QGraphicsItem *> items = this->items();
     for (QGraphicsItem *item:items){
         qDebug() << "重回初始大小";
-        fitInView(item,Qt::KeepAspectRatio);
+        int itemType = item->type();
+        if(itemType==MarkGraphicsPixmapItem::Type){
+           MarkGraphicsPixmapItem *markItem =  dynamic_cast<MarkGraphicsPixmapItem *>(item);
+           QSize markItemSize = markItem->getOriginalSize();
+           QSize viewportSize = viewport()->size();
+           if(markItemSize.width()<viewportSize.width() && markItemSize.height() < viewportSize.height()){
+//             会将图元展示到正中央,如果图元比较高,那么展示为图元中间的位置,也就是图片展示的不完整
+             centerOn(item);
+           }else{
+
+//          使图元充满容器,但是会导致图元变形,因为默认的fitInView方法并不是等比例压缩的(但是可以设置填充方式为等比例),fitview有3个重载的方法,因此可以传入等比压缩的矩形区域来展示
+            fitInView(item,Qt::KeepAspectRatio);
+           }
+        }
+
     }
 
-}
+ }
 
-void MarkGraphicsView::defaultDisplay()
-{
-    adapt();
-}
+
 
 MarkGraphicsView::~MarkGraphicsView()
 {

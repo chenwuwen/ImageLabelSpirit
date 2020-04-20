@@ -1,4 +1,4 @@
-#include "commonutil.h"
+﻿#include "commonutil.h"
 
 #include <QFile>
 #include <QString>
@@ -75,10 +75,10 @@ qreal CommonUtil::compressProportion(QPixmap& pixmap,QSize targetSize)
     if(originalSize.width()>originalSize.height()){
 //    由于是保持长宽比的缩放,因此直接可以用宽度计算
         proportion = static_cast<qreal>(targetSize.width())/static_cast<qreal>(originalSize.width());
-        qDebug() << "目标宽度："<< targetSize.width() <<"  实际宽度："<< originalSize.width() <<"  图片压缩比：" << proportion;
+        qDebug() << "目标宽度：" << targetSize.width() << "  实际宽度："<< originalSize.width() << "  图片压缩比：" << proportion;
     }else{
         proportion = static_cast<qreal>(targetSize.height())/static_cast<qreal>(originalSize.height());
-        qDebug() << "目标高度："<< targetSize.height() <<"  实际高度："<< originalSize.height() <<"  图片压缩比：" << proportion;
+        qDebug() << "目标高度：" << targetSize.height() <<"  实际高度：" << originalSize.height() <<"  图片压缩比：" << proportion;
     }
 //    缩放并保留长宽比
     pixmap =  pixmap.scaled(targetSize, Qt::KeepAspectRatio);

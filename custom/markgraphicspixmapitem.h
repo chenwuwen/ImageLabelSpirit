@@ -1,3 +1,4 @@
+﻿#pragma execution_character_set("utf-8")
 #ifndef MARKGRAPHICSPIXMAPITEM_H
 #define MARKGRAPHICSPIXMAPITEM_H
 
@@ -17,6 +18,12 @@ class MarkGraphicsPixmapItem:public QObject,public QGraphicsPixmapItem
 public:
     MarkGraphicsPixmapItem(const QPixmap &pixmap, QGraphicsItem *parent = nullptr);
     MarkGraphicsPixmapItem(const QString imgPath, QGraphicsItem *parent = nullptr);
+//    自定义type值
+    enum {Type = 1993};
+    int type() const override {return Type;}
+
+//    图片原始尺寸
+    QSize getOriginalSize();
 
 protected:
      void mouseMoveEvent(QGraphicsSceneMouseEvent *event);

@@ -1,4 +1,4 @@
-#include "exportdialog.h"
+﻿#include "exportdialog.h"
 #include "ui_exportdialog.h"
 
 #include <common/commonutil.h>
@@ -62,9 +62,9 @@ void ExportDialog::on_close_export_dialog_btn_clicked()
 
 void ExportDialog::on_exportFileButton_clicked()
 {
-    QString dirPath = QFileDialog::getExistingDirectory(this, QString("选择文件夹"),
-                                                  localPath,
-                                                  QFileDialog::ShowDirsOnly);
+    QString dirPath = QFileDialog::getExistingDirectory(this,
+                                                        QString("选择文件夹"),
+                                                        localPath,QFileDialog::ShowDirsOnly);
     if(!dirPath.isEmpty()){
           localPath = dirPath;
           fileButton->draw_path(localPath);

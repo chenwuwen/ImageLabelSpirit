@@ -1,4 +1,4 @@
-
+﻿#pragma execution_character_set("utf-8")
 #include "mainwidget.h"
 
 #include "ui_mainwidget.h"
@@ -49,10 +49,10 @@ MainWidget::MainWidget(QWidget *parent) :
     metaMarkInfoList<<"虫"<<"鱼"<<"鸟";
     metaMarkInfoItemModel->setStringList(metaMarkInfoList);
 
-    initMarkInfo();
+
 
     connect(ui->main_graphics_view,&MarkGraphicsView::scaleChange,this,&MainWidget::setSizeProportionText);
-    connect(scene,static_cast<void (MarkGraphicsScene::*)(QGraphicsRectItem)>(&MarkGraphicsScene::addMarkItem),this,&MainWidget::addRectMarkInfo);
+
 }
 
 
@@ -262,33 +262,33 @@ void MainWidget::initCustomUI()
 //    下面两个连接函数使用了lambda表达式
     connect(fontButton,&MenuButton::clicked,this,[=]{
         qDebug() << "前一个按钮被点击";
-        if(imgCount==0) return ;
-        if(currentImg>0){
+        if(imgCount == 0) return ;
+        if(currentImgIndex > 0){
             notReviewImgFilesItemModel->insertRow(0,currentImgItem);
             currentImgItem = hasReviewImgFilesItemModel->item(0);
             hasReviewImgFilesItemModel->takeRow(0);
-            currentImg--;
+            currentImgIndex--;
         }else{
 //            currentImg = imgCount-1;
              return ;
         }
-        setProcessInfo();
+        setMarkProgressInfo();
         displayImg();
     });
     connect(afterButton,&MenuButton::clicked,this,[=]{
         qDebug() << "后一个按钮被点击";
-        if(imgCount==0) return ;
-        if(currentImg<imgCount-1){
+        if(imgCount == 0) return ;
+        if(currentImgIndex<imgCount-1){
 //            hasReviewImgFilesItemModel之所以使用insert是因为,hasReviewImgFilesItemModel是从右向左展示顺序,因此倒排,最远的靠近中央
             hasReviewImgFilesItemModel->insertRow(0,currentImgItem);
             currentImgItem = notReviewImgFilesItemModel->item(0);
             notReviewImgFilesItemModel->takeRow(0);
-            currentImg++;
+            currentImgIndex++;
         }else{
 //            currentImg = 0;
             return ;
         }
-        setProcessInfo();
+        setMarkProgressInfo();
         displayImg();
     });
 
@@ -407,21 +407,13 @@ void MainWidget::on_openDirButton_clicked()
     ui->left_file_listView->setDragEnabled(false);
     ui->right_file_listView->setDragEnabled(false);
 
-    currentImg = 0;
-    currentImgItem = notReviewImgFilesItemModel->item(currentImg);
-    notReviewImgFilesItemModel->takeRow(currentImg);
-    setProcessInfo();
+    currentImgIndex = 0;
+    currentImgItem = notReviewImgFilesItemModel->item(currentImgIndex);
+    notReviewImgFilesItemModel->takeRow(currentImgIndex);
+    setMarkProgressInfo();
     displayImg();
 }
 
-void MainWidget::setProcessInfo(){
-    QString info = QString("已标注%1/ 总%2   当前位置：%3").arg(hasMarkCount).arg(imgCount).arg(currentImg+1);
-    ui->progress_info->setText(info);
-//    设置进度条最大值
-    ui->progress_bar->setMaximum(imgCount);
-//    设置进度条当前的运行值
-    ui->progress_bar->setValue(hasMarkCount);
-}
 
 void MainWidget::displayImg(){
     qDebug() << "主界面展示图片";
@@ -438,19 +430,28 @@ void MainWidget::displayImg(){
     ui->main_graphics_view->setAlignment(Qt::AlignCenter);
 
     scene =new MarkGraphicsScene(ui->main_graphics_view);
-
 //    scene->addPixmap(pixmap);
-   graphicsPixmapItem = new MarkGraphicsPixmapItem(currentFilePath);
+    graphicsPixmapItem = new MarkGraphicsPixmapItem(currentFilePath);
 
     scene->addItem(graphicsPixmapItem);
     ui->main_graphics_view->setScene(scene);
-//   会将图元展示到正中央,如果图元比较高,那么展示为图元中间的位置,也就是图片展示的不完整
-//    ui->main_graphics_view->centerOn(graphicsPixmapItem);
-//    使图元充满容器,但是会导致图元变形,因为默认的fitInView方法并不是等比例压缩的(但是可以设置填充方式为等比例),fitview有3个重载的方法,因此可以传入等比压缩的矩形区域来展示
-    ui->main_graphics_view->fitInView(graphicsPixmapItem,Qt::KeepAspectRatio);
-    ui->main_graphics_view->clearMask();
+    ui->main_graphics_view->adapt();
+//    ui->main_graphics_view->clearMask();
     ui->main_graphics_view->show();
     setSizeProportionText();
+
+//    槽函数:添加标注信息
+    connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF)>(&MarkGraphicsScene::addMarkItem),this,&MainWidget::addRectMarkInfo);
+//    槽函数:删除标注信息
+    connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF)>(&MarkGraphicsScene::deleteMarkItem),this,&MainWidget::removeRectMarkInfo);
+//    槽函数：修改标注信息(主要是item的坐标产生变化)
+    connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF,QRectF)>(&MarkGraphicsScene::updateMarkItem),this,&MainWidget::updateRectMarkInfo);
+
+
+//    清空标注信息的model
+    markInfoItemModel->clear();
+//    初始化当前图片标注信息
+    initMarkInfo();
 }
 
 void MainWidget::on_settingButton_clicked()
@@ -494,6 +495,11 @@ void MainWidget::on_importButton_clicked()
 void MainWidget::on_import_function(QString path)
 {
     qDebug()<< "接收到importDialog窗口返回值："<<path;
+//    清空标注信息集合
+    markInfoCollection.clear();
+//    读取引入的文件,并将文件内容保存按照格式保存到 markInfoCollection 标注信息集合中
+//    1.读取文件,获取图片绝对路径作为markInfoCollection的key
+//    2.读取文件内容作为对应key的value
 }
 
 void MainWidget::on_narrowButton_clicked()
@@ -520,6 +526,28 @@ void MainWidget::on_adaptWindowButton_clicked()
 void MainWidget::on_saveButton_clicked()
 {
     qDebug()<< "保存按钮被点击......";
+    if (markInfoCollection.keys().size() == 0) return ;
+    QString currentFilePath =  currentImgItem->data().toString();
+
+    if(!markInfoCollection.contains(currentFilePath)){
+        markInfoCollection[currentFilePath].clear();
+    }
+
+    QList<RectMeta> rectMetas;
+    int rowCount = markInfoItemModel->rowCount();
+    for(int i = 0;i<rowCount;i++){
+        QStandardItem *item =  markInfoItemModel->item(i);
+        QVariant variant = item->data();
+//      将QVariant变成结构体
+        RectMeta rectMeta = variant.value<RectMeta>();
+        rectMetas << rectMeta;
+    }
+
+    markInfoCollection[currentFilePath] = rectMetas;
+
+    qDebug() << "总集合的数量" << markInfoCollection[currentImgItem->data().toString()].size();
+    setMarkProgressInfo();
+    QToast::ShowText("已保存");
 }
 
 void MainWidget::on_reviewButton_clicked()
@@ -548,40 +576,108 @@ void MainWidget::on_minimizeWindowButton_clicked()
 
 void MainWidget::initMarkInfo()
 {
+//    从标注集合中获取当前图片的标注集合,然后放到model中
+    QList<RectMeta> rectMetas =  markInfoCollection[currentImgItem->data().toString()];
+    for(RectMeta rectMeta : rectMetas){
 
+        scene->addItemFromStorage(QRectF(rectMeta.x,rectMeta.y,rectMeta.w,rectMeta.h));
+
+        QStandardItem *item = new QStandardItem;
+        item->setData(QVariant::fromValue(rectMeta));
+        item->setText(rectMeta.text);
+        markInfoItemModel->appendRow(item);
+    }
     AnnotationDelegate *delegate = new AnnotationDelegate;
     ui->annotation_list_view->setModel(markInfoItemModel);
-//    设置委托
-//    ui->annotation_list_view->setItemDelegate(delegate);
+//    设置委托(MVVM视图到模型)
+    ui->annotation_list_view->setItemDelegate(delegate);
 //    QListView默认是可以编辑的，可以用setEditTrigers设置QListView的条目是否可以编辑，以及如何进入编辑状态，比如表示在双击，或者选择并单击列表项目,也可以设置不可编辑QAbstractItemView::NoEditTriggers
     ui->annotation_list_view->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::SelectedClicked);
     ui->annotation_list_view->setSpacing(5);
+    ui->annotation_list_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    int rowCount = markInfoItemModel->rowCount();
+    for(int i = 0; i < rowCount; i++) {
+          QStandardItem *item =  markInfoItemModel->item(i);
+          configAnnotationDisplay(item);
+      }
 
-    int rows = markInfoItemModel->rowCount();
-    for(int i = 0; i < 5; i++) {
-          QStandardItem *item = new QStandardItem(QString::number(i));
+
+}
+
+void MainWidget::configAnnotationDisplay(QStandardItem *item)
+{
 //          设置每个Item的尺寸,这里控制的是QComboBox的宽度和高度。
-          item->setSizeHint(QSize(100,50));
-          markInfoItemModel->appendRow(item);
+          item->setSizeHint(QSize(80,50));
           QModelIndex index = markInfoItemModel->indexFromItem(item);
 //        设置listview中的控件为QComboBox
           QComboBox *cmb =new QComboBox;
 //          设置QComboBox是否可编辑
           cmb->setEditable(true);
           cmb->setModel(metaMarkInfoItemModel);
-          cmb->setEditText("看云");
+          cmb->setEditText(item->text());
 //          setIndexWidget要生效，必须setModel(model)的后面
           ui->annotation_list_view->setIndexWidget(index, cmb);
-      }
-
 
 }
 
-void MainWidget::addRectMarkInfo(QGraphicsRectItem *item)
+void MainWidget::addRectMarkInfo(QRectF rectf)
 {
     RectMeta rectMeta;
+    rectMeta.x = rectf.x();
+    rectMeta.y = rectf.y();
+    rectMeta.w = rectf.width();
+    rectMeta.h = rectf.height();
+    rectMeta.text  = "看云22";
+    qDebug() << "接收到一个标注信息：" << rectMeta;
+
+    QStandardItem *item = new QStandardItem;
+//    将结构体变成QVariant
+    item->setData(QVariant::fromValue(rectMeta));
+    item->setText(rectMeta.text);
+    markInfoItemModel->appendRow(item);
+    configAnnotationDisplay(item);
+}
+
+void MainWidget::removeRectMarkInfo(QRectF rectf)
+{
+   qDebug() << "删除标注信息";
+
+   int rowCount = markInfoItemModel->rowCount();
+   for(int i = 0; i < rowCount; i++){
+       QStandardItem *item =  markInfoItemModel->item(i);
+       QVariant variant = item->data();
+//     将QVariant变成结构体
+       RectMeta rectMeta = variant.value<RectMeta>();
+       if(rectMeta.w == rectf.width() && rectMeta.h == rectf.height() && rectMeta.x == rectf.x() && rectMeta.y == rectf.y()){
+           qDebug() << "Model中找到了对应数据";
+           markInfoItemModel->removeRow(i);
+           break;
+       }
+   }
 
 }
+
+
+void MainWidget::updateRectMarkInfo(QRectF oldRectF,QRectF newRectF)
+{
+    qDebug() << "修改标注信息";
+    int rowCount = markInfoItemModel->rowCount();
+    for(int i = 0;i<rowCount;i++){
+        QStandardItem *item =  markInfoItemModel->item(i);
+        QVariant variant = item->data();
+//      将QVariant变成结构体
+        RectMeta rectMeta = variant.value<RectMeta>();
+        if(rectMeta.w == oldRectF.width() && rectMeta.h == oldRectF.height() && rectMeta.x == oldRectF.x() && rectMeta.y == oldRectF.y()){
+            qDebug() << "Model中找到了对应数据";
+            rectMeta.x=newRectF.x();
+            rectMeta.y=newRectF.y();
+            break;
+        }
+    }
+}
+
+
+
 
 void MainWidget::resizeEvent(QResizeEvent *event){
 //    使用Qt内置的图标
@@ -616,3 +712,20 @@ void MainWidget::setSizeProportionText()
 
 }
 
+
+void  MainWidget::setMarkProgressInfo()
+{
+    int hasMarkCount = 0;
+    foreach(const QString key,markInfoCollection.keys()){
+        if(markInfoCollection[key].size() > 0){
+            hasMarkCount++;
+        }
+    }
+
+    QString info = QString("已标注%1/ 总%2   当前位置：%3").arg(hasMarkCount).arg(imgCount).arg(currentImgIndex+1);
+    ui->progress_info->setText(info);
+//    设置进度条最大值
+    ui->progress_bar->setMaximum(imgCount);
+//    设置进度条当前的运行值
+    ui->progress_bar->setValue(hasMarkCount);
+}

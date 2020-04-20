@@ -1,3 +1,4 @@
+﻿#pragma execution_character_set("utf-8")
 #ifndef MARKGRAPHICSVIEW_H
 #define MARKGRAPHICSVIEW_H
 
@@ -29,8 +30,6 @@ public:
 //   适应窗口大小
    void adapt();
 
-
-   void defaultDisplay();
 
 signals:
 //   自定义信号,缩放比例改变。信号
