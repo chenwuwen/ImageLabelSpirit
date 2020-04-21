@@ -7,7 +7,7 @@
 #include <QDebug>
 #include <QStyle>
 #include <QCursor>
-
+#include <QGraphicsSceneMouseEvent>
 
 
 class MarkGraphicsPixmapItem:public QObject,public QGraphicsPixmapItem
@@ -49,6 +49,7 @@ private:
     QPixmap currentPixmap;
 //    空格键是否处于按下状态
     bool spaceActive = false;
+    QPointF startPoint;
 };
 
 #endif // MARKGRAPHICSPIXMAPITEM_H

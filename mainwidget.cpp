@@ -38,7 +38,7 @@ MainWidget::MainWidget(QWidget *parent) :
     ui(new Ui::MainWidget)
 {
     ui->setupUi(this);
-
+    CommonUtil::setQssStyle(":/res/style/scrollbar_style.qss",this);
     initCustomUI();
 
 //    实例化QStandardItemModel
@@ -366,6 +366,8 @@ void MainWidget::on_openDirButton_clicked()
 
             notReviewImgFilesItemModel->appendRow(imageItem);
 
+//            以文件路径为Key,放进总集合中
+            markInfoCollection[info.absoluteFilePath()];
         }
 
 //    设置数据
@@ -446,6 +448,7 @@ void MainWidget::displayImg(){
     connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF)>(&MarkGraphicsScene::deleteMarkItem),this,&MainWidget::removeRectMarkInfo);
 //    槽函数：修改标注信息(主要是item的坐标产生变化)
     connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF,QRectF)>(&MarkGraphicsScene::updateMarkItem),this,&MainWidget::updateRectMarkInfo);
+    connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF,bool)>(&MarkGraphicsScene::itemSelectState),this,&MainWidget::itemSelectState);
 
 
 //    清空标注信息的model
@@ -553,6 +556,14 @@ void MainWidget::on_saveButton_clicked()
 void MainWidget::on_reviewButton_clicked()
 {
     qDebug()<< "查看按钮被点击......";
+    reviewDialog = new ReviewDialog(this);
+//    设置dialog为模态框
+    reviewDialog->setModal(true);
+    reviewDialog->setMarkInfoTable(markInfoCollection);
+    MainWidget::g_masking->show();
+    reviewDialog->exec();
+    MainWidget::g_masking->hide();
+
 }
 
 void MainWidget::on_closeWindowButton_clicked()
@@ -728,4 +739,26 @@ void  MainWidget::setMarkProgressInfo()
     ui->progress_bar->setMaximum(imgCount);
 //    设置进度条当前的运行值
     ui->progress_bar->setValue(hasMarkCount);
+}
+
+void  MainWidget::itemSelectState(QRectF rectf ,bool state)
+{
+   int rowCout =  markInfoItemModel->rowCount();
+   for(int i = 0; i < rowCout ; i++){
+       QStandardItem *item = markInfoItemModel->item(i);
+       QVariant variant = item->data();
+//      将QVariant变成结构体
+       RectMeta rectMeta = variant.value<RectMeta>();
+       if(rectMeta.w == rectf.width() && rectMeta.h == rectf.height() && rectMeta.x == rectf.x() && rectMeta.y == rectf.y()){
+           qDebug() << "Model中找到了对应数据";
+           if(state){
+//               选中状态
+
+           }else{
+//               取消选中状态
+           }
+
+//         ui->annotation_list_view.
+       }
+   }
 }

@@ -18,7 +18,7 @@ void MarkGraphicsView::mousePressEvent(QMouseEvent *event)
     qDebug() << "MarkGraphicsView类 mousePressEvent方法执行";
     if (event->button()!=Qt::LeftButton) return;
     lastMousePos = event->pos();
-    qDebug() << "点击了鼠标左键,同时设定了laseMousePos";
+    qDebug() << "点击了鼠标左键,同时设定了lastMousePos";
 }
 
 void MarkGraphicsView::mouseMoveEvent(QMouseEvent *event)

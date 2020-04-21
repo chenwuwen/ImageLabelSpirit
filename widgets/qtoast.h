@@ -13,7 +13,7 @@
 #include <QMovie>
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
-
+#include <QGraphicsDropShadowEffect>
 /*
  * QToast : 仿Android中Toast控件，用于弹出任意Widget，
  *          常见用法如弹出一个文字提示，图片，GIF等，并于特定时间后自动隐藏
@@ -94,6 +94,8 @@ private:
     QPropertyAnimation *m_pHideAnimation;
     QPropertyAnimation *m_pShowAnimation;
 
+
+
 public:
     static void ShowText(const QString &text,int displayTimeByMSec = 5000,
                          double hPercentage = 0.5,double vPercentage = 0.8,QWidget *parent = nullptr)
@@ -105,12 +107,12 @@ public:
         pLabel->setFrameStyle(QFrame::Panel);
         pLabel->setAlignment(Qt::AlignCenter);
         pLabel->setFont(iFont);
+//        文字是否换行
         pLabel->setWordWrap(true);
         pLabel->setText(text);
 
         QString qss = "background-color:rgb(74,64,53);"
                       "border:none;"
-                      "padding:2px 8px 2px 8px;"
                       "color:#ffffff;";
 
         pLabel->setStyleSheet(qss);
@@ -118,11 +120,27 @@ public:
 
         QToast *iToast = new QToast(parent);
         QFontMetrics metrics(iFont);
+//        得到pLabel尺寸 pLabel->maximumWidth() 得到的是QLable的默认最大宽度
         QRect rect = metrics.boundingRect(QRect(0,0,pLabel->maximumWidth(),pLabel->maximumHeight()),
             Qt::AlignCenter|Qt::TextWordWrap,text);
-        iToast->resize(rect.size()+QSize(metrics.width("A"),0));
+
+//        根据pLabel的尺寸,重定义iToast的尺寸
+        iToast->resize(rect.size()+QSize(metrics.width("A"),10));
 
         iToast->SetWidget(pLabel);
+
+//        实例阴影shadow
+        QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect(iToast);
+//        设置阴影距离
+        shadow->setOffset(0, 0);
+//        设置阴影颜色
+        shadow->setColor(QColor("#444444"));
+//        设置阴影圆角
+        shadow->setBlurRadius(30);
+//        给嵌套QWidget设置阴影
+        iToast->setGraphicsEffect(shadow);
+//        布局器设置边距(此步很重要, 设置宽度为阴影的宽度)
+        iToast->layout()->setMargin(10);
         iToast->SetDisplayTime(displayTimeByMSec);
         iToast->SetDeleteWhenHide(true);
         iToast->MoveToPercentage(hPercentage,vPercentage);

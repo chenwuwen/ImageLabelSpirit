@@ -9,6 +9,7 @@
 #include <QWidget>
 
 #include <module/importdialog.h>
+#include <module/reviewdialog.h>
 #include <widgets/qtoast.h>
 #include <custom/markgraphicspixmapitem.h>
 #include <custom/markgraphicsscene.h>
@@ -68,6 +69,8 @@ private slots:
     void removeRectMarkInfo(QRectF);
 //    修改标注(标注位置信息发生变化)
     void updateRectMarkInfo(QRectF oldRectF,QRectF newRectF);
+//    item被选中
+    void itemSelectState(QRectF,bool);
 signals:
 //    自定义信号,发送图片路径给导出窗口
     void sendExportLocalPath(QString);
@@ -105,6 +108,8 @@ private:
     QString dirPath;
 //    引入窗口
     ImportDialog *importDialog;
+//    查看窗口
+    ReviewDialog *reviewDialog;
 //    标注信息集合,key为图片名称,value为自定义的结构体
     QMap<QString,QList<RectMeta>> markInfoCollection;
 

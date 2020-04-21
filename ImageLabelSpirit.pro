@@ -39,7 +39,8 @@ SOURCES += \
     widgets/markgraphicsview.cpp \
     custom/markgraphicspixmapitem.cpp \
     custom/markgraphicsscene.cpp \
-    widgets/qtoast.cpp
+    widgets/qtoast.cpp \
+    module/reviewdialog.cpp
 
 HEADERS += \
         mainwidget.h \
@@ -56,7 +57,8 @@ HEADERS += \
     widgets/markgraphicsview.h \
     custom/markgraphicspixmapitem.h \
     custom/markgraphicsscene.h \
-    widgets/qtoast.h
+    widgets/qtoast.h \
+    module/reviewdialog.h
 
 
 FORMS += \
@@ -64,7 +66,8 @@ FORMS += \
      module/importdialog.ui \
     module/exportdialog.ui \
     module/settingdialog.ui \
-    splashwidget.ui
+    splashwidget.ui \
+    module/reviewdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

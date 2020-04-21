@@ -2,11 +2,7 @@
 #include "importdialog.h"
 #include "ui_importdialog.h"
 
-#include <QFileDialog>
-#include <QStandardPaths>
 
-#include <common/commonutil.h>
-#include <common/fontawesomeicons.h>
 
 
 ImportDialog::ImportDialog(QWidget *parent) :

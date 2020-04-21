@@ -1,0 +1,83 @@
+QPushButton#review_dialog_export_btn{
+    background-color: rgb(17,124,216);
+    color: rgb(255, 255, 255);
+    border: 7px solid rgb(17,124,216);
+    padding-left:10px;
+    padding-right:10px;
+}
+
+QWidget{
+   background-color: rgb(255, 255, 255);
+}
+
+
+QLabel#review_dialog_title{
+    color: rgb(93,93,93);
+    size: 4;
+    font: 75 10pt "Microsoft YaHei UI";
+}
+
+QPushButton#review_dialog_close_btn:hover{
+    background-color:rgb(112, 184, 240);
+    color:white;
+    border:none;
+}
+
+QPushButton#review_dialog_close_btn{
+    color:rgba(112,112,112);
+    border:none;
+    padding:2px 8px 2px 8px
+}
+
+
+
+QPushButton{
+    background-color:transparent;
+}
+
+
+
+/*QTableView 左上角样式*/
+QTableView QTableCornerButton::section {
+    color: red;
+    background-color: rgb(64, 64, 64);
+    border: 5px solid #f6f7fa;
+    border-radius:0px;
+    border-color: rgb(64, 64, 64);
+ }
+
+QTableView {
+    /*表格内文字颜色*/
+    color: rgb(0,0,0);
+    /*表格内框颜色*/
+    gridline-color: rgb(204,204,204);
+    /*表格内背景色*/
+    background-color: rgb(255,255,255);
+    /*同上 奇偶行颜色区分*/
+    alternate-background-color: rgb(195, 195, 195);
+    /*选中区域的文字颜色*/
+    selection-color: white;
+    /*选中区域的背景色*/
+    selection-background-color: rgb(202,214,212);
+    border: 1px solid rgb(204,204,204);
+    border-radius: 0px;
+}
+
+
+
+/*表格表头样式*/
+QHeaderView::section{
+    /*文字颜色*/
+    color: rgb(0,0,0);
+    /*背景色*/
+    background-color:rgb(195, 195, 195);
+    /*先把边框宽度设为0，即隐藏所有表头边框 必须设置border,否则表头无法扁平化*/
+    border:0px solid #E0DDDC;
+    font: bold 10pt;
+}
+
+
+
+
+
+

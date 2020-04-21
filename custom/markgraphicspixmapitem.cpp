@@ -15,7 +15,7 @@ MarkGraphicsPixmapItem::MarkGraphicsPixmapItem(const QPixmap &pixmap, QGraphicsI
     setAcceptDrops(true);
 //    setAcceptHoverEvents(true);
 //    可选择
-//    setFlags(QGraphicsItem::ItemIsSelectable | );
+//    setFlags(QGraphicsItem::ItemIsSelectable);
 //    可移动
     setFlags(QGraphicsItem::ItemIsMovable);
 }
@@ -39,13 +39,17 @@ void MarkGraphicsPixmapItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     qDebug() << "MarkGraphicsPixmapItem类的 mouseMoveEvent() 方法执行";
     QGraphicsItem::mouseMoveEvent(event);
-//    if(spaceActive) {
-//        如果是空格键按下状态鼠标移动则是拖拽事件
-//        QDrag *drag = new QDrag(event->widget());
-//        drag->start();
-//    }else{
-//        QGraphicsRectItem *rectItem = new QGraphicsRectItem;
-//    }
+//    event->modifiers() 返回发送事件时使用的键盘修饰符。但是数量有限
+
+
+    if(spaceActive) {
+//   如果是空格键按下状态鼠标移动则是拖拽事件
+
+
+
+    }else{
+        QGraphicsRectItem *rectItem = new QGraphicsRectItem;
+    }
 }
 
 
@@ -53,6 +57,7 @@ void MarkGraphicsPixmapItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     qDebug() << "MarkGraphicsPixmapItem类 的 mousePressEvent() 方法执行";
 //    QGraphicsItem::mousePressEvent(event);
+    startPoint = event->pos();
 }
 
 void MarkGraphicsPixmapItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)

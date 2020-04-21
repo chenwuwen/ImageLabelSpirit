@@ -5,79 +5,89 @@ QScrollArea{
   border-radius: 2px;
 }
 
+/*垂直滑块整体*/
 QScrollBar:vertical
 {
-  width: 4px;
-  border:0px solid;
-  border-radius: 2px;
-  margin: 0px,0px,0px,0px;
-  background-color: transparent;
-  background:#F5F5F5;
+  /*上预留位置（放置向上箭头）*/
+  padding-top:20px;
+  /* 下预留位置（放置向下箭头） */
+  padding-bottom:20px;
+  /*左预留位置（美观）*/
+  padding-left:3px;
+  /*右预留位置（美观）*/
+  padding-right:3px;
+  /*左分割线*/
+  border-left:1px solid #d7d7d7;
+  /*背景色*/
+  background:#FFFFFF;
 }
 
-QScrollBar:vertical:hover
-{
-  width: 4px;
-  border:0px solid;
-  margin: 0px,0px,0px,0px;
-  background:#F5F5F5;
-}
 
+/*滑块样式*/
 QScrollBar::handle:vertical
 {
   width:4px;
+  /*滑块颜色*/
   background:#E1E1E1;
+  /*边角圆润 */
   border-radius: 2px;
-  height: 40px;
+  /*滑块最小高度*/
+  min-height: 40px;
 
 }
 
+/*鼠标触及滑块样式*/
 QScrollBar::handle:vertical:hover
 {
-  background:#E1E1E1;
-  border-radius: 2px;
+  background:#d0d0d0;
 }
 
+
+/*向下箭头样式*/
 QScrollBar::add-line:vertical
 {
-  height:11px;
-  background-color: transparent;
-  subcontrol-position:bottom;
-  border:0px solid;
-  border-radius: 2px;
+ background:url(:/res/icons/arrow_down.png) center no-repeat;
 
 }
+
+/*向上箭头样式*/
 QScrollBar::sub-line:vertical
 {
-  height:11px;
-  background-color: transparent;
-  subcontrol-position:top;
-  border:0px solid;
-  border-radius: 2px;
+  background:url(:/res/icons/arrow_up.png) center no-repeat;
 }
 
-QScrollBar::add-page:vertical
+/*水平方向滚动条*/
+QScrollBar:horizontal
 {
-  background-color: #F5F5F5;
-  border:0px solid;
-  border-radius: 2px;
+      background:#FFFFFF;
+      padding-top:3px;"
+      padding-bottom:3px;
+      padding-left:20px;"
+      padding-right:20px;
 }
 
-QScrollBar::sub-page:vertical
+/*水平方向滚动条上的滑块*/
+QScrollBar::handle:horizontal
 {
-  background-color: #F5F5F5;
-  border:0px solid;
-  border-radius: 2px;
+      background:#dbdbdb;
+      border-radius:6px;
+      min-width:80px;
 }
 
-QScrollBar::up-arrow:vertical{
-  image : url(:/image/scroll_up_arrow.png);
-  border:0px solid;
-  border-radius: 3px;
+/*水平方向滚动条上的滑块 鼠标滑过*/
+QScrollBar::handle:horizontal:hover
+{
+   background:#d0d0d0;
 }
 
-QScrollBar::down-arrow:vertical {
-  image : url(:/image/scroll_down_arrow.png);
-  border:0px solid;
-  border-radius: 3px;
+/*水平方向滚动条 左箭头 */
+QScrollBar::add-line:horizontal
+{
+    background:url(:/images/resource/images/checkout/right.png) center no-repeat;
+}
+
+/*水平方向滚动条 右箭头 */
+QScrollBar::add-line:horizontal
+{
+    background:url(:/images/resource/images/checkout/right.png) center no-repeat;
 }

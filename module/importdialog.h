@@ -5,6 +5,11 @@
 #include <QDialog>
 
 #include <widgets/filebutton.h>
+#include <QFileDialog>
+#include <QStandardPaths>
+
+#include <common/commonutil.h>
+#include <common/fontawesomeicons.h>
 
 namespace Ui {
 class ImportDialog;

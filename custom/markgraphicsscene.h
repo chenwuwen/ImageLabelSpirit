@@ -29,6 +29,7 @@ public slots:
 //    保存标注的Item信息
     void saveMarkItem();
 
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
@@ -50,6 +51,9 @@ signals:
 //    更改了一个Item信息(主要是移动item的位置)
     void updateMarkItem(QRectF oldRectF,QRectF newRectF);
 
+//    Item被选中,或者取消选中 信号
+    void itemSelectState(QRectF,bool);
+
 private:
     bool ctrlActive = false;
     bool spaceActive = false;
@@ -62,6 +66,8 @@ private:
 
 //    旧的标注
     QGraphicsRectItem *oldQGraphicsRectItem = NULL;
+//    旧标注的信息
+    QRectF oldRectF;
 
 
 };
