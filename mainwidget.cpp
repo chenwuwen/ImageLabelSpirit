@@ -503,6 +503,25 @@ void MainWidget::on_import_function(QString path)
 //    读取引入的文件,并将文件内容保存按照格式保存到 markInfoCollection 标注信息集合中
 //    1.读取文件,获取图片绝对路径作为markInfoCollection的key
 //    2.读取文件内容作为对应key的value
+//    3.重置显示
+
+    CommonUtil::readJSonValue(markInfoCollection,path);
+    qDebug() << "导入数据完毕,数据量：" << markInfoCollection.size();
+    currentImgIndex = 0;
+    imgCount = markInfoCollection.keys().size();
+    notReviewImgFilesItemModel->clear();
+    hasReviewImgFilesItemModel->clear();
+    foreach(const QString key, markInfoCollection.keys()){
+        QStandardItem *item = new QStandardItem;
+        item->setIcon(QIcon(key));
+        item->setData(key);
+        notReviewImgFilesItemModel->appendRow(item);
+    }
+    currentImgItem = notReviewImgFilesItemModel->item(currentImgIndex);
+    notReviewImgFilesItemModel->takeRow(currentImgIndex);
+    setMarkProgressInfo();
+    displayImg();
+
 }
 
 void MainWidget::on_narrowButton_clicked()
@@ -560,6 +579,8 @@ void MainWidget::on_reviewButton_clicked()
 //    设置dialog为模态框
     reviewDialog->setModal(true);
     reviewDialog->setMarkInfoTable(markInfoCollection);
+    connect(this,static_cast<void (MainWidget::*)(QString)>(&MainWidget::sendExportLocalPath),reviewDialog,&ReviewDialog::setExportLocalPath);
+    emit sendExportLocalPath(dirPath);
     MainWidget::g_masking->show();
     reviewDialog->exec();
     MainWidget::g_masking->hide();

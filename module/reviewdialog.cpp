@@ -1,4 +1,4 @@
-#include "reviewdialog.h"
+﻿#include "reviewdialog.h"
 #include "ui_reviewdialog.h"
 
 
@@ -8,7 +8,7 @@ ReviewDialog::ReviewDialog(QWidget *parent) :
     ui(new Ui::ReviewDialog)
 {
     ui->setupUi(this);
-    resize(parent->width() * 0.8,parent->height() * 0.8);
+    resize(parent->width() * 0.6,parent->height() * 0.6);
 //    配置无边框
     setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
     setWindowTitle("查看标注结果");
@@ -29,8 +29,8 @@ ReviewDialog::ReviewDialog(QWidget *parent) :
    ui->review_table->setSelectionBehavior(QAbstractItemView::SelectRows);
 //    设置表格的单元为只读属性，即不能编辑
    ui->review_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-//   表头信息显示居左
-   ui->review_table->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
+//   表头信息显示水平居左垂直居中
+   ui->review_table->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 //   隐藏网格
    ui->review_table->setShowGrid(false);
 //   选择整行
@@ -55,6 +55,7 @@ ReviewDialog::~ReviewDialog()
 
 void ReviewDialog::setMarkInfoTable(QMap<QString,QList<RectMetaInfo>> markCollection)
 {
+    this->collection = markCollection;
 //    设置表头
     QStringList labels = QObject::trUtf8("文件地址,标注数量,时间").simplified().split(",");
     tableItemModel->setHorizontalHeaderLabels(labels);
@@ -74,9 +75,19 @@ void ReviewDialog::setMarkInfoTable(QMap<QString,QList<RectMetaInfo>> markCollec
 
 }
 
+void ReviewDialog::setExportLocalPath(QString localPath)
+{
+    this->localPath = localPath;
+}
+
 void ReviewDialog::on_review_dialog_export_btn_clicked()
 {
-
+//    得到路径分隔符
+    QChar separ = QDir::separator();
+//   QDir::toNativeSeparators() 方法,得到转换后的路径
+    QString savePath = QDir::toNativeSeparators(localPath) + separ + "outputs" + separ;
+    qDebug() << "导出路径为：" << savePath;
+    CommonUtil::saveJSonValue(collection,savePath);
 }
 
 void ReviewDialog::on_review_dialog_close_btn_clicked()

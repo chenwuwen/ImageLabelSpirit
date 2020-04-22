@@ -59,6 +59,8 @@ private:
     bool spaceActive = false;
     bool isDrawing = false;
     bool isMoving = false;
+//    操作阈值
+    static const int OPERATION_THRESHOLD_VALUE = 20;
 //    开始点位置,结束点位置
     QPointF startPoint,endPoint;
 //    矩形框item

@@ -71,6 +71,7 @@ void ImportDialog::on_importFileButton_clicked(){
 void ImportDialog::on_determine_import_button_clicked()
 {
     if(!dirPath.isEmpty()){
+        qDebug() << "导入路径为：" << dirPath;
         emit sendData(dirPath);
         this->close();
     }

@@ -3,10 +3,20 @@
 #define COMMONUTIL_H
 
 #include <QFileInfoList>
+#include <QMap>
 #include <QString>
 #include <QWidget>
-
-
+#include <custom/meta.h>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QFile>
+#include <QString>
+#include <QDebug>
+#include <QFileInfoList>
+#include <QDir>
+#include <QDateTime>
+#include <QPixmap>
 
 class CommonUtil
 {
@@ -18,6 +28,8 @@ public:
     static QString readQssFile(const QString& filePath);
     static qreal compressProportion(QPixmap& pixmap,QSize targetSize);
     static QRectF defaultDisplayQRectF(const QString pixmapPath,QSize targetSize);
+    static void saveJSonValue(QMap<QString,QList<RectMetaInfo>> map, QString savePath);
+    static void readJSonValue(QMap<QString,QList<RectMetaInfo>> &collection, QString dirPath);
 };
 
 #endif // COMMONUTIL_H

@@ -85,7 +85,7 @@ void MarkGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
      }
 
 //    说明移动结束
-    if(event->button()==Qt::LeftButton && isMoving) {
+    if(event->button() == Qt::LeftButton && isMoving && oldRectF != oldQGraphicsRectItem->rect()) {
 //        如果鼠标左键按着的同时移动鼠标
         qDebug() << "MarkGraphicsScene 移动Item结束,其原信息：" << oldRectF << " 新的信息：" << oldQGraphicsRectItem->rect();
         QPointF point = event->scenePos();
@@ -117,7 +117,7 @@ void MarkGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         endPoint = point;
         if ( isDrawing ){
 //           只有鼠标移动一定的距离才判断是要进行标注,然后开始画标注,因为鼠标一直在移动,所以画标注的步骤是先删之前画的范围,再画新范围
-            if(endPoint.x()- startPoint.x()>20 && endPoint.y()- startPoint.y()>20){
+            if(endPoint.x()- startPoint.x()>OPERATION_THRESHOLD_VALUE && endPoint.y()- startPoint.y()>OPERATION_THRESHOLD_VALUE){
 //                画新item之前先移除之前画的
                 removeItem(rectItem);
                 rectItem->setRect(startPoint.x(), startPoint.y(), endPoint.x()-startPoint.x(), endPoint.y()-startPoint.y());
@@ -126,16 +126,19 @@ void MarkGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                 addItem(rectItem);
              }
        }
-
+        int x,y=100;
         if ( isMoving ){
-            if(endPoint.x()- startPoint.x()>20 && endPoint.y()- startPoint.y()>20){
+            if(endPoint.x()- startPoint.x()>OPERATION_THRESHOLD_VALUE && endPoint.y()- startPoint.y()>OPERATION_THRESHOLD_VALUE){
 //                startPoint位置的x轴距离左上角距离
                 qreal x_range_top_left_corner = oldQGraphicsRectItem->x() - startPoint.x();
 //                startPoint位置的y轴距离左上角距离
                 qreal y_range_top_left_corner = oldQGraphicsRectItem->y() - startPoint.y();
+                x++;
+                y++;
 //                (endPoint.x() - startPoint.x()) (startPoint.x() - x_range_top_left_corner);
 //                移动
-                oldQGraphicsRectItem->moveBy(oldQGraphicsRectItem->x() + (endPoint.x() - startPoint.x()),oldQGraphicsRectItem->y() + (endPoint.y() - startPoint.y()));
+//                oldQGraphicsRectItem->moveBy(oldRectF.x() + (endPoint.x() - startPoint.x()),oldRectF.y() + (endPoint.y() - startPoint.y()));
+                oldQGraphicsRectItem->moveBy(0,0);
 //                oldQGraphicsRectItem->moveBy(endPoint.x() - x_range_top_left_corner,endPoint.y() - y_range_top_left_corner );
 //                oldQGraphicsRectItem->setRect(endPoint.x() - x_range_top_left_corner,endPoint.y() - y_range_top_left_corner,oldRectF.width(),oldRectF.height());
             }

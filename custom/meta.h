@@ -35,5 +35,15 @@ QDebug inline operator<<(QDebug debug, const RectMetaInfo &rect)
 
 Q_DECLARE_METATYPE(RectMetaInfo);
 
+//导出方式枚举
+enum export_type{
+    JSON,
+    XML,
+    MONGO
+};
+
+
+
+
 
 #endif // META_H

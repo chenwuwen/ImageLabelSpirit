@@ -1,11 +1,7 @@
 ﻿#include "commonutil.h"
 
-#include <QFile>
-#include <QString>
-#include <QWidget>
-#include <QDebug>
-#include <QFileInfoList>
-#include <QDir>
+
+
 
 CommonUtil::CommonUtil()
 {
@@ -104,3 +100,141 @@ QRectF CommonUtil::defaultDisplayQRectF(const QString pixmapPath,QSize targetSiz
     pixmap = pixmap.scaled(targetSize, Qt::KeepAspectRatio);
     return  pixmap.rect();
 }
+
+void CommonUtil::saveJSonValue(QMap<QString, QList<RectMetaInfo> > mapCollection,QString savePath)
+{
+    QJsonDocument document;
+    foreach(const QString key,mapCollection.keys()){
+         QJsonArray object;
+         QJsonObject outputs;
+         QList<RectMetaInfo> list = mapCollection[key];
+         for(RectMetaInfo rectMeta: list){
+//             一个标注
+             QJsonObject item;
+//             标注中的位置尺寸信息
+             QJsonObject pos;
+
+             pos.insert("x",static_cast<int>(rectMeta.x));
+             pos.insert("y",static_cast<int>(rectMeta.y));
+             pos.insert("w",static_cast<int>(rectMeta.w));
+             pos.insert("h",static_cast<int>(rectMeta.h));
+
+             item.insert("name",rectMeta.text);
+             item.insert("bndbox",pos);
+
+             object.append(item);
+         }
+
+         outputs.insert("object",object);
+
+//         根json
+         QJsonObject root;
+         root.insert("path",key);
+         root.insert("outputs",outputs);
+         root.insert("time_labeled",QDateTime::currentDateTime().toString());
+         root.insert("labeled",list.size()>0);
+
+         QPixmap pixmap(key);
+
+//         尺寸
+         QJsonObject size;
+         size.insert("width",pixmap.width());
+         size.insert("height",pixmap.height());
+         size.insert("depth",pixmap.depth());
+
+         root.insert("size",size);
+
+         document.setObject(root);
+         QFileInfo fileInfo(key);
+//         得到的文件名称是不带后缀的名称
+         QString fileName = fileInfo.baseName();
+         QFile file(savePath + fileName + ".json");
+
+         QDir saveDir(savePath);
+         if(!saveDir.exists()){
+           qDebug() << "文件夹不存在,创建文件夹" ;
+           saveDir.mkdir(savePath);
+         }
+         qDebug() << "导出文件的绝对路径：" << file.fileName();
+//         以读写方式打开目录下的文件，若该文件不存在则会自动创建
+         file.open(QIODevice::ReadWrite);
+//         将json写入文件中去
+         file.write(document.toJson());
+         file.close();
+    }
+}
+
+void CommonUtil::readJSonValue(QMap<QString, QList<RectMetaInfo>> &collection, QString dirPath)
+{
+    QDir dir(dirPath);
+    QStringList nameFilters;
+    nameFilters << "*.json" ;
+    QFileInfoList fileInfoList =  dir.entryInfoList(nameFilters, QDir::Files|QDir::Readable, QDir::Name);
+    qDebug() << "读取到的Json文件数量为:" << fileInfoList.size();
+    QJsonParseError complex_json_error;
+    QJsonDocument document;
+    foreach(const QFileInfo fileInfo , fileInfoList){
+        QList<RectMetaInfo> rectInfos;
+//        读取文件
+        QFile file(fileInfo.absoluteFilePath());
+
+//        只读方式打开
+        file.open(QFile::ReadOnly);
+
+//       读取为json
+        document = QJsonDocument::fromJson(file.readAll(), &complex_json_error);
+
+        if(complex_json_error.error == QJsonParseError::NoError){
+            QJsonObject root = document.object();
+
+            QJsonValue pathJsonValue = root.value("path");
+            QString path = pathJsonValue.toVariant().toString();
+
+            QJsonValue outputsJsonValue = root.value("outputs");
+
+    //         判断outputsJsonValue是不是QJsonObject对象
+             if(outputsJsonValue.isObject()){
+
+               QJsonObject outputs = outputsJsonValue.toVariant().toJsonObject();
+
+    //           判断outputsJsonValue是否包含object key
+               if (outputs.contains("object")){
+                  QJsonValue objectJsonValue = outputs.value("object");
+
+    //              判断objectJsonValue是否是QJsonArray类型
+                  if( objectJsonValue.isArray() ){
+                       QJsonArray array = objectJsonValue.toArray();
+                       if(!array.empty()){
+                           for (int i = 0 ;i <array.size();i++){
+                             QJsonValue value =  array.at(i);
+                             QJsonObject vo = value.toObject();
+                             QString text = vo.value("name").toString();
+                             QJsonObject bndbox = vo.value("bndbox").toObject();
+//                             QVariant bndbox = vo.value("bndbox").toVariant();
+//                             RectMetaInfo rectMeta = bndbox.value<RectMetaInfo>();
+                             RectMetaInfo rectMeta;
+                             rectMeta.x =  bndbox.value("x").toInt();
+                             rectMeta.y =  bndbox.value("y").toInt();
+                             rectMeta.w =  bndbox.value("w").toInt();
+                             rectMeta.h =  bndbox.value("h").toInt();
+                             rectMeta.text = text;
+
+                             rectInfos << rectMeta;
+                           }
+                       }
+                  }
+
+               }
+
+             }
+            collection[path] = rectInfos;
+        }else{
+            qDebug() << "读取JSON文件出错：" << fileInfo.absoluteFilePath() << " 错误类型：" << complex_json_error.error;
+        }
+
+    }
+
+    qDebug() << "读取JSON数据完毕,数据量为：" << collection.size();
+}
+
+
