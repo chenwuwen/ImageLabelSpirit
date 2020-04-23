@@ -17,6 +17,8 @@
 #include <QDir>
 #include <QDateTime>
 #include <QPixmap>
+#include <QDomDocument>
+#include <QDomNodeList>
 
 class CommonUtil
 {
@@ -28,8 +30,10 @@ public:
     static QString readQssFile(const QString& filePath);
     static qreal compressProportion(QPixmap& pixmap,QSize targetSize);
     static QRectF defaultDisplayQRectF(const QString pixmapPath,QSize targetSize);
-    static void saveJSonValue(QMap<QString,QList<RectMetaInfo>> map, QString savePath);
+    static void saveJSonValue(const QMap<QString,QList<RectMetaInfo>> map, QString savePath);
     static void readJSonValue(QMap<QString,QList<RectMetaInfo>> &collection, QString dirPath);
+    static void saveXmlValue(const QMap<QString,QList<RectMetaInfo>> map, QString savePath);
+    static void readXmlValue(QMap<QString,QList<RectMetaInfo>> &collection, QString dirPath);
 };
 
 #endif // COMMONUTIL_H

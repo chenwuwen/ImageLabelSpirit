@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+QT       += core gui network xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -40,7 +40,8 @@ SOURCES += \
     custom/markgraphicspixmapitem.cpp \
     custom/markgraphicsscene.cpp \
     widgets/qtoast.cpp \
-    module/reviewdialog.cpp
+    module/reviewdialog.cpp \
+    custom/filelistdelegate.cpp
 
 HEADERS += \
         mainwidget.h \
@@ -58,7 +59,8 @@ HEADERS += \
     custom/markgraphicspixmapitem.h \
     custom/markgraphicsscene.h \
     widgets/qtoast.h \
-    module/reviewdialog.h
+    module/reviewdialog.h \
+    custom/filelistdelegate.h
 
 
 FORMS += \

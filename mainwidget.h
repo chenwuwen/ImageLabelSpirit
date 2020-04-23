@@ -7,7 +7,7 @@
 #include <QStandardItemModel>
 #include <QStringListModel>
 #include <QWidget>
-
+#include <QClipboard>
 #include <module/importdialog.h>
 #include <module/reviewdialog.h>
 #include <widgets/qtoast.h>
@@ -72,8 +72,8 @@ private slots:
 //    item被选中
     void itemSelectState(QRectF,bool);
 signals:
-//    自定义信号,发送图片路径给导出窗口
-    void sendExportLocalPath(QString);
+//    自定义信号,发送图片路径和标注信息集合给导出窗口
+    void sendExportLocalPathAndCollection(QString,QMap<QString,QList<RectMetaInfo>>);
 //    自定义信号,发送图片路径给设置窗口
     void sendImageLocalPath(QString);
 
@@ -112,7 +112,10 @@ private:
     ReviewDialog *reviewDialog;
 //    标注信息集合,key为图片名称,value为自定义的结构体
     QMap<QString,QList<RectMeta>> markInfoCollection;
-
+//    上次标注的内容
+    QString lastMarkInfo;
+//    剪切板
+    QClipboard *clipboard = QApplication::clipboard();
 };
 
 #endif // MAINWIDGET_H

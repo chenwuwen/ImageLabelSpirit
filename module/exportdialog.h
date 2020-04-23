@@ -5,6 +5,8 @@
 #include <QDialog>
 
 #include <widgets/filebutton.h>
+#include <QList>
+#include <custom/meta.h>
 
 namespace Ui {
 class ExportDialog;
@@ -22,7 +24,8 @@ public:
 public slots:
     void on_close_export_dialog_btn_clicked();
     void on_exportFileButton_clicked();
-    void setExportLocalPath(QString);
+    void setExportLocalPathAndMarkInfoCollection(QString,QMap<QString,QList<RectMetaInfo>>);
+
 
 private slots:
     void on_determine_export_button_clicked();
@@ -32,6 +35,7 @@ private:
     FileButton *fileButton;
 //    父窗口传过来的路径值
     QString localPath;
+    QMap<QString,QList<RectMetaInfo>> markInfoCollection;
 };
 
 #endif // EXPORTDIALOG_H

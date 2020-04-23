@@ -127,6 +127,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="review_dialog_export_btn">
+        <property name="cursor">
+         <cursorShape>PointingHandCursor</cursorShape>
+        </property>
         <property name="text">
          <string>导出</string>
         </property>

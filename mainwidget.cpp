@@ -26,6 +26,7 @@
 #include <module/settingdialog.h>
 
 #include <custom/annotationdelegate.h>
+#include <custom/filelistdelegate.h>
 #include <custom/markgraphicspixmapitem.h>
 #include <custom/meta.h>
 
@@ -395,8 +396,12 @@ void MainWidget::on_openDirButton_clicked()
     ui->right_file_listView->setIconSize(size);
 
 //    设置显示模式为IconModel
-    ui->left_file_listView->setViewMode(QListView::IconMode);
-    ui->right_file_listView->setViewMode(QListView::IconMode);
+//    ui->left_file_listView->setViewMode(QListView::IconMode);
+//    ui->right_file_listView->setViewMode(QListView::IconMode);
+
+    FileListDelegate *deleteLater = new FileListDelegate(this);
+    ui->right_file_listView->setItemDelegate(deleteLater);
+
 //    设置不显示滚动条
     ui->left_file_listView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->left_file_listView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -473,8 +478,8 @@ void MainWidget::on_exportButton_clicked()
     ExportDialog *exportDialog = new ExportDialog(this);
 //    设置dialog为模态框
     exportDialog->setModal(true);
-    connect(this,static_cast<void (MainWidget::*)(QString)>(&MainWidget::sendExportLocalPath),exportDialog,&ExportDialog::setExportLocalPath);
-    emit sendExportLocalPath(dirPath);
+    connect(this,static_cast<void (MainWidget::*)(QString,QMap<QString,QList<RectMetaInfo>>)>(&MainWidget::sendExportLocalPathAndCollection),exportDialog,&ExportDialog::setExportLocalPathAndMarkInfoCollection);
+    emit sendExportLocalPathAndCollection(dirPath,markInfoCollection);
     MainWidget::g_masking->show();
     exportDialog->exec();
     MainWidget::g_masking->hide();
@@ -506,6 +511,11 @@ void MainWidget::on_import_function(QString path)
 //    3.重置显示
 
     CommonUtil::readJSonValue(markInfoCollection,path);
+    if (markInfoCollection.size() == 0){
+        qDebug() << "导入JSON发现集合为空,尝试导入XML";
+        CommonUtil::readXmlValue(markInfoCollection,path);
+    }
+
     qDebug() << "导入数据完毕,数据量：" << markInfoCollection.size();
     currentImgIndex = 0;
     imgCount = markInfoCollection.keys().size();
@@ -579,11 +589,18 @@ void MainWidget::on_reviewButton_clicked()
 //    设置dialog为模态框
     reviewDialog->setModal(true);
     reviewDialog->setMarkInfoTable(markInfoCollection);
-    connect(this,static_cast<void (MainWidget::*)(QString)>(&MainWidget::sendExportLocalPath),reviewDialog,&ReviewDialog::setExportLocalPath);
-    emit sendExportLocalPath(dirPath);
+    connect(this,static_cast<void (MainWidget::*)(QString,QMap<QString,QList<RectMetaInfo>>)>(&MainWidget::sendExportLocalPathAndCollection),reviewDialog,&ReviewDialog::setExportLocalPath);
+    emit sendExportLocalPathAndCollection(dirPath,markInfoCollection);
     MainWidget::g_masking->show();
-    reviewDialog->exec();
+    int return_code = reviewDialog->exec();
     MainWidget::g_masking->hide();
+    if (return_code == QDialog::Accepted){
+        qDebug() << "说明点击的是导出按钮";
+        on_exportButton_clicked();
+    }else{
+        qDebug() << "说明点击的是Dialog右上角的关闭按钮";
+    }
+
 
 }
 
@@ -659,7 +676,14 @@ void MainWidget::addRectMarkInfo(QRectF rectf)
     rectMeta.y = rectf.y();
     rectMeta.w = rectf.width();
     rectMeta.h = rectf.height();
-    rectMeta.text  = "看云22";
+//    如果之前没有标记过,则使用下拉框中的第一个文字信息,否则使用上次输入的信息
+    if (lastMarkInfo.isEmpty()){
+       rectMeta.text  = lastMarkInfo;
+    }else{
+        lastMarkInfo = metaMarkInfoItemModel->stringList().at(0);
+        rectMeta.text  = lastMarkInfo;
+    }
+
     qDebug() << "接收到一个标注信息：" << rectMeta;
 
     QStandardItem *item = new QStandardItem;

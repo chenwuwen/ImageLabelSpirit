@@ -150,31 +150,40 @@
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
              <widget class="QPushButton" name="xml_btn">
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="text">
                <string>XML</string>
               </property>
               <attribute name="buttonGroup">
-               <string notr="true">buttonGroup</string>
+               <string notr="true">export_type_button_group</string>
               </attribute>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="json_btn">
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="text">
                <string>JSON</string>
               </property>
               <attribute name="buttonGroup">
-               <string notr="true">buttonGroup</string>
+               <string notr="true">export_type_button_group</string>
               </attribute>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="mongo_btn">
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="text">
                <string>MongoDB</string>
               </property>
               <attribute name="buttonGroup">
-               <string notr="true">buttonGroup</string>
+               <string notr="true">export_type_button_group</string>
               </attribute>
              </widget>
             </item>
@@ -204,6 +213,9 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
               </property>
               <property name="text">
                <string>上传到神箭手</string>
@@ -252,6 +264,9 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="cursor">
+         <cursorShape>PointingHandCursor</cursorShape>
+        </property>
         <property name="text">
          <string>确定导出</string>
         </property>
@@ -267,6 +282,6 @@
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup"/>
+  <buttongroup name="export_type_button_group"/>
  </buttongroups>
 </ui>

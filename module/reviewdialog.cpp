@@ -82,15 +82,14 @@ void ReviewDialog::setExportLocalPath(QString localPath)
 
 void ReviewDialog::on_review_dialog_export_btn_clicked()
 {
-//    得到路径分隔符
-    QChar separ = QDir::separator();
-//   QDir::toNativeSeparators() 方法,得到转换后的路径
-    QString savePath = QDir::toNativeSeparators(localPath) + separ + "outputs" + separ;
-    qDebug() << "导出路径为：" << savePath;
-    CommonUtil::saveJSonValue(collection,savePath);
+//    this->close();
+//    accept()方法也是关闭窗口的方法,但是返回值不同,这样父类就知道是哪个按钮点击的关闭了,从而做出对应操作
+    accept();
 }
 
 void ReviewDialog::on_review_dialog_close_btn_clicked()
 {
-    this->close();
+//    this->close();
+//    reject()方法也是关闭窗口的方法,但是返回值不同,这样父类就知道是哪个按钮点击的关闭了,从而做出对应操作
+    this->reject();
 }

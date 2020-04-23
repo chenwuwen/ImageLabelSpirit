@@ -101,7 +101,7 @@ QRectF CommonUtil::defaultDisplayQRectF(const QString pixmapPath,QSize targetSiz
     return  pixmap.rect();
 }
 
-void CommonUtil::saveJSonValue(QMap<QString, QList<RectMetaInfo> > mapCollection,QString savePath)
+void CommonUtil::saveJSonValue(const QMap<QString, QList<RectMetaInfo> > mapCollection,QString savePath)
 {
     QJsonDocument document;
     foreach(const QString key,mapCollection.keys()){
@@ -235,6 +235,200 @@ void CommonUtil::readJSonValue(QMap<QString, QList<RectMetaInfo>> &collection, Q
     }
 
     qDebug() << "读取JSON数据完毕,数据量为：" << collection.size();
+}
+
+void CommonUtil::saveXmlValue(const QMap<QString, QList<RectMetaInfo>> map, QString savePath)
+{
+
+
+    foreach(const QString key,map.keys()){
+
+       QDomDocument doc;
+
+       QDomProcessingInstruction instruction;
+
+//     写入xml头部
+       instruction=doc.createProcessingInstruction("xml","version=\"1.0\" encoding=\"UTF-8\"");
+       doc.appendChild(instruction);
+//     添加根节点
+       QDomElement root=doc.createElement("doc");
+       doc.appendChild(root);
+
+//     添加第一个子节点及其子元素
+       QDomElement path=doc.createElement("path");
+//       将值设置到tag中
+       path.appendChild(doc.createTextNode(key));
+
+//     方式二：创建属性 值必须是字符串
+       QDomElement time_labeled = doc.createElement("time_labeled");
+       time_labeled.appendChild(doc.createTextNode(QDateTime::currentDateTime().toString()));
+
+       QDomElement labeled=doc.createElement("labeled");
+       labeled.appendChild(doc.createTextNode(map[key].size()>0?"true":"false"));
+
+       QDomElement outputs=doc.createElement("outputs");
+
+       QDomElement object=doc.createElement("object");
+
+       QList<RectMetaInfo> rectMetaInfoList = map[key];
+       for(RectMetaInfo rectMeta:rectMetaInfoList){
+           QDomElement item=doc.createElement("item");
+
+
+           QDomElement name=doc.createElement("name");
+           name.appendChild(doc.createTextNode(rectMeta.text));
+
+           QDomElement bndbox=doc.createElement("bndbox");
+
+//           位置尺寸信息
+           QDomElement x=doc.createElement("x");
+           x.appendChild(doc.createTextNode(QString::number(static_cast<int>(rectMeta.x))));
+
+           QDomElement y=doc.createElement("y");
+           y.appendChild(doc.createTextNode(QString::number(static_cast<int>(rectMeta.y))));
+
+           QDomElement w=doc.createElement("w");
+           w.appendChild(doc.createTextNode(QString::number(static_cast<int>(rectMeta.w))));
+
+           QDomElement h=doc.createElement("h");
+           h.appendChild(doc.createTextNode(QString::number(static_cast<int>(rectMeta.h))));
+
+//           添加子元素
+           bndbox.appendChild(x);
+           bndbox.appendChild(y);
+           bndbox.appendChild(w);
+           bndbox.appendChild(h);
+
+           item.appendChild(name);
+           item.appendChild(bndbox);
+           object.appendChild(item);
+       }
+
+       outputs.appendChild(object);
+
+//       尺寸
+       QDomElement size=doc.createElement("size");
+
+       QPixmap pixmap(key);
+       QDomElement width=doc.createElement("width");
+       width.appendChild(doc.createTextNode(QString::number(pixmap.width())));
+       QDomElement height=doc.createElement("height");
+       height.appendChild(doc.createTextNode(QString::number(pixmap.height())));
+       QDomElement depth=doc.createElement("depth");
+       depth.appendChild(doc.createTextNode(QString::number(pixmap.depth())));
+
+       size.appendChild(width);
+       size.appendChild(height);
+       size.appendChild(depth);
+
+
+       root.appendChild(path);
+       root.appendChild(outputs);
+       root.appendChild(time_labeled);
+       root.appendChild(labeled);
+       root.appendChild(size);
+
+       QFileInfo fileInfo(key);
+//         得到的文件名称是不带后缀的名称
+       QString fileName = fileInfo.baseName();
+       QFile file(savePath + fileName + ".xml");
+
+       QDir saveDir(savePath);
+       if(!saveDir.exists()){
+         qDebug() << "文件夹不存在,创建文件夹" ;
+         saveDir.mkdir(savePath);
+       }
+       qDebug() << "导出文件的绝对路径：" << file.fileName();
+//      以读写方式打开目录下的文件，若该文件不存在则会自动创建 QFile::Truncate表示清空原来的内容
+       file.open(QIODevice::ReadWrite|QFile::Truncate);
+//       输出到文件
+       QTextStream out_stream(&file);
+//       缩进4格
+       doc.save(out_stream,4);
+       file.close();
+    }
+}
+
+void CommonUtil::readXmlValue(QMap<QString, QList<RectMetaInfo>> &collection, QString dirPath)
+{
+    QDir dir(dirPath);
+    QStringList nameFilters;
+    nameFilters << "*.xml" ;
+    QFileInfoList fileInfoList =  dir.entryInfoList(nameFilters, QDir::Files|QDir::Readable, QDir::Name);
+    qDebug() << "读取到的Xml文件数量为:" << fileInfoList.size();
+    QDomDocument doc;
+    foreach(const QFileInfo fileInfo , fileInfoList){
+        QList<RectMetaInfo> rectInfos;
+        QString path ;
+//        读取文件
+        QFile file(fileInfo.absoluteFilePath());
+
+//        只读方式打开
+        file.open(QFile::ReadOnly);
+//        setContent()函数来设置整个文档的内容，它会将XML解析成一个DOM树,并保存在内存中
+        if(!doc.setContent(&file)){
+            file.close();
+            continue;
+        }
+        file.close();
+
+//        返回根节点
+        QDomElement root=doc.documentElement();
+//        得到根节点下的所有子节点
+        QDomNodeList domNodeList = root.childNodes();
+
+
+        for (int i=0;i<domNodeList.count();i++){
+            QDomNode domNode = domNodeList.at(i);
+            QString nodeName = domNode.nodeName();
+            if (nodeName == "path"){
+//                取出tag中的值 即： <path>123</path> 取出123
+                path = domNode.toElement().text();
+            }
+
+            if (nodeName == "outputs"){
+                QDomNode objectNode = domNode.childNodes().at(0);
+                QDomNodeList objectNodeList = objectNode.childNodes();
+                if (objectNodeList.count() > 0){
+                    for(int k = 0; k<objectNodeList.count(); k++){
+                       QDomNode itemNode = objectNodeList.at(k);
+                       QDomNodeList itemNodeList  = itemNode.childNodes();
+                       RectMetaInfo rectMeta;
+                       for (int j = 0;j<itemNodeList.count();j++) {
+                           QDomNode domNode = itemNodeList.at(j);
+                           if (domNode.nodeName() == "name"){
+                               rectMeta.text = domNode.toElement().text();
+                           }else{
+                               QDomNodeList nodeList = domNode.childNodes();
+                               for(int n=0; n<nodeList.count();n++){
+                                   QDomNode node = nodeList.at(n);
+                                   if(node.nodeName() == "x"){
+                                       rectMeta.x = node.toElement().text().toInt();
+                                       continue;
+                                   }
+                                   if(node.nodeName() == "y"){
+                                       rectMeta.y = node.toElement().text().toInt();
+                                       continue;
+                                   }
+                                   if(node.nodeName() == "w"){
+                                       rectMeta.w = node.toElement().text().toInt();
+                                       continue;
+                                   }
+                                   if(node.nodeName() == "h"){
+                                       rectMeta.h = node.toElement().text().toInt();
+                                       continue;
+                                   }
+                               }
+                           }
+                       }
+                       rectInfos << rectMeta;
+                    }
+
+                }
+            }
+        }
+        collection[path] = rectInfos;
+     }
 }
 
 
