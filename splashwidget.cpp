@@ -1,10 +1,8 @@
-﻿#include "mainwidget.h"
+﻿
 #include "splashwidget.h"
 #include "ui_splashwidget.h"
 
-#include <QTimer>
-#include <QDebug>
-#include <QMovie>
+
 
 //https://zhuanlan.zhihu.com/p/74561278
 

@@ -2,18 +2,44 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
-#include <QFile>
 #include <QGraphicsScene>
 #include <QStandardItemModel>
 #include <QStringListModel>
 #include <QWidget>
 #include <QClipboard>
+#include <QIcon>
+#include <QDebug>
+#include <QScreen>
+#include <QGridLayout>
+#include <QFile>
+#include <QDir>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QStandardPaths>
+#include <QGraphicsRectItem>
+#include <QButtonGroup>
+#include <QComboBox>
+#include <QStyle>
+
+#include <common/commonutil.h>
+#include <common/fontawesomeicons.h>
+
+#include <module/exportdialog.h>
 #include <module/importdialog.h>
+#include <module/settingdialog.h>
 #include <module/reviewdialog.h>
+
 #include <widgets/qtoast.h>
+#include <widgets/menubutton.h>
+
+#include <custom/annotationdelegate.h>
+#include <custom/filelistdelegate.h>
+#include <custom/markgraphicspixmapitem.h>
+#include <custom/meta.h>
 #include <custom/markgraphicspixmapitem.h>
 #include <custom/markgraphicsscene.h>
-#include <custom/meta.h>
+
+
 namespace Ui {
 class MainWidget;
 }

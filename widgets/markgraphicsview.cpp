@@ -49,6 +49,9 @@ void MarkGraphicsView::wheelEvent(QWheelEvent *event)
 
 //     当前放缩倍数
        qreal scaleFactor = this->matrix().m11();
+//       防止过小或过大
+       if(scaleFactor > 10 || scaleFactor < 0.1 ) return;
+//       滚轮的滚动量,正值表示滚轮远离使用者（放大），负值表示朝向使用者（缩小）
        int wheelDeltaValue = event->delta();
        if (wheelDeltaValue > 0){
 //            向前滚动，放大;
@@ -58,6 +61,9 @@ void MarkGraphicsView::wheelEvent(QWheelEvent *event)
            this->scale(1.0 / DEFAULT_PROPORTION, 1.0 / DEFAULT_PROPORTION);
 
        }
+//       为了改善缩放效果，以鼠标为中心进行缩放
+       setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+
 
 //        将scene坐标转换为放大缩小后的坐标;
           QPointF viewPoint = this->matrix().map(scenePos);

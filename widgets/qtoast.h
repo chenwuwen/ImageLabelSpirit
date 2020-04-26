@@ -73,6 +73,11 @@ public:
     void MoveToCenter();
     void MoveToPercentage(qreal hPer,qreal vPer);
 
+    /**
+     * @brief SetShadow 设置阴影
+     */
+    void SetShadow();
+
 public slots:
     void StartShowAnimation();
     void StartHideAnimation();
@@ -91,12 +96,22 @@ private:
     int                 m_nDisplayTimeByMSecs;
     bool                m_bShowAnimation;
     bool                m_bDeleteWhenHide;
+//    动画Qt属性的类 (隐藏动画)
     QPropertyAnimation *m_pHideAnimation;
+//    动画Qt属性的类 (显示动画)
     QPropertyAnimation *m_pShowAnimation;
 
 
 
 public:
+    /**
+     * @brief ShowText 文字是展示在QLable上的,Qlable是放在QToast上的,使用的是垂直布局, QToast是QDialog的子类
+     * @param text 要展示的文字
+     * @param displayTimeByMSec 展示时间
+     * @param hPercentage 横向位置百分比
+     * @param vPercentage  纵向位置百分比
+     * @param parent
+     */
     static void ShowText(const QString &text,int displayTimeByMSec = 5000,
                          double hPercentage = 0.5,double vPercentage = 0.8,QWidget *parent = nullptr)
     {
@@ -124,23 +139,12 @@ public:
         QRect rect = metrics.boundingRect(QRect(0,0,pLabel->maximumWidth(),pLabel->maximumHeight()),
             Qt::AlignCenter|Qt::TextWordWrap,text);
 
-//        根据pLabel的尺寸,重定义iToast的尺寸
+//        根据pLabel的尺寸,重定义iToast的尺寸,在既有文字的基础尺寸上再加上一个值
         iToast->resize(rect.size()+QSize(metrics.width("A"),10));
-
+//        将QLable放到QToast上,也就是QDialog上
         iToast->SetWidget(pLabel);
-
-//        实例阴影shadow
-        QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect(iToast);
-//        设置阴影距离
-        shadow->setOffset(0, 0);
-//        设置阴影颜色
-        shadow->setColor(QColor("#444444"));
-//        设置阴影圆角
-        shadow->setBlurRadius(30);
-//        给嵌套QWidget设置阴影
-        iToast->setGraphicsEffect(shadow);
-//        布局器设置边距(此步很重要, 设置宽度为阴影的宽度)
-        iToast->layout()->setMargin(10);
+//        设置阴影
+        iToast->SetShadow();
         iToast->SetDisplayTime(displayTimeByMSec);
         iToast->SetDeleteWhenHide(true);
         iToast->MoveToPercentage(hPercentage,vPercentage);

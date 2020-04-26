@@ -20,7 +20,8 @@ void MarkGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         foreach (QGraphicsItem *item, items(event->scenePos())) {
             if (item->type() == QGraphicsRectItem::Type){
                 oldQGraphicsRectItem = dynamic_cast<QGraphicsRectItem *>(item);
-                qDebug() << "当前区域有标注" ;
+                qDebug() << "当前区域存在标注: " << oldQGraphicsRectItem->rect() ;
+//                这里直接跳出循环了,如果有两个标注有一部分是重合的,那么只会移动一个
                 break;
             }
         }
@@ -44,53 +45,56 @@ void MarkGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 //                这里将isDrawing设置为true,表示将要开始画标注,但其实有两种情况,一种是点击一下,直接弹起来,一种是点击之后不松开开始移动一段距离再松开
 //                因此需要在鼠标弹起来时,将其设置为false.
                 isDrawing = true;
-//              在 Scene 上添加一个自定义 item        
-
+//              实例化QGraphicsRectItem 准备在scene场景上添加,之所以说是准备添加,是因为只有触发mouseMoveEvent()方法才能添加item,现在只是实例化出来
                 rectItem = new QGraphicsRectItem;
             }
 
-        } else if (event->button() == Qt::RightButton) {
-            if(!oldQGraphicsRectItem->isSelected()){
-//             设置为选中状态
-               oldQGraphicsRectItem->setSelected(true);
-               qDebug() << "item未选中,设置为选中状态,已选中item数量为：" << selectedItems().size();
-//               发射item被选中信号
-               emit itemSelectState(oldQGraphicsRectItem->rect(),true);
-            }else{
-//              取消选中状态
-                oldQGraphicsRectItem->setSelected(false);
-                qDebug() << "item已选中,取消其选中状态,已选中item数量为：" << selectedItems().size();
-//                发射item取消选中信号
-               emit itemSelectState(oldQGraphicsRectItem->rect(),false);
-           }
         }
+
+        if (event->button() == Qt::RightButton) {
+            if(oldQGraphicsRectItem != NULL){
+                if(!oldQGraphicsRectItem->isSelected()){
+    //             设置为选中状态
+                   oldQGraphicsRectItem->setSelected(true);
+                   oldQGraphicsRectItem->setBrush(QBrush(QColor(255,215,0),Qt::Dense7Pattern));
+                   qDebug() << "item未选中,设置为选中状态,已选中item数量为：" << selectedItems().size();
+    //               发射item被选中信号
+                   emit itemSelectState(oldQGraphicsRectItem->rect(),true);
+                }else{
+    //              取消选中状态
+                    oldQGraphicsRectItem->setSelected(false);
+                    oldQGraphicsRectItem->setBrush(Qt::NoBrush);
+                    qDebug() << "item已选中,取消其选中状态,已选中item数量为：" << selectedItems().size();
+    //                发射item取消选中信号
+                   emit itemSelectState(oldQGraphicsRectItem->rect(),false);
+               }
+            }
+        }
+
     }
 }
 
 void MarkGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    QGraphicsScene::mouseReleaseEvent(event);
+    QPointF point = event->scenePos();
+    endPoint = point;
 
 //    说明标注结束
     if(event->button()==Qt::LeftButton && isDrawing && rectItem->rect().width() > 0) {
 //        如果鼠标左键按着的同时移动鼠标
-        qDebug() << "MarkGraphicsScene 标注结束. 其信息为：" << rectItem->rect();
-        QPointF point = event->scenePos();
-        endPoint = point;
-        qDebug()<< "endPoint:" << endPoint;
+
 //        取到的是所有的Item,可以通过item的type属性区分,哪些是QGraphicsRectItem,和其他Item
-        qDebug() << "当前场景Item的数量为：" << items().size();
+//        qDebug() << "当前场景Item的数量为：" << items().size();
         QRectF rectf = rectItem->rect();
-        emit addMarkItem(rectf);
+//        emit addMarkItem(rectf);
+
+        qDebug() << "MarkGraphicsScene 标注结束,startPoint" << startPoint <<  "endPoint:" << endPoint << "标注的尺寸信息是：" << rectf;
      }
 
 //    说明移动结束
-    if(event->button() == Qt::LeftButton && isMoving && oldRectF != oldQGraphicsRectItem->rect()) {
+    if(event->button() == Qt::LeftButton && isMoving && endPoint != startPoint) {
 //        如果鼠标左键按着的同时移动鼠标
-        qDebug() << "MarkGraphicsScene 移动Item结束,其原信息：" << oldRectF << " 新的信息：" << oldQGraphicsRectItem->rect();
-        QPointF point = event->scenePos();
-        endPoint = point;
-        qDebug()<< "endPoint:" << endPoint;
+
 //        这里需要注意的是,如果是移动的情况,那么改变的只是坐标信息,长宽是不进行改变的.只需要操作oldQGraphicsRectItem即可
 //        那么已经移动了,如何知道移动后的item坐标呢？ 其实可以通过 endPoint 和 startPoint 算出来
 
@@ -98,25 +102,29 @@ void MarkGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 //         新的item信息
         QRectF newRectF = oldQGraphicsRectItem->rect();
         oldQGraphicsRectItem->setRect(newRectF);
-        emit updateMarkItem(oldRectF,newRectF);
-
+//        emit updateMarkItem(oldRectF,newRectF);
+        qDebug() << "MarkGraphicsScene 移动Item结束,startPoint" << startPoint <<  "endPoint:" << endPoint << "其原信息：" << oldRectF << " 新的信息：" << oldQGraphicsRectItem->rect();
      }
 
     isMoving = false;
     isDrawing = false;
+    oldQGraphicsRectItem = NULL;
     views().at(0)->setCursor(Qt::ArrowCursor);
+    QGraphicsScene::mouseReleaseEvent(event);
 }
 
 void MarkGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "MarkGraphicsScene类的 mouseMoveEvent()方法执行";
+//    qDebug() << "MarkGraphicsScene类的 mouseMoveEvent()方法执行";
     QGraphicsScene::mouseMoveEvent(event);
 
     if(event->buttons() & Qt::LeftButton) {
+//        返回鼠标在场景中的位置
         QPointF point = event->scenePos();
+
         endPoint = point;
         if ( isDrawing ){
-//           只有鼠标移动一定的距离才判断是要进行标注,然后开始画标注,因为鼠标一直在移动,所以画标注的步骤是先删之前画的范围,再画新范围
+//           只有鼠标移动一定的距离才判断是要进行标注,然后开始画标注,因为鼠标一直在移动,所以画标注的步骤是先删之前画的范围,再画新范围.这里需要注意的是：只能从左上角往右下角画
             if(endPoint.x()- startPoint.x()>OPERATION_THRESHOLD_VALUE && endPoint.y()- startPoint.y()>OPERATION_THRESHOLD_VALUE){
 //                画新item之前先移除之前画的
                 removeItem(rectItem);
@@ -126,19 +134,26 @@ void MarkGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                 addItem(rectItem);
              }
        }
-        int x,y=100;
+
         if ( isMoving ){
-            if(endPoint.x()- startPoint.x()>OPERATION_THRESHOLD_VALUE && endPoint.y()- startPoint.y()>OPERATION_THRESHOLD_VALUE){
+//            qAbs()函数求绝对值,移动图元可能往右下角移动也有可能往左上角移动,有可能只水平移动,也有可能只垂直移动
+            if(qAbs(endPoint.x()- startPoint.x())>OPERATION_THRESHOLD_VALUE || qAbs(endPoint.y()- startPoint.y())>OPERATION_THRESHOLD_VALUE){
+                qDebug() << "移动操作: 场景坐标" << endPoint << "item:" << event->pos();
 //                startPoint位置的x轴距离左上角距离
                 qreal x_range_top_left_corner = oldQGraphicsRectItem->x() - startPoint.x();
 //                startPoint位置的y轴距离左上角距离
                 qreal y_range_top_left_corner = oldQGraphicsRectItem->y() - startPoint.y();
-                x++;
-                y++;
-//                (endPoint.x() - startPoint.x()) (startPoint.x() - x_range_top_left_corner);
+//                https://blog.csdn.net/EddyXie/article/details/91489519
+
 //                移动
 //                oldQGraphicsRectItem->moveBy(oldRectF.x() + (endPoint.x() - startPoint.x()),oldRectF.y() + (endPoint.y() - startPoint.y()));
-                oldQGraphicsRectItem->moveBy(0,0);
+
+//               QPointF f =   oldQGraphicsRectItem->mapToScene(endPoint);
+                oldQGraphicsRectItem->setPos(endPoint.x(),endPoint.y());
+//                oldQGraphicsRectItem->moveBy(event->pos().x(),event->pos().y());
+//                QGraphicsScene::
+//                oldQGraphicsRectItem->setRect(476,334,oldRectF.width(),oldRectF.height());
+
 //                oldQGraphicsRectItem->moveBy(endPoint.x() - x_range_top_left_corner,endPoint.y() - y_range_top_left_corner );
 //                oldQGraphicsRectItem->setRect(endPoint.x() - x_range_top_left_corner,endPoint.y() - y_range_top_left_corner,oldRectF.width(),oldRectF.height());
             }

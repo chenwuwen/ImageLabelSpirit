@@ -2,33 +2,6 @@
 #include "mainwidget.h"
 
 #include "ui_mainwidget.h"
-#include <widgets/menubutton.h>
-
-#include <QIcon>
-#include <QDebug>
-#include <QScreen>
-#include <QGridLayout>
-#include <QFile>
-#include <QDir>
-#include <QMessageBox>
-#include <QFileDialog>
-#include <QStandardPaths>
-#include <QGraphicsRectItem>
-#include <QButtonGroup>
-#include <QComboBox>
-#include <QStyle>
-
-#include <common/commonutil.h>
-#include <common/fontawesomeicons.h>
-
-#include <module/exportdialog.h>
-#include <module/importdialog.h>
-#include <module/settingdialog.h>
-
-#include <custom/annotationdelegate.h>
-#include <custom/filelistdelegate.h>
-#include <custom/markgraphicspixmapitem.h>
-#include <custom/meta.h>
 
 
 //蒙版全局变量初始化
@@ -349,8 +322,11 @@ void MainWidget::on_openDirButton_clicked()
     hasReviewImgFilesItemModel->clear();
 //    这里不能设置行数,因为此处如果设置了行数,会与下面appendRow()产生干扰,如实际是1行,先setRowCount(1),然后又appendRow()了一次,那么当以后使用imgFilesItemModel.rowCount()时,将返回2,因此此处不能设置
 //    imgFilesItemModel->setRowCount(imgCount);
-    for(auto info : imgInfoFiles)
-        {
+
+    int list_view_height = ui->left_file_listView->height();
+    int list_view_width = ui->left_file_listView->width();
+    qDebug() << "QListView的高度："<< list_view_height << "  宽度："<< list_view_width;
+    for(auto info : imgInfoFiles){
 //            定义QStandardItem对象 , 构造方法参数1.行数,2.列数 有默认值
             QStandardItem *imageItem = new QStandardItem(1);
 //            为单元项设置属性
@@ -361,8 +337,13 @@ void MainWidget::on_openDirButton_clicked()
 //            设置tooltip,不能直接使用
 //            imageItem->setToolTip(info.absoluteFilePath());
 //            设置文字属性 这里不需要展示文字
-//            imageItem->setText(info.fileName());
-
+//            imageItem->setText("占位符不占");
+//            设置每个Item的尺寸,这个是体现在QListView中的尺寸(可以通过点击item得到的选中尺寸)
+            imageItem->setSizeHint(QSize(list_view_height,list_view_height));
+            imageItem->setTextAlignment(Qt::AlignCenter|Qt::AlignVCenter);
+//            默认情况下 双击item是可以进行编辑的,这里禁用编辑
+            imageItem->setEditable(false);
+            imageItem->setCheckable(false);
             qDebug() << "设置的Item:"<< imageItem;
 
             notReviewImgFilesItemModel->appendRow(imageItem);
@@ -375,6 +356,7 @@ void MainWidget::on_openDirButton_clicked()
     ui->left_file_listView->setModel(hasReviewImgFilesItemModel);
     ui->right_file_listView->setModel(notReviewImgFilesItemModel);
 
+
 //    设置框选矩形框可见性
     ui->left_file_listView->setSelectionRectVisible(false);
     ui->right_file_listView->setSelectionRectVisible(false);
@@ -384,23 +366,29 @@ void MainWidget::on_openDirButton_clicked()
 //    ui->file_list_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
 //   设置ListViw中单元项的间距(但是发现在ListView中setSpacing()不仅影响了控件间的距离还影响了控件与其父容器之间的距离,因此改用qss处理)
-//    ui->left_file_listView->setSpacing(6);
-//    ui->right_file_listView->setSpacing(6);
+    ui->left_file_listView->setSpacing(0);
+    ui->right_file_listView->setSpacing(0);
 
-    int h = ui->left_file_listView->height();
-    int w = ui->left_file_listView->width();
-    qDebug() << "QListView的高度："<< h << "  宽度："<<w;
-    QSize size(h-23,h-23);
-//    设置QStandardItem中单元项的图片大小
-    ui->left_file_listView->setIconSize(size);
-    ui->right_file_listView->setIconSize(size);
+
+
+
+//    设置QListView中各个item占的图片大小(能压缩但不能拉伸) 最好与QStandardItem::setSizeHint() 配合使用
+    ui->left_file_listView->setIconSize(QSize(list_view_height,list_view_height));
+    ui->right_file_listView->setIconSize(QSize(list_view_height,list_view_height));
+
+//    不能移动item
+    ui->right_file_listView->setMovement(QListView::Static);
+    ui->left_file_listView->setMovement(QListView::Static);
+
+
+//    QListView设置自定义委托
+    FileListDelegate *deleteLater = new FileListDelegate(ui->right_file_listView);
+    ui->right_file_listView->setItemDelegate(deleteLater);
+    ui->left_file_listView->setItemDelegate(deleteLater);
 
 //    设置显示模式为IconModel
-//    ui->left_file_listView->setViewMode(QListView::IconMode);
-//    ui->right_file_listView->setViewMode(QListView::IconMode);
-
-    FileListDelegate *deleteLater = new FileListDelegate(this);
-    ui->right_file_listView->setItemDelegate(deleteLater);
+    ui->left_file_listView->setViewMode(QListView::IconMode);
+    ui->right_file_listView->setViewMode(QListView::IconMode);
 
 //    设置不显示滚动条
     ui->left_file_listView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -410,9 +398,15 @@ void MainWidget::on_openDirButton_clicked()
 //    设置listview展示方向
     ui->left_file_listView->setFlow(QListView::LeftToRight);
     ui->right_file_listView->setFlow(QListView::LeftToRight);
+
+    ui->right_file_listView->setItemAlignment(Qt::AlignVCenter);
+    ui->left_file_listView->setItemAlignment(Qt::AlignCenter|Qt::AlignVCenter);
 //    控件不允许拖动
     ui->left_file_listView->setDragEnabled(false);
     ui->right_file_listView->setDragEnabled(false);
+
+    ui->left_file_listView->setResizeMode(QListView::Adjust);
+    ui->right_file_listView->setDragEnabled(QListView::Adjust);
 
     currentImgIndex = 0;
     currentImgItem = notReviewImgFilesItemModel->item(currentImgIndex);

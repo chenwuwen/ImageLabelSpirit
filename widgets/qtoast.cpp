@@ -77,6 +77,22 @@ void QToast::MoveToPercentage(qreal hPer, qreal vPer)
     m_dVPer = (vPer < 0) ? -1 : ((vPer > 1.0) ? 1.0 : vPer);
 }
 
+void QToast::SetShadow()
+{
+//        实例阴影shadow
+        QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect(this);
+//        设置阴影距离
+        shadow->setOffset(0,0);
+//        设置阴影颜色
+        shadow->setColor(QColor("#444444"));
+//        设置阴影圆角
+        shadow->setBlurRadius(30);
+//        给嵌套QWidget设置阴影
+        this->setGraphicsEffect(shadow);
+//        布局器设置边距(此步很重要, 设置宽度为阴影的宽度)
+        this->layout()->setMargin(2);
+}
+
 void QToast::Init()
 {
     if(nullptr == this->parentWidget())
@@ -94,21 +110,28 @@ void QToast::Init()
 
 void QToast::InitAnimation()
 {
+//    该类用于图形元素的透明效果，主要函数是setOpacity(qreal opacity)，用于设置透明度，参数值在0和1.0之间。
+//    也可以设置部分透明效果，需要调用的函数是setOpacityMask (QBrush mask)
     QGraphicsOpacityEffect *pOpacityEffect = new QGraphicsOpacityEffect(this);
     pOpacityEffect->setOpacity(0.0);
     this->setGraphicsEffect(pOpacityEffect);
 
+//    隐藏动画设置
     m_pHideAnimation = new QPropertyAnimation(pOpacityEffect, "opacity",this);
     m_pHideAnimation->setEasingCurve(QEasingCurve::Linear);
     m_pHideAnimation->setDuration(1200);
     m_pHideAnimation->setEndValue(0);
 
+//    显示动画设置
     m_pShowAnimation = new QPropertyAnimation(pOpacityEffect, "opacity",this);
     m_pShowAnimation->setEasingCurve(QEasingCurve::Linear);
     m_pShowAnimation->setDuration(1200);
     m_pShowAnimation->setEndValue(1.0);
 
-    connect(m_pHideAnimation,SIGNAL(finished()),this,SLOT(hide()));
+//    老版本的槽函数
+//    connect(m_pHideAnimation,SIGNAL(finished()),this,SLOT(hide()));
+//    新版本槽函数 隐藏动画完毕后(实际上是透明度变为完全透明) 隐藏QDialog
+    connect(m_pHideAnimation,&QPropertyAnimation::finished,this,&QToast::hide);
 }
 
 void QToast::SetDelaySeconds(int mSecs)

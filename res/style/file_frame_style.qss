@@ -1,4 +1,4 @@
-.QFrame {
+﻿.QFrame {
         background-color: rgb(244, 244, 244);
 }
 
@@ -28,9 +28,21 @@ QPushButton#review_btn{
    padding: 0px 20px 0px 20px;
 }
 
+QPushButton#review_btn:hover{
+   background-color:rgb(44 , 137 , 255);
+   padding: 0px 20px 0px 20px;
+}
+
 QPushButton#save_btn{
     border:1px solid rgb(55, 108, 255);
     background-color: rgb(55, 108, 255);
+    padding: 0px 20px 0px 20px;
+    color: white;
+}
+
+QPushButton#save_btn:hover{
+    border:1px solid rgb(55, 108, 255);
+    background-color: rgb(44 , 137 , 255);
     padding: 0px 20px 0px 20px;
     color: white;
 }
@@ -48,7 +60,7 @@ QListView {
 QListView::item {
     background-color:black;
     color: rgb(240,255,255);
-    padding:0px 10px 0px 10px;
+    margin:0px 10px 0px 10px;
 }
 
 /* 鼠标县浮在条目上 */

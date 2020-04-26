@@ -3,6 +3,11 @@
 #define SPLASHWIDGET_H
 
 #include <QWidget>
+#include <QTimer>
+#include <QDebug>
+#include <QMovie>
+#include "mainwidget.h"
+
 namespace Ui {
 class SplashWidget;
 }

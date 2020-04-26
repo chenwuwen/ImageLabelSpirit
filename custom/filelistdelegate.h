@@ -1,19 +1,22 @@
+﻿#pragma execution_character_set("utf-8")
 #ifndef FILELISTDELEGATE_H
 #define FILELISTDELEGATE_H
 
 #include <QStyledItemDelegate>
-
 #include <QApplication>
-#include <QItemDelegate>
 #include <QDebug>
 #include <QPainter>
-class FileListDelegate : public QItemDelegate
+class FileListDelegate : public QStyledItemDelegate
 {
 public:
-    FileListDelegate(QObject* parent = 0);
+    FileListDelegate(QWidget* parent = 0);
 
 //    绘制控件
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+
+private:
+    QWidget *parentWdiget;
 
 };
 

@@ -14,7 +14,7 @@ public:
 //    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 //    创建你编辑时候的控件,双击调用
 //    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-//    编辑的时候设置数据到上面创建的editor中。
+//    显示控件后设置里面的值,也就是上面createEditor方法执行完成后里面设置的值
 //    void setEditorData(QWidget *editor, const QModelIndex &index) const;
 //    编辑完成，保存数据到data中
     void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
