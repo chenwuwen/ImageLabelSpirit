@@ -13,6 +13,7 @@
 #include <QStandardPaths>
 #include <QFileDialog>
 #include <QStyle>
+#include <QMetaEnum>
 
 
 ExportDialog::ExportDialog(QWidget *parent) :
@@ -88,27 +89,17 @@ void ExportDialog::setExportLocalPathAndMarkInfoCollection(QString path,QMap<QSt
 
 void ExportDialog::on_determine_export_button_clicked()
 {
-    qDebug()<< "最终导出路径:"<< localPath;
-//    得到路径分隔符
-    QChar separ = QDir::separator();
-//   QDir::toNativeSeparators() 方法,得到转换后的路径
-    QString savePath = QDir::toNativeSeparators(localPath) + separ + "outputs" + separ;
-    qDebug() << "处理后的导出路径为：" << savePath;
-
+    QString savePath = localPath.append("/outputs/") ;
+    qDebug()<< "最终导出路径:"<< savePath;
 //    得到按钮组中被选中的按钮
     int type_id =  ui->export_type_button_group->checkedId();
-    switch (type_id) {
-        case export_type::JSON:
-            qDebug() << "导出为JSON形式";
-            CommonUtil::saveJSonValue(markInfoCollection,savePath);
-            break;
-        case export_type::XML:
-            qDebug() << "导出为XML形式";
-            CommonUtil::saveXmlValue(markInfoCollection,savePath);
-            break;
-        case export_type::MONGO:
-            qDebug() << "导出为MONGO形式";
-            break;
-    }
+//    数字转枚举
+//    QMetaEnum exportType = QMetaEnum::fromType<export_type>();
+    export_type type = static_cast<export_type>(type_id);
+
+//    发射信号
+    emit sendExportPathAndExportId(savePath,type);
+
+    this->close();
 
 }

@@ -475,8 +475,39 @@ void MainWidget::on_exportButton_clicked()
     connect(this,static_cast<void (MainWidget::*)(QString,QMap<QString,QList<RectMetaInfo>>)>(&MainWidget::sendExportLocalPathAndCollection),exportDialog,&ExportDialog::setExportLocalPathAndMarkInfoCollection);
     emit sendExportLocalPathAndCollection(dirPath,markInfoCollection);
     MainWidget::g_masking->show();
+//    注意connect()函数的位置
+    connect(exportDialog,static_cast<void (ExportDialog::*)(QString,export_type)>(&ExportDialog::sendExportPathAndExportId),this,[=](QString exportPath,export_type exportType){
+            this->export_dir_path = exportPath;
+            this->export_type_enum = exportType;
+            qDebug() << "lambda表达式接收到参数：" << exportPath << exportType;
+    });
+
     exportDialog->exec();
     MainWidget::g_masking->hide();
+
+    ExportMessageBox *ex = new ExportMessageBox(export_dir_path);
+    ex->show();
+
+//  实例化工作类
+    ExportWorker *worker = new ExportWorker(export_dir_path,export_type_enum,markInfoCollection);
+    QThread* thread = new QThread();
+//  当线程启动时，执行Worker类的耗时函数exportMarkData()
+    connect(thread,&QThread::started,worker,&ExportWorker::exportMarkData);
+//    当耗时函数执行完毕，发出complete()信号时，删除worker实例
+    connect(worker,&ExportWorker::complete,ex,[=]{
+        ex->export_complete();
+        delete worker;
+    });
+//    当worker对象实例销毁时，退出线程
+    connect(worker,SIGNAL(destroyed(QObject*)),thread,SLOT(quit()));
+//    当线程结束时，销毁线程对象实例
+    connect(thread,SIGNAL(finished()),thread,SLOT(deleteLater()));
+//    移动worker对象实例到线程中
+    worker->moveToThread(thread);
+//    启动线程
+    thread->start();
+
+
 }
 void MainWidget::on_moveButton_clicked()
 {

@@ -30,6 +30,11 @@ public slots:
 private slots:
     void on_determine_export_button_clicked();
 
+signals:
+//    信号,最终导出的文件路径和导出类型ID
+    void sendExportPathAndExportId(QString,export_type);
+
+
 private:
     Ui::ExportDialog *ui;
     FileButton *fileButton;

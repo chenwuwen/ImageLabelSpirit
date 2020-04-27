@@ -10,6 +10,7 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsSceneDragDropEvent>
 #include <QGraphicsItem>
+#include <QDrag>
 
 class MarkGraphicsScene : public QGraphicsScene
 {

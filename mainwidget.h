@@ -20,15 +20,17 @@
 #include <QButtonGroup>
 #include <QComboBox>
 #include <QStyle>
+#include <QThread>
 
 #include <common/commonutil.h>
 #include <common/fontawesomeicons.h>
+#include <common/exportworker.h>
 
 #include <module/exportdialog.h>
 #include <module/importdialog.h>
 #include <module/settingdialog.h>
 #include <module/reviewdialog.h>
-
+#include <module/exportmessagebox.h>
 #include <widgets/qtoast.h>
 #include <widgets/menubutton.h>
 
@@ -142,6 +144,9 @@ private:
     QString lastMarkInfo;
 //    剪切板
     QClipboard *clipboard = QApplication::clipboard();
+//    文件导出路径
+    QString export_dir_path;
+    export_type export_type_enum;
 };
 
 #endif // MAINWIDGET_H

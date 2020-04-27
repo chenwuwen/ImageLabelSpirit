@@ -41,7 +41,9 @@ SOURCES += \
     custom/markgraphicsscene.cpp \
     widgets/qtoast.cpp \
     module/reviewdialog.cpp \
-    custom/filelistdelegate.cpp
+    custom/filelistdelegate.cpp \
+    module/exportmessagebox.cpp \
+    common/exportworker.cpp
 
 HEADERS += \
         mainwidget.h \
@@ -60,7 +62,9 @@ HEADERS += \
     custom/markgraphicsscene.h \
     widgets/qtoast.h \
     module/reviewdialog.h \
-    custom/filelistdelegate.h
+    custom/filelistdelegate.h \
+    module/exportmessagebox.h \
+    common/exportworker.h
 
 
 FORMS += \
@@ -69,7 +73,8 @@ FORMS += \
     module/exportdialog.ui \
     module/settingdialog.ui \
     splashwidget.ui \
-    module/reviewdialog.ui
+    module/reviewdialog.ui \
+    module/exportmessagebox.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

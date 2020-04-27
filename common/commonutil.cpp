@@ -155,7 +155,6 @@ void CommonUtil::saveJSonValue(const QMap<QString, QList<RectMetaInfo> > mapColl
            qDebug() << "文件夹不存在,创建文件夹" ;
            saveDir.mkdir(savePath);
          }
-         qDebug() << "导出文件的绝对路径：" << file.fileName();
 //         以读写方式打开目录下的文件，若该文件不存在则会自动创建
          file.open(QIODevice::ReadWrite);
 //         将json写入文件中去

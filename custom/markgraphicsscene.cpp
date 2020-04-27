@@ -1,7 +1,5 @@
 ﻿#include "markgraphicsscene.h"
 
-#include <QDrag>
-
 
 
 MarkGraphicsScene::MarkGraphicsScene(QObject *parent):QGraphicsScene(parent)
@@ -15,7 +13,11 @@ void MarkGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     qDebug() << "MarkGraphicsScene类的 mousePressEvent()方法执行";
 //    QGraphicsScene::mousePressEvent(event);
     if (!event->isAccepted()) {
-
+        if(event->pos() == event->scenePos()){
+            qDebug() << "两只一致" << event->pos() ;
+        }else{
+             qDebug() << "两只bu一致" << event->pos() << event->scenePos();
+        }
 //        检测光标下是否有 item,如果存在则赋值给oldQGraphicsRectItem
         foreach (QGraphicsItem *item, items(event->scenePos())) {
             if (item->type() == QGraphicsRectItem::Type){
@@ -25,6 +27,7 @@ void MarkGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 break;
             }
         }
+
 
 
         if (event->button() == Qt::LeftButton) {
@@ -87,8 +90,7 @@ void MarkGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 //        qDebug() << "当前场景Item的数量为：" << items().size();
         QRectF rectf = rectItem->rect();
 //        emit addMarkItem(rectf);
-
-        qDebug() << "MarkGraphicsScene 标注结束,startPoint" << startPoint <<  "endPoint:" << endPoint << "标注的尺寸信息是：" << rectf;
+        qDebug() << "MarkGraphicsScene 标注结束,startPoint" << startPoint <<  "endPoint:" << endPoint << "标注的尺寸信息是：" << rectf << "item的pos()值：" << rectItem->pos()<< "item的scenePos()返回：" << rectItem->scenePos();
      }
 
 //    说明移动结束
@@ -102,8 +104,9 @@ void MarkGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 //         新的item信息
         QRectF newRectF = oldQGraphicsRectItem->rect();
         oldQGraphicsRectItem->setRect(newRectF);
+
 //        emit updateMarkItem(oldRectF,newRectF);
-        qDebug() << "MarkGraphicsScene 移动Item结束,startPoint" << startPoint <<  "endPoint:" << endPoint << "其原信息：" << oldRectF << " 新的信息：" << oldQGraphicsRectItem->rect();
+        qDebug() << "MarkGraphicsScene 移动Item结束,startPoint" << startPoint <<  "endPoint:" << endPoint << "其原信息：" << oldRectF << " 新的信息：" << oldQGraphicsRectItem->rect() << "oldQGraphicsRectItem的pos()返回：" << oldQGraphicsRectItem->pos() << "oldQGraphicsRectItem的scenePos()返回：" << oldQGraphicsRectItem->scenePos();
      }
 
     isMoving = false;
@@ -125,10 +128,10 @@ void MarkGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         endPoint = point;
         if ( isDrawing ){
 //           只有鼠标移动一定的距离才判断是要进行标注,然后开始画标注,因为鼠标一直在移动,所以画标注的步骤是先删之前画的范围,再画新范围.这里需要注意的是：只能从左上角往右下角画
-            if(endPoint.x()- startPoint.x()>OPERATION_THRESHOLD_VALUE && endPoint.y()- startPoint.y()>OPERATION_THRESHOLD_VALUE){
+            if(qAbs(endPoint.x()- startPoint.x())>OPERATION_THRESHOLD_VALUE && qAbs(endPoint.y()- startPoint.y())>OPERATION_THRESHOLD_VALUE){
 //                画新item之前先移除之前画的
                 removeItem(rectItem);
-                rectItem->setRect(startPoint.x(), startPoint.y(), endPoint.x()-startPoint.x(), endPoint.y()-startPoint.y());
+                rectItem->setRect(startPoint.x(), startPoint.y(), qAbs(endPoint.x()-startPoint.x()), qAbs(endPoint.y()-startPoint.y()));
 //                配置如何画Item,包括画笔颜色等
                 drawRectMark(rectItem);
                 addItem(rectItem);

@@ -9,6 +9,8 @@ MarkGraphicsView::MarkGraphicsView(QWidget *parent):QGraphicsView(parent)
 {
 //      设置允许拖拽
       setAcceptDrops(true);
+//      缺省鼠标样式
+      setCursor(QCursor(Qt::ArrowCursor));
 }
 
 
