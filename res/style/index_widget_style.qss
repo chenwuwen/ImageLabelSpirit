@@ -1,0 +1,57 @@
+﻿QWidget{
+    background-color: rgb(244,244,244);
+}
+
+/*头部区域*/
+QWidget#header_widget{
+    background-color: rgb(216,217,218);
+}
+
+
+QPushButton{
+   background: transparent;
+   border:none
+}
+
+QPushButton#create_project_btn{
+   color:rgb(149,184,243);
+}
+
+QPushButton#create_project_btn:hover{
+   background:rgb(230,230,230);
+}
+
+QPushButton#close_index_widget_btn:hover{
+    background-color:rgb(112, 184, 240);
+    color:white;
+    border:none;
+}
+
+
+
+QListView {
+        /* 背景色 */
+        background-color:transparent;
+        /* 行与行之间交替颜色不同 */
+        /* setAlternatingRowColors(true); */
+        alternate-background-color:yellow;
+        /* 设置是否选中时,整行都高亮显示 */
+        show-decoration-selected:1;
+}
+
+QListView::item {
+    background-color:black;
+    color: rgb(240,255,255);
+    margin:0px 10px 0px 10px;
+}
+
+/* 鼠标县浮在条目上 */
+QListView::item::hover {
+   background-color:transparent;
+}
+
+/* Item 被选中*/
+QListWidget::item::selected
+{
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #3399ea);
+}

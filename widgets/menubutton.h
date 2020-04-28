@@ -6,6 +6,15 @@
 #include <QObject>
 #include <QWidget>
 #include <QPushButton>
+#include <QLabel>
+#include <QPainter>
+#include <QDebug>
+#include <QColor>
+#include <QBrush>
+#include <QStyleOption>
+#include <QStylePainter>
+#include <QFile>
+#include <QLayout>
 
 class MenuButton : public QPushButton
 {

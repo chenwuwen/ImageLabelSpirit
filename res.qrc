@@ -29,5 +29,8 @@
         <file>res/style/review_dialog_style.qss</file>
         <file>res/style/export_message_box_style.qss</file>
         <file>res/icons/export_btn.png</file>
+        <file>res/style/create_project_dialog_style.qss</file>
+        <file>res/style/index_widget_style.qss</file>
+        <file>res/icons/new_project.png</file>
     </qresource>
 </RCC>

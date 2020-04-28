@@ -1,15 +1,4 @@
 #include "menubutton.h"
-
-#include <QLabel>
-#include <QPainter>
-#include <QDebug>
-#include <QColor>
-#include <QBrush>
-#include <QStyleOption>
-#include <QStylePainter>
-#include <QFile>
-#include <QLayout>
-
 #include <common/commonutil.h>
 
 MenuButton::MenuButton(QWidget *parent):QPushButton(parent)

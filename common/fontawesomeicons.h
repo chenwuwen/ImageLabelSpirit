@@ -3,6 +3,7 @@
 
 #include <QFont>
 #include <QChar>
+#include <QFontDatabase>
 //可以在该网址查看字体对应编码：https://fontawesome.com/cheatsheet?from=io
 //如果找不到,也可以再下载好的字体库中的css里面找
 class FontAwesomeIcons

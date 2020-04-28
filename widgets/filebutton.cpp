@@ -1,9 +1,6 @@
 ﻿#include "filebutton.h"
 
-#include <QPaintEvent>
-#include <QPainter>
-#include <QDebug>
-#include <QGraphicsDropShadowEffect>
+
 
 FileButton::FileButton(QWidget *parent) : QWidget(parent)
 {

@@ -1,0 +1,43 @@
+QWidget{
+   background-color: rgb(255, 255, 255);
+}
+
+QPushButton{
+    background-color:transparent;
+    border:none;
+}
+
+QPushButton#determine_create_project_btn{
+    background-color: rgb(17,124,216);
+    color: rgb(255, 255, 255);
+    border: 7px solid rgb(17,124,216);
+    padding-left:10px;
+    padding-right:10px;
+}
+
+
+QWidget#widget_5 QLabel{
+    color: rgb(93,93,93);
+    size: 4;
+    font: 75 10pt "Microsoft YaHei UI";
+}
+
+QPushButton#close_create_project_btn:hover{
+    background-color:rgb(112, 184, 240);
+    color:white;
+    border:none;
+}
+
+QPushButton#close_create_project_btn{
+    color:rgba(112,112,112);
+    border:none;
+    padding:2px 8px 2px 8px
+}
+
+
+
+
+
+QLabel#title_label{
+    color:rgb(230,230,230);
+}

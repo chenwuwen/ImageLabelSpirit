@@ -3,6 +3,9 @@
 
 
 
+
+QString CommonUtil::PROJECT_STORAGE_DIR = QStandardPaths::writableLocation(QStandardPaths::HomeLocation).append("/.imagelablespirit/");
+
 CommonUtil::CommonUtil()
 {
 
@@ -52,6 +55,45 @@ QFileInfoList CommonUtil::getImageFileInfoList(const QString& dirPath)
     QStringList nameFilters;
     nameFilters << "*.png" << "*.bmp" << "*.jpg" << "*.jpeg";
     return dir.entryInfoList(nameFilters, QDir::Files|QDir::Readable, QDir::Name);
+}
+
+QFileInfoList CommonUtil::getProjectInfoList()
+{
+//    从用户目录下的 .imagelablespirit 目录 下 查找 后缀名为.ils的文件
+    QDir dir(PROJECT_STORAGE_DIR);
+    QStringList nameFilters;
+    if(!dir.exists()){
+        QFileInfoList list;
+        return list;
+    }
+    nameFilters << "*.ils";
+    return dir.entryInfoList(nameFilters, QDir::Files|QDir::Readable, QDir::Name);
+}
+
+void CommonUtil::saveProjectInfo(Project project)
+{
+    QDir dir(PROJECT_STORAGE_DIR);
+    if (!dir.exists()){
+        dir.mkdir(PROJECT_STORAGE_DIR);
+
+    }
+    QString filePath = PROJECT_STORAGE_DIR + project.createTime+ ".ils";
+    QFile file(filePath);
+//    文件可读可写,文件存在清空文件
+    file.open(QFile::WriteOnly|QFile::Truncate);
+    QDataStream out(&file);
+//    将project 序列化到文件中
+    out << project;
+}
+
+Project CommonUtil::readProjectInfo(QString projectFilePath)
+{
+    QFile file(projectFilePath);
+    file.open(QFile::ReadOnly);
+    QDataStream in(&file);
+    Project pj;
+    in >> pj;
+    return pj;
 }
 
 /**

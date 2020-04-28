@@ -5,7 +5,10 @@
 #include <QPaintEvent>
 #include <QStyleOption>
 #include <QWidget>
-
+#include <QPaintEvent>
+#include <QPainter>
+#include <QDebug>
+#include <QGraphicsDropShadowEffect>
 
 class FileButton : public QWidget
 {

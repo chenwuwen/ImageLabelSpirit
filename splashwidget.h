@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QMovie>
 #include "mainwidget.h"
+#include "ui_splashwidget.h"
 
 namespace Ui {
 class SplashWidget;

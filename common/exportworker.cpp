@@ -17,6 +17,7 @@ void ExportWorker::exportMarkData()
 {
 //    如果使用vc编译，需要引入windows.h,且函数名为Sleep(),单位为毫秒;
     sleep(3);
+//    Sleep(3000);
     switch (exportButtonId) {
         case export_type::JSON:
             qDebug() << "导出为JSON形式";

@@ -42,7 +42,29 @@ enum export_type{
     MONGO
 };
 
+//项目信息
 
+typedef struct ProjectInfo{
+    QString projectName;
+    QString imgPath;
+    QString annotationMeta;
+    QString createTime;
+    QMap<QString,QList<RectMeta>> markCollection;
+} Project;
+Q_DECLARE_METATYPE(ProjectInfo);
+
+//重载序列化
+inline QDataStream &operator<<(QDataStream &output , const ProjectInfo &pj)
+{
+    output << pj.projectName << pj.imgPath << pj.annotationMeta << pj.createTime ;
+    return output ;
+}
+//重载反序列化
+inline QDataStream &operator>>(QDataStream &input , ProjectInfo &pj)
+{
+    input >> pj.projectName >> pj.imgPath >> pj.annotationMeta >> pj.createTime;
+    return input ;
+}
 
 
 

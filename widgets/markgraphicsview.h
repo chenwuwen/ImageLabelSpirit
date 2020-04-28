@@ -9,7 +9,7 @@
 #include <QScrollBar>
 #include <mainwidget.h>
 #include <QList>
-
+#include <QDrag>
 
 
 class MarkGraphicsView:public QGraphicsView

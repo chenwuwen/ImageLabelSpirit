@@ -43,7 +43,10 @@ SOURCES += \
     module/reviewdialog.cpp \
     custom/filelistdelegate.cpp \
     module/exportmessagebox.cpp \
-    common/exportworker.cpp
+    common/exportworker.cpp \
+    indexwidget.cpp \
+    module/createprojectdialog.cpp \
+    widgets/projectpreview.cpp
 
 HEADERS += \
         mainwidget.h \
@@ -64,7 +67,11 @@ HEADERS += \
     module/reviewdialog.h \
     custom/filelistdelegate.h \
     module/exportmessagebox.h \
-    common/exportworker.h
+    common/exportworker.h \
+    indexwidget.h \
+    module/createprojectdialog.h \
+    widgets/projectpreview.h
+
 
 
 FORMS += \
@@ -74,7 +81,11 @@ FORMS += \
     module/settingdialog.ui \
     splashwidget.ui \
     module/reviewdialog.ui \
-    module/exportmessagebox.ui
+    module/exportmessagebox.ui \
+    indexwidget.ui \
+    module/createprojectdialog.ui \
+    widgets/projectpreview.ui
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -1,5 +1,5 @@
 #include "fontawesomeicons.h"
-#include <QFontDatabase>
+
 //这个类有两个作用：一是加载字体；二是将图标名称定义成枚举，方便后面使用。
 FontAwesomeIcons &FontAwesomeIcons::Instance()
 {

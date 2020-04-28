@@ -1,6 +1,6 @@
 ﻿#include "markgraphicsview.h"
 
-#include <QDrag>
+
 
 
 

@@ -152,8 +152,8 @@ void MarkGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 //                oldQGraphicsRectItem->moveBy(oldRectF.x() + (endPoint.x() - startPoint.x()),oldRectF.y() + (endPoint.y() - startPoint.y()));
 
 //               QPointF f =   oldQGraphicsRectItem->mapToScene(endPoint);
-                oldQGraphicsRectItem->setPos(endPoint.x(),endPoint.y());
-//                oldQGraphicsRectItem->moveBy(event->pos().x(),event->pos().y());
+//                oldQGraphicsRectItem->setPos(endPoint.x(),endPoint.y());
+                oldQGraphicsRectItem->moveBy(startPoint.x()-endPoint.x(),startPoint.y()-endPoint.y());
 //                QGraphicsScene::
 //                oldQGraphicsRectItem->setRect(476,334,oldRectF.width(),oldRectF.height());
 
