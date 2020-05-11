@@ -49,20 +49,23 @@ typedef struct ProjectInfo{
     QString imgPath;
     QString annotationMeta;
     QString createTime;
-    QMap<QString,QList<RectMeta>> markCollection;
+//    这里使用了QVariant而不是QList<RectMeta>,是因为使用QDataStream序列化不支持这种格式,因此使用QVariant来转换
+    QMap<QString,QVariant> markCollection;
 } Project;
 Q_DECLARE_METATYPE(ProjectInfo);
 
 //重载序列化
 inline QDataStream &operator<<(QDataStream &output , const ProjectInfo &pj)
 {
-    output << pj.projectName << pj.imgPath << pj.annotationMeta << pj.createTime ;
+
+    output << pj.projectName << pj.imgPath << pj.annotationMeta << pj.createTime << pj.markCollection;
     return output ;
 }
 //重载反序列化
 inline QDataStream &operator>>(QDataStream &input , ProjectInfo &pj)
 {
-    input >> pj.projectName >> pj.imgPath >> pj.annotationMeta >> pj.createTime;
+
+    input >> pj.projectName >> pj.imgPath >> pj.annotationMeta >> pj.createTime ;
     return input ;
 }
 

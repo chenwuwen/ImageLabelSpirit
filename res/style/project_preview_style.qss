@@ -1,0 +1,15 @@
+QWidget{
+   background-color:transparent;
+}
+
+QLabel{
+    color:rgb(192,192,192);
+    font-size:14px;
+}
+
+QLabel#project_name{
+    color:rgb(43,43,43);
+    font-family: "Microsoft YaHei";
+    font-weight:bold;
+    font-size:20px;
+}

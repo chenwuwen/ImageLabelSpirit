@@ -1,7 +1,11 @@
 #include "indexwidget.h"
+#include "mainwidget.h"
 #include "ui_indexwidget.h"
 
 #include <widgets/projectpreview.h>
+
+//声明一个全局变量,用来表示当前项目的文件地址,其他cpp文件可以引用它
+QString CURRENT_PROJECT_FILE_PATH;
 
 IndexWidget::IndexWidget(QWidget *parent) :
     QWidget(parent),
@@ -18,6 +22,9 @@ IndexWidget::IndexWidget(QWidget *parent) :
 //    使用Qt内置的图标
     QStyle* style = QApplication::style();
     ui->close_index_widget_btn->setIcon(style->standardIcon(QStyle::SP_TitleBarCloseButton));
+    ui->header_widget->layout()->setAlignment(Qt::AlignRight);
+//    为QListWidget设置大小调整策略
+    ui->project_preview_list_widget->setSizeAdjustPolicy(QListWidget::AdjustToContents);
 
     loadAllProject();
 
@@ -37,12 +44,19 @@ void IndexWidget::loadAllProject()
         QFileInfo pjFile = projects.at(i);
         Project project = CommonUtil::readProjectInfo(pjFile.absoluteFilePath());
         qDebug() << "得到反序列化的结果：" << project.projectName << "  " << project.annotationMeta;
-        ProjectPreview *projectPreview = new ProjectPreview(project);
+        ProjectPreview *projectPreview = new ProjectPreview(project,pjFile.absoluteFilePath());
         QListWidgetItem *item = new QListWidgetItem;
+
+        item->setSizeHint(QSize(30,ui->project_preview_list_widget->width()));
         item->setData(Qt::UserRole,QVariant::fromValue(project));
+//        重要：先addItem 然后再setItemWidget否则列表为空
+        ui->project_preview_list_widget->addItem(item);
 //        设置item的内容是自定义的widget
         ui->project_preview_list_widget->setItemWidget(item,projectPreview);
-
+//        双击Item时,触发双击信号,打开项目槽函数处理
+        connect(projectPreview,static_cast<void (ProjectPreview::*) (QString)>(&ProjectPreview::mouseDoubleClicked),this,&IndexWidget::openProject);
+//        处理删除项目
+        connect(projectPreview,static_cast<void (ProjectPreview::*) ()>(&ProjectPreview::deleteProjectItem),this,&IndexWidget::removeProjectItem);
     }
 }
 
@@ -79,4 +93,20 @@ void IndexWidget::compileCreateProject(QString projectName, QString imgPath, QSt
 void IndexWidget::on_close_index_widget_btn_clicked()
 {
     this->close();
+}
+
+void IndexWidget::openProject(QString project_file_path)
+{
+
+    CURRENT_PROJECT_FILE_PATH = project_file_path;
+    qDebug() << "双击项目概览,打开项目：" << CURRENT_PROJECT_FILE_PATH;
+    MainWidget *mw = new MainWidget;
+    mw->show();
+    this->close();
+}
+
+void IndexWidget::removeProjectItem()
+{
+    QListWidgetItem *currentItem=ui->project_preview_list_widget->currentItem();
+    ui->project_preview_list_widget->removeItemWidget(currentItem);
 }

@@ -54,9 +54,14 @@ void CreateProjectDialog::on_close_create_project_btn_clicked()
 
 void CreateProjectDialog::on_create_project_file_btn_clicked()
 {
+//    文件夹选择对话框是使用getExistingDirectory()函数 来自头文件QFileDialog
+//    第一个参数 父对象（一般是this）
+//    第二个参数 对话框标题
+//    第三个参数 对话框开始目录
+//    第四个参数 默认是只显示目录 如果要别的参数可以参考以下表格 https://doc.qt.io/qt-5/qfiledialog.html#Option-enum
     dirPath = QFileDialog::getExistingDirectory(this,
                                                 QString("选择文件夹"),
                                                 QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
                                                 QFileDialog::ShowDirsOnly);
-     fileButton->draw_path(dirPath);
+    fileButton->draw_path(dirPath);
 }

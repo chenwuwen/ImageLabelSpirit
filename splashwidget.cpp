@@ -69,7 +69,7 @@ SplashWidget::~SplashWidget()
 void SplashWidget::startMainWidget()
 {
     qDebug()<<"跳转到主界面";
-//    这里的MainWidget一定要使用new才可以,不能直接定义MainWidget w,如果直接定义,则show()方法不能显示MainWidget
+//    这里的IndexWidget一定要使用new才可以,不能直接定义MainWidget w,如果直接定义,则show()方法不能显示MainWidget
     IndexWidget *index = new IndexWidget;
     index->show();
     this->close();

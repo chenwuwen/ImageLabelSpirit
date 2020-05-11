@@ -6,59 +6,61 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>109</height>
+    <width>251</width>
+    <height>86</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,5,3,1">
+   <property name="spacing">
+    <number>2</number>
+   </property>
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
    <item>
     <widget class="QWidget" name="widget" native="true">
-     <widget class="QLabel" name="label">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>50</y>
-        <width>41</width>
-        <height>9</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>我是一张图片</string>
-      </property>
-     </widget>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>我是一张图片</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
     <widget class="QWidget" name="widget_2" native="true">
-     <widget class="QLabel" name="project_name">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>41</width>
-        <height>9</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="project_img_path">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>80</y>
-        <width>41</width>
-        <height>9</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
-     </widget>
+     <layout class="QVBoxLayout" name="verticalLayout_3" stretch="3,1,1">
+      <item>
+       <widget class="QLabel" name="project_name">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="project_name_2">
+        <property name="text">
+         <string>项目类型：位置标注</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="project_img_path">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
@@ -107,7 +109,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="operation_project_btn">
+       <widget class="QToolButton" name="operation_project_btn">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>

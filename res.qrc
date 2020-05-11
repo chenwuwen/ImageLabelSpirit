@@ -32,5 +32,7 @@
         <file>res/style/create_project_dialog_style.qss</file>
         <file>res/style/index_widget_style.qss</file>
         <file>res/icons/new_project.png</file>
+        <file>res/style/project_preview_style.qss</file>
+        <file>res/icons/more.png</file>
     </qresource>
 </RCC>

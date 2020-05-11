@@ -59,6 +59,10 @@ public:
     void displayImg();
 //    初始化界面内容
     void initCustomUI();
+//    初始化项目信息
+    void initProjectInfo();
+//    加载图片
+    void loadImage();
 //    初始化标注信息列表
     void initMarkInfo();
 //    配置标注信息展示
@@ -72,7 +76,7 @@ public slots:
 
 private slots:
     void on_pushButton_clicked();
-    void on_openDirButton_clicked();
+
     void on_importButton_clicked();
     void on_settingButton_clicked();
     void on_exportButton_clicked();
@@ -146,7 +150,10 @@ private:
     QClipboard *clipboard = QApplication::clipboard();
 //    文件导出路径
     QString export_dir_path;
+//    导出类型枚举
     export_type export_type_enum;
+//    当前项目
+    Project currentProject ;
 };
 
 #endif // MAINWIDGET_H

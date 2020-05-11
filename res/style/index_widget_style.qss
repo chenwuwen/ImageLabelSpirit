@@ -6,7 +6,9 @@
 QWidget#header_widget{
     background-color: rgb(216,217,218);
 }
-
+QWidget#header_widget QPushButton{
+    background-color: rgb(216,217,218);
+}
 
 QPushButton{
    background: transparent;
@@ -29,29 +31,32 @@ QPushButton#close_index_widget_btn:hover{
 
 
 
-QListView {
-        /* 背景色 */
-        background-color:transparent;
-        /* 行与行之间交替颜色不同 */
-        /* setAlternatingRowColors(true); */
-        alternate-background-color:yellow;
-        /* 设置是否选中时,整行都高亮显示 */
-        show-decoration-selected:1;
+QListWidget {
+   background-color:rgb(255,255,255);
+   /*去掉item选中是的虚边框线*/
+   outline: none;
+   padding: 0px 5px 0px 5px;
 }
 
-QListView::item {
-    background-color:black;
-    color: rgb(240,255,255);
-    margin:0px 10px 0px 10px;
+
+
+/* 鼠标县浮在条目上*/
+QListWidget::item::hover{
+    background-color:rgb(240,240,240);
+    border:none;
+    border-radius:15px;
 }
 
-/* 鼠标县浮在条目上 */
-QListView::item::hover {
-   background-color:transparent;
+QListWidget::item:selected{
+    background-color:rgb(230,230,230);
+    border:none;
+    border-radius:15px;
 }
 
-/* Item 被选中*/
-QListWidget::item::selected
-{
-    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #3399ea);
+
+QListWidget::item:!active{
+    /*background-color:transparent*/;
 }
+
+
+

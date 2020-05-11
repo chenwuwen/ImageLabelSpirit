@@ -6,24 +6,32 @@
 
 //蒙版全局变量初始化
 QWidget *MainWidget::g_masking = NULL;
-
+//引用IndexWidget的全局变量
+extern QString CURRENT_PROJECT_FILE_PATH;
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MainWidget)
 {
     ui->setupUi(this);
     CommonUtil::setQssStyle(":/res/style/scrollbar_style.qss",this);
+
+//    初始化自定义的UI
     initCustomUI();
+
 
 //    实例化QStandardItemModel
     notReviewImgFilesItemModel = new QStandardItemModel;
     hasReviewImgFilesItemModel = new QStandardItemModel;
     markInfoItemModel = new QStandardItemModel;
     metaMarkInfoItemModel = new QStringListModel;
-    metaMarkInfoList<<"虫"<<"鱼"<<"鸟";
-    metaMarkInfoItemModel->setStringList(metaMarkInfoList);
-
-
+//    初始化项目信息,包括图片文件夹的路径/标注的预设信息/已经标注过的信息
+    initProjectInfo();
+//    加载图片
+    loadImage();
+//    设置标注进度信息
+    setMarkProgressInfo();
+//    展示图片
+    displayImg();
 
     connect(ui->main_graphics_view,&MarkGraphicsView::scaleChange,this,&MainWidget::setSizeProportionText);
 
@@ -128,7 +136,6 @@ void MainWidget::initCustomUI()
 //    menuVerticalLayout->setAlignment(Qt::AlignHCenter);
 
 //    定义按钮
-    MenuButton *openDirButton = new MenuButton(":/res/icons/open.png","新建",false);
     MenuButton *fontButton = new MenuButton(":/res/icons/font.png","前一个",false);
     MenuButton *afterButton = new MenuButton(":/res/icons/after.png","后一个",false);
     MenuButton *settingButton = new MenuButton(":/res/icons/setting.png","设置",false);
@@ -136,7 +143,7 @@ void MainWidget::initCustomUI()
     MenuButton *rectButton = new MenuButton(":/res/icons/rect.png","矩形框",true);
     MenuButton *importButton = new MenuButton(":/res/icons/import.png","导入",false);
     MenuButton *exportButton = new MenuButton(":/res/icons/export.png","导出",false);
-    openDirButton->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+
 //    分隔线
     QFrame * line = new QFrame;
     line->setFrameShape(QFrame::HLine);
@@ -146,7 +153,6 @@ void MainWidget::initCustomUI()
     menuVerticalLayout->addWidget(moveButton,0,Qt::AlignHCenter);
     menuVerticalLayout->addWidget(line);
     menuVerticalLayout->addWidget(rectButton,0,Qt::AlignHCenter);
-    menuVerticalLayout->addWidget(openDirButton,0,Qt::AlignHCenter);
     menuVerticalLayout->addWidget(fontButton,0,Qt::AlignHCenter);
     menuVerticalLayout->addWidget(afterButton,0,Qt::AlignHCenter);
     menuVerticalLayout->addWidget(settingButton,0,Qt::AlignHCenter);
@@ -156,7 +162,6 @@ void MainWidget::initCustomUI()
 
 //   设置按钮对象的名称方便后续可以根据组件名称写槽函数(利用QMetaObject::connectSlotsByName(QObject *o)),而不必每个按钮都去写connect()函数
 //   原来想的是通过规范命名,即可不必再写connect()连接函数,结果对于自定义的控件来说,并不能实现,需要注意,因此还需要手动写connect()函数
-    openDirButton->setObjectName(QString::fromUtf8("openDirButton"));
     fontButton->setObjectName(QString::fromUtf8("fontButton"));
     afterButton->setObjectName(QString::fromUtf8("afterButton"));
     settingButton->setObjectName(QString::fromUtf8("settingButton"));
@@ -216,7 +221,6 @@ void MainWidget::initCustomUI()
     qDebug()<< ui->menu_frame->width()<<ui->file_frame->height();
 
 //    定义连接函数
-    connect(openDirButton,&MenuButton::clicked,this,&MainWidget::on_openDirButton_clicked);
     connect(settingButton,&MenuButton::clicked,this,&MainWidget::on_settingButton_clicked);
     connect(moveButton,&MenuButton::clicked,this,&MainWidget::on_moveButton_clicked);
     connect(importButton,&MenuButton::clicked,this,&MainWidget::on_importButton_clicked);
@@ -288,6 +292,23 @@ void MainWidget::initCustomUI()
 
 }
 
+void MainWidget::initProjectInfo()
+{
+
+    currentProject = CommonUtil::readProjectInfo(CURRENT_PROJECT_FILE_PATH);
+    qDebug() << QString("初始化项目信息：[项目路径：%1 图片文件夹路径：%2]").arg(CURRENT_PROJECT_FILE_PATH).arg(currentProject.imgPath);
+//    标注内容预定义信息
+    metaMarkInfoList = currentProject.annotationMeta.split(",");
+    metaMarkInfoItemModel->setStringList(metaMarkInfoList);
+//    图片文件夹路径
+    dirPath = currentProject.imgPath;
+//    已标注过的信息
+    QMap<QString,QVariant> storgeCollection = currentProject.markCollection;
+    foreach(const QString key,storgeCollection.keys()){
+       markInfoCollection[key]=storgeCollection[key].value<QList<RectMeta>>();
+    }
+}
+
 MainWidget::~MainWidget()
 {
     delete ui;
@@ -302,16 +323,8 @@ void MainWidget::on_pushButton_clicked()
 
 
 
-void MainWidget::on_openDirButton_clicked()
+void MainWidget::loadImage()
 {
-//    文件夹选择对话框是使用getExistingDirectory()函数 来自头文件QFileDialog
-//    第一个参数 父对象（一般是this）
-//    第二个参数 对话框标题
-//    第三个参数 对话框开始目录
-//    第四个参数 默认是只显示目录 如果要别的参数可以参考以下表格 https://doc.qt.io/qt-5/qfiledialog.html#Option-enum
-    dirPath = QFileDialog::getExistingDirectory(this, QString("选择文件夹"),
-                                                  QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
-                                                  QFileDialog::ShowDirsOnly);
     if(dirPath.isEmpty()) return;
     QFileInfoList imgInfoFiles = CommonUtil::getImageFileInfoList(dirPath);
     imgCount =  imgInfoFiles.size();
@@ -348,8 +361,11 @@ void MainWidget::on_openDirButton_clicked()
 
             notReviewImgFilesItemModel->appendRow(imageItem);
 
-//            以文件路径为Key,放进总集合中
-            markInfoCollection[info.absoluteFilePath()];
+//            以文件路径为Key,放进总集合中。
+            if (!markInfoCollection.contains(info.absoluteFilePath())){
+                markInfoCollection[info.absoluteFilePath()];
+            }
+
         }
 
 //    设置数据
@@ -411,8 +427,7 @@ void MainWidget::on_openDirButton_clicked()
     currentImgIndex = 0;
     currentImgItem = notReviewImgFilesItemModel->item(currentImgIndex);
     notReviewImgFilesItemModel->takeRow(currentImgIndex);
-    setMarkProgressInfo();
-    displayImg();
+
 }
 
 
@@ -603,7 +618,17 @@ void MainWidget::on_saveButton_clicked()
     markInfoCollection[currentFilePath] = rectMetas;
 
     qDebug() << "总集合的数量" << markInfoCollection[currentImgItem->data().toString()].size();
+//    设置标注进度信息
     setMarkProgressInfo();
+//    保存到项目文件中去
+    QMap<QString,QVariant> saveCollection;
+    foreach(const QString key,markInfoCollection.keys()){
+       QVariant v = QVariant::fromValue(markInfoCollection[key]);
+       saveCollection[key] = v;
+    }
+    currentProject.markCollection = saveCollection;
+    CommonUtil::saveProjectInfo(currentProject);
+//    弹出吐司
     QToast::ShowText("已保存");
 }
 
