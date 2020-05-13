@@ -1,10 +1,6 @@
 ﻿#include "markgraphicsview.h"
 
 
-
-
-
-
 MarkGraphicsView::MarkGraphicsView(QWidget *parent):QGraphicsView(parent)
 {
 //      设置允许拖拽

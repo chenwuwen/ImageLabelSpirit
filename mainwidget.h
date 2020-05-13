@@ -21,6 +21,7 @@
 #include <QComboBox>
 #include <QStyle>
 #include <QThread>
+#include <QDateTime>
 
 #include <common/commonutil.h>
 #include <common/fontawesomeicons.h>
@@ -61,13 +62,13 @@ public:
     void initCustomUI();
 //    初始化项目信息
     void initProjectInfo();
-//    加载图片
+//    从本地磁盘系统加载图片
     void loadImage();
 //    初始化标注信息列表
     void initMarkInfo();
 //    配置标注信息展示
     void configAnnotationDisplay(QStandardItem *);
-//    设置标注进度
+//    设置标注进度文字信息
     void setMarkProgressInfo();
 
 public slots:
@@ -75,7 +76,6 @@ public slots:
     void setSizeProportionText();
 
 private slots:
-    void on_pushButton_clicked();
 
     void on_importButton_clicked();
     void on_settingButton_clicked();

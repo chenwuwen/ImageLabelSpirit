@@ -34,5 +34,7 @@
         <file>res/icons/new_project.png</file>
         <file>res/style/project_preview_style.qss</file>
         <file>res/icons/more.png</file>
+        <file>res/icons/close.png</file>
+        <file>res/icons/滑稽.png</file>
     </qresource>
 </RCC>

@@ -7,10 +7,10 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QScrollBar>
-#include <mainwidget.h>
 #include <QList>
 #include <QDrag>
 
+#include <custom/markgraphicspixmapitem.h>
 
 class MarkGraphicsView:public QGraphicsView
 {

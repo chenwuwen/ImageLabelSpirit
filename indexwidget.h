@@ -6,6 +6,9 @@
 #include<QFileInfoList>
 #include <QFileInfo>
 #include <QDebug>
+
+#include "mainwidget.h"
+#include <widgets/projectpreview.h>
 #include <module/createprojectdialog.h>
 #include <common/commonutil.h>
 namespace Ui {
@@ -33,6 +36,8 @@ private slots:
     void openProject(QString project_file_path);
 //    移除项目
     void removeProjectItem();
+//    项目重命名
+    void renameProject(QString newProjectName);
 private:
     Ui::IndexWidget *ui;
     CreateProjectDialog *createProjectDialog;

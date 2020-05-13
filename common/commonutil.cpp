@@ -77,6 +77,7 @@ void CommonUtil::saveProjectInfo(Project project)
         dir.mkdir(PROJECT_STORAGE_DIR);
 
     }
+//    文件创建时间作为文件名
     QString filePath = PROJECT_STORAGE_DIR + project.createTime+ ".ils";
     QFile file(filePath);
 //    文件可读可写,文件存在清空文件

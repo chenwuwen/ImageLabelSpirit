@@ -13,3 +13,63 @@ QLabel#project_name{
     font-weight:bold;
     font-size:20px;
 }
+
+/*不显示下拉图片*/
+QToolButton::menu-indicator{
+    image:none;
+}
+
+QToolButton{
+    background-color:transparent;
+    border:none;
+}
+
+/*鼠标放上后*/
+QToolButton:hover{
+    background-color:rgb(207,207,207);
+    border-radius:5px;
+}
+
+QPushButton:hover{
+    background-color:rgb(207,207,207);
+    border-radius:5px;
+}
+
+/*按下按钮后*/
+QToolButton:pressed{
+    background-color:rgb(207,207,207);
+    border-radius:5px;
+}
+/*按下按钮后*/
+QToolButton:!pressed{
+    background-color:transparent;
+}
+
+/*设置整个菜单区域*/
+QMenu {
+    background-color: rgb(255,255,255);
+}
+
+/* 设置菜单中item */
+QMenu::item {
+    background-color: transparent;
+    /*设置菜单项文字上下和左右的内边距，效果就是菜单中的条目左右上下有了间隔*/
+    padding:8px 32px 8px 32px;
+    /*为菜单项之间添加横线间隔*/
+    border-bottom:0px solid #DBDBDB;
+
+}
+
+/*设置菜单项鼠标经过选中的样式*/
+QMenu::item:selected {
+     background-color: rgb(230,230,230);
+}
+
+QMenu::item#delete_project_action{
+    color: red;
+}
+
+QMenu::item#delete_project_action:selected{
+    color: white;
+    background-color:red;
+}

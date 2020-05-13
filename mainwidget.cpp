@@ -1,6 +1,4 @@
-﻿#pragma execution_character_set("utf-8")
-#include "mainwidget.h"
-
+﻿#include "mainwidget.h"
 #include "ui_mainwidget.h"
 
 
@@ -314,13 +312,6 @@ MainWidget::~MainWidget()
     delete ui;
 }
 
-void MainWidget::on_pushButton_clicked()
-{
-    QPushButton *b;
-    QMessageBox::critical(NULL, "critical", "Content", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-
-}
-
 
 
 void MainWidget::loadImage()
@@ -328,7 +319,7 @@ void MainWidget::loadImage()
     if(dirPath.isEmpty()) return;
     QFileInfoList imgInfoFiles = CommonUtil::getImageFileInfoList(dirPath);
     imgCount =  imgInfoFiles.size();
-    qDebug()<<"选择的路径是："<<dirPath <<"  共找到" << imgCount<<"张图片";
+    qDebug()<< "选择的路径是：" << dirPath << "  共找到" << imgCount << "张图片";
     if(imgCount == 0) return;
 //    设置数据之前,先清空旧数据
     notReviewImgFilesItemModel->clear();
@@ -338,35 +329,35 @@ void MainWidget::loadImage()
 
     int list_view_height = ui->left_file_listView->height();
     int list_view_width = ui->left_file_listView->width();
-    qDebug() << "QListView的高度："<< list_view_height << "  宽度："<< list_view_width;
+    qDebug() << "QListView的高度：" << list_view_height << "  宽度：" << list_view_width;
     for(auto info : imgInfoFiles){
-//            定义QStandardItem对象 , 构造方法参数1.行数,2.列数 有默认值
-            QStandardItem *imageItem = new QStandardItem(1);
-//            为单元项设置属性
-//            设置Icon属性
-            imageItem->setIcon(QIcon(info.absoluteFilePath()));
-//            将文件的路径设置到data中
-            imageItem->setData(info.absoluteFilePath());
-//            设置tooltip,不能直接使用
-//            imageItem->setToolTip(info.absoluteFilePath());
-//            设置文字属性 这里不需要展示文字
-//            imageItem->setText("占位符不占");
-//            设置每个Item的尺寸,这个是体现在QListView中的尺寸(可以通过点击item得到的选中尺寸)
-            imageItem->setSizeHint(QSize(list_view_height,list_view_height));
-            imageItem->setTextAlignment(Qt::AlignCenter|Qt::AlignVCenter);
-//            默认情况下 双击item是可以进行编辑的,这里禁用编辑
-            imageItem->setEditable(false);
-            imageItem->setCheckable(false);
-            qDebug() << "设置的Item:"<< imageItem;
+//       定义QStandardItem对象 , 构造方法参数1.行数,2.列数 有默认值
+        QStandardItem *imageItem = new QStandardItem(1);
+//       为单元项设置属性
+//       设置Icon属性
+        imageItem->setIcon(QIcon(info.absoluteFilePath()));
+//       将文件的路径设置到data中
+        imageItem->setData(info.absoluteFilePath());
+//       设置tooltip,不能直接使用
+//       imageItem->setToolTip(info.absoluteFilePath());
+//       设置文字属性 这里不需要展示文字
+//       imageItem->setText("占位符不占");
+//       设置每个Item的尺寸,这个是体现在QListView中的尺寸(可以通过点击item得到的选中尺寸)
+        imageItem->setSizeHint(QSize(list_view_height,list_view_height));
+        imageItem->setTextAlignment(Qt::AlignCenter|Qt::AlignVCenter);
+//       默认情况下 双击item是可以进行编辑的,这里禁用编辑
+        imageItem->setEditable(false);
+        imageItem->setCheckable(false);
+        qDebug() << "设置的Item:" << imageItem;
+//        添加到未查看的model中
+        notReviewImgFilesItemModel->appendRow(imageItem);
 
-            notReviewImgFilesItemModel->appendRow(imageItem);
-
-//            以文件路径为Key,放进总集合中。
-            if (!markInfoCollection.contains(info.absoluteFilePath())){
-                markInfoCollection[info.absoluteFilePath()];
-            }
-
+//       以文件路径为Key,放进总集合中。
+        if (!markInfoCollection.contains(info.absoluteFilePath())){
+            markInfoCollection[info.absoluteFilePath()];
         }
+
+    }
 
 //    设置数据
     ui->left_file_listView->setModel(hasReviewImgFilesItemModel);
@@ -398,7 +389,7 @@ void MainWidget::loadImage()
 
 
 //    QListView设置自定义委托
-    FileListDelegate *deleteLater = new FileListDelegate(ui->right_file_listView);
+    FileListDelegate *deleteLater = new FileListDelegate();
     ui->right_file_listView->setItemDelegate(deleteLater);
     ui->left_file_listView->setItemDelegate(deleteLater);
 
@@ -423,9 +414,11 @@ void MainWidget::loadImage()
 
     ui->left_file_listView->setResizeMode(QListView::Adjust);
     ui->right_file_listView->setDragEnabled(QListView::Adjust);
-
+//    设置当前图片索引为0
     currentImgIndex = 0;
+//    取得当前图片Item
     currentImgItem = notReviewImgFilesItemModel->item(currentImgIndex);
+//    从未查看Model中弹出当前图片Item,因为该方法体在初始化时只执行一次,因此takeRow()方法的参数恒为0,也就是取出第一个Item
     notReviewImgFilesItemModel->takeRow(currentImgIndex);
 
 }
@@ -444,13 +437,16 @@ void MainWidget::displayImg(){
 
 //    设置图元在容器中的展示位置
     ui->main_graphics_view->setAlignment(Qt::AlignCenter);
-
-    scene =new MarkGraphicsScene(ui->main_graphics_view);
+//    创建场景(自定义的场景类)
+    scene = new MarkGraphicsScene(ui->main_graphics_view);
 //    scene->addPixmap(pixmap);
+//    创建图元(自定义的图元,存放要标注的图片)
     graphicsPixmapItem = new MarkGraphicsPixmapItem(currentFilePath);
-
+//    在场景中,添加要被标注的图元
     scene->addItem(graphicsPixmapItem);
+//    自定义视图,设置场景
     ui->main_graphics_view->setScene(scene);
+//    调用自定义视图的adapt()方法,用于自适应显示
     ui->main_graphics_view->adapt();
 //    ui->main_graphics_view->clearMask();
     ui->main_graphics_view->show();
@@ -627,6 +623,7 @@ void MainWidget::on_saveButton_clicked()
        saveCollection[key] = v;
     }
     currentProject.markCollection = saveCollection;
+//    currentProject.lastLabelTime = QString(QDateTime::currentDateTime().toTime_t());
     CommonUtil::saveProjectInfo(currentProject);
 //    弹出吐司
     QToast::ShowText("已保存");
@@ -789,6 +786,7 @@ void MainWidget::resizeEvent(QResizeEvent *event){
 //    使用Qt内置的图标
     QStyle* style = QApplication::style();
     if(isMaximized()){
+//        如果窗口已经是最大状态,则设置图片为自定义大小图标
          ui->custom_window_btn->setIcon(style->standardIcon(QStyle::SP_TitleBarNormalButton));
     }else{
         ui->custom_window_btn->setIcon(style->standardIcon(QStyle::SP_TitleBarMaxButton));
@@ -801,14 +799,14 @@ void MainWidget::setSizeProportionText()
         QVariant variant = currentImgItem->data();
 //        当前图片文件路径
         QString currentFilePath = variant.toString();
-        qDebug()<<"当前展示的图片路径是："<<currentFilePath;
+        qDebug() << "当前展示的图片路径是：" << currentFilePath;
         QPixmap srcPixmap(currentFilePath);
         QSize srcSize = srcPixmap.size();
-        qDebug() << "原图尺寸："<< srcSize;
+        qDebug() << "原图尺寸：" << srcSize;
 
         QSize currentSize(ui->main_graphics_view->scene()->width(),ui->main_graphics_view->scene()->height());
-        qDebug() << "场景尺寸："<< srcSize;
-        qDebug() << "视图尺寸："<< ui->main_graphics_view->size();
+        qDebug() << "场景尺寸：" << srcSize;
+        qDebug() << "视图尺寸：" << ui->main_graphics_view->size();
 
 
 //        当前缩放比例

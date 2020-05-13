@@ -1,10 +1,12 @@
 #include "indexwidget.h"
-#include "mainwidget.h"
+
 #include "ui_indexwidget.h"
 
-#include <widgets/projectpreview.h>
 
-//声明一个全局变量,用来表示当前项目的文件地址,其他cpp文件可以引用它
+
+
+
+//声明一个全局变量,用来表示当前项目的文件地址,其他cpp文件可以引用它,不能使用extern/static修饰
 QString CURRENT_PROJECT_FILE_PATH;
 
 IndexWidget::IndexWidget(QWidget *parent) :
@@ -54,10 +56,22 @@ void IndexWidget::loadAllProject()
 //        设置item的内容是自定义的widget
         ui->project_preview_list_widget->setItemWidget(item,projectPreview);
 //        双击Item时,触发双击信号,打开项目槽函数处理
-        connect(projectPreview,static_cast<void (ProjectPreview::*) (QString)>(&ProjectPreview::mouseDoubleClicked),this,&IndexWidget::openProject);
+        connect(projectPreview,static_cast<void (ProjectPreview::*) (QString)>(&ProjectPreview::openCurrentProject),this,&IndexWidget::openProject);
 //        处理删除项目
-        connect(projectPreview,static_cast<void (ProjectPreview::*) ()>(&ProjectPreview::deleteProjectItem),this,&IndexWidget::removeProjectItem);
+        connect(projectPreview,&ProjectPreview::deleteProjectItem,this,&IndexWidget::removeProjectItem);
+//        重命名项目
+        connect(projectPreview,static_cast<void (ProjectPreview::*) (QString)>(&ProjectPreview::projectNameModify),this,&IndexWidget::renameProject);
+
     }
+}
+
+void IndexWidget::renameProject(QString newProjectName)
+{
+      QListWidgetItem *currentItem=ui->project_preview_list_widget->currentItem();
+      QVariant variant = currentItem->data(Qt::UserRole);
+      ProjectInfo info = variant.value<ProjectInfo>();
+      info.projectName = newProjectName;
+      CommonUtil::saveProjectInfo(info);
 }
 
 
@@ -78,7 +92,7 @@ void IndexWidget::compileCreateProject(QString projectName, QString imgPath, QSt
 //    获取当前时间
     QDateTime time = QDateTime::currentDateTime();
 //    将当前时间转为时间戳
-    int second = time.toTime_t();
+    uint second = time.toTime_t();
     qDebug() << "新创建的项目信息：" << projectName << "  " << imgPath << "  " << annotationMeta << "  " << QString::number(second);
 
     Project project;

@@ -4,7 +4,7 @@
 
 FileListDelegate::FileListDelegate(QWidget* parent):QStyledItemDelegate(parent)
 {
-    parentWdiget = parent;
+
 }
 
 
@@ -24,16 +24,16 @@ void FileListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     } else {
         QPixmap pixmap(path);
         QRect rect = option.rect;
-//        qDebug() << "rect:::(" << rect.x() << " " << rect.y() << "   " << rect.width() << "  " << rect.height() ;
+        qDebug() << "rect:::(" << rect.x() << " " << rect.y() << "   " << rect.width() << "  " << rect.height() ;
         painter->save();
 //		绘图抗锯齿
         painter->setRenderHint(QPainter::Antialiasing);
 //		pixmap等比压缩
         pixmap = pixmap.scaled(rect.width(), rect.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-//		设置背景色
+//		设置背景色(黑色)
         painter->setBrush(QBrush(QColor(0,0,0)));
         painter->drawRect(rect);
-//		找到画图的坐标远点
+//		找到画图的坐标原点
         int x = rect.x() + (rect.width() - pixmap.width()) / 2;
         int y = rect.y() + (rect.height() - pixmap.height()) / 2;
         painter->drawPixmap(x,y,pixmap);
