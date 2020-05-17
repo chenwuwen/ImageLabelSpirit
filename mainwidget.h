@@ -76,10 +76,13 @@ public slots:
     void setSizeProportionText();
 
 private slots:
-
+//    导入按钮点击
     void on_importButton_clicked();
+//    设置按钮点击
     void on_settingButton_clicked();
+//    导出按钮点击
     void on_exportButton_clicked();
+//    移动按钮点击
     void on_moveButton_clicked();
 //    缩小按钮被按下
     void on_narrowButton_clicked();

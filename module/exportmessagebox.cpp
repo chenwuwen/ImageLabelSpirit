@@ -1,4 +1,4 @@
-#include "exportmessagebox.h"
+﻿#include "exportmessagebox.h"
 #include "ui_exportmessagebox.h"
 
 ExportMessageBox::ExportMessageBox(QString dir,QWidget *parent) :
@@ -64,7 +64,7 @@ void ExportMessageBox::on_export_message_box_close_btn_clicked()
 
 void ExportMessageBox::on_review_export_result_btn_clicked()
 {
-    qDebug() << "打开导出的文件夹路径：" << dirPath;
+    qDebug() << "打开导出的文件夹路径：" << dirPath ;
 //    打开文件夹 https://zhuanlan.zhihu.com/p/33578217
     QDesktopServices::openUrl(QUrl("file:"+ dirPath,QUrl::TolerantMode));
     this->close();

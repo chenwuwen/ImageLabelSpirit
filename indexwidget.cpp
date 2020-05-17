@@ -1,4 +1,4 @@
-#include "indexwidget.h"
+﻿#include "indexwidget.h"
 
 #include "ui_indexwidget.h"
 
@@ -14,7 +14,14 @@ IndexWidget::IndexWidget(QWidget *parent) :
     ui(new Ui::IndexWidget)
 {
     ui->setupUi(this);
-    resize(1024,800);
+    resize(1280,720);
+
+//    居中
+    int cx, cy;
+    cx = (QApplication::desktop()->width() - width()) / 2;
+    cy = (QApplication::desktop()->height() - height()) / 2;
+    move(cx, cy);
+
 //    配置无边框
     QWidget::setWindowFlags(Qt::FramelessWindowHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
     setWindowIcon(QIcon(":/res/icons/kanyun.png"));
@@ -42,7 +49,7 @@ void IndexWidget::loadAllProject()
     QFileInfoList projects = CommonUtil::getProjectInfoList();
     int projectCount = projects.size();
     qDebug() << QString("查找到[%1]个项目").arg(projectCount);
-    for(int i = 0;i<projectCount;i++){
+    for(int i = 0 ; i < projectCount ; i++){
         QFileInfo pjFile = projects.at(i);
         Project project = CommonUtil::readProjectInfo(pjFile.absoluteFilePath());
         qDebug() << "得到反序列化的结果：" << project.projectName << "  " << project.annotationMeta;

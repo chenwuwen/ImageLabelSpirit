@@ -1,10 +1,10 @@
-#pragma execution_character_set("utf-8")
+﻿#pragma execution_character_set("utf-8")
 #ifndef EXPORTWORKER_H
 #define EXPORTWORKER_H
 
 #include <QObject>
 #include <custom/meta.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <windows.h>
 /**
  * 多线程 工作类 用于导出

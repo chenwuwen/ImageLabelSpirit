@@ -1,4 +1,4 @@
-#include "commonutil.h"
+﻿#include "commonutil.h"
 #include "exportworker.h"
 
 ExportWorker::ExportWorker(QString dirPath,export_type exportType,QMap<QString,QList<RectMetaInfo>> data,QObject *parent) : QObject(parent)
@@ -16,7 +16,7 @@ ExportWorker::ExportWorker(QString dirPath,export_type exportType,QMap<QString,Q
 void ExportWorker::exportMarkData()
 {
 //    如果使用vc编译，需要引入windows.h,且函数名为Sleep(),单位为毫秒;
-    sleep(3);
+    Sleep(3);
 //    Sleep(3000);
     switch (exportButtonId) {
         case export_type::JSON:

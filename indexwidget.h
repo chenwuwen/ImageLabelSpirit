@@ -1,4 +1,4 @@
-#pragma execution_character_set("utf-8")
+﻿#pragma execution_character_set("utf-8")
 #ifndef INDEXWIDGET_H
 #define INDEXWIDGET_H
 
@@ -6,6 +6,8 @@
 #include<QFileInfoList>
 #include <QFileInfo>
 #include <QDebug>
+#include <QApplication>
+#include <QDesktopWidget>
 
 #include "mainwidget.h"
 #include <widgets/projectpreview.h>

@@ -16,6 +16,9 @@ MainWidget::MainWidget(QWidget *parent) :
 //    初始化自定义的UI
     initCustomUI();
 
+    qDebug() << ">>>>>>>>>>>" << ui->left_file_listView->height();
+//    如果没有得到当前项目的文件路径,就不再进行下去
+    if (CURRENT_PROJECT_FILE_PATH.isEmpty()) return;
 
 //    实例化QStandardItemModel
     notReviewImgFilesItemModel = new QStandardItemModel;
@@ -303,7 +306,7 @@ void MainWidget::initProjectInfo()
 //    已标注过的信息
     QMap<QString,QVariant> storgeCollection = currentProject.markCollection;
     foreach(const QString key,storgeCollection.keys()){
-       markInfoCollection[key]=storgeCollection[key].value<QList<RectMeta>>();
+       markInfoCollection[key] = storgeCollection[key].value<QList<RectMeta>>();
     }
 }
 
@@ -593,6 +596,7 @@ void MainWidget::on_adaptWindowButton_clicked()
 
 void MainWidget::on_saveButton_clicked()
 {
+    qDebug() << ">>>>>>>>>>>" << ui->left_file_listView->height();
     qDebug()<< "保存按钮被点击......";
     if (markInfoCollection.keys().size() == 0) return ;
     QString currentFilePath =  currentImgItem->data().toString();
