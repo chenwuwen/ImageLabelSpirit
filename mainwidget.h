@@ -22,6 +22,7 @@
 #include <QStyle>
 #include <QThread>
 #include <QDateTime>
+#include <QShowEvent>
 
 #include <common/commonutil.h>
 #include <common/fontawesomeicons.h>
@@ -115,6 +116,8 @@ signals:
 protected:
 //	窗口改变监听器
     void resizeEvent(QResizeEvent *event) ;
+//    窗口显示监听器
+    void showEvent(QShowEvent *event);
 
 
 

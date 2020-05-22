@@ -16,7 +16,6 @@ MainWidget::MainWidget(QWidget *parent) :
 //    初始化自定义的UI
     initCustomUI();
 
-    qDebug() << ">>>>>>>>>>>" << ui->left_file_listView->height();
 //    如果没有得到当前项目的文件路径,就不再进行下去
     if (CURRENT_PROJECT_FILE_PATH.isEmpty()) return;
 
@@ -27,12 +26,6 @@ MainWidget::MainWidget(QWidget *parent) :
     metaMarkInfoItemModel = new QStringListModel;
 //    初始化项目信息,包括图片文件夹的路径/标注的预设信息/已经标注过的信息
     initProjectInfo();
-//    加载图片
-    loadImage();
-//    设置标注进度信息
-    setMarkProgressInfo();
-//    展示图片
-    displayImg();
 
     connect(ui->main_graphics_view,&MarkGraphicsView::scaleChange,this,&MainWidget::setSizeProportionText);
 
@@ -421,6 +414,7 @@ void MainWidget::loadImage()
     currentImgIndex = 0;
 //    取得当前图片Item
     currentImgItem = notReviewImgFilesItemModel->item(currentImgIndex);
+    qDebug() << "获取的Item11:"<< currentImgItem;
 //    从未查看Model中弹出当前图片Item,因为该方法体在初始化时只执行一次,因此takeRow()方法的参数恒为0,也就是取出第一个Item
     notReviewImgFilesItemModel->takeRow(currentImgIndex);
 
@@ -461,6 +455,7 @@ void MainWidget::displayImg(){
     connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF)>(&MarkGraphicsScene::deleteMarkItem),this,&MainWidget::removeRectMarkInfo);
 //    槽函数：修改标注信息(主要是item的坐标产生变化)
     connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF,QRectF)>(&MarkGraphicsScene::updateMarkItem),this,&MainWidget::updateRectMarkInfo);
+//    槽函数：图片上的item被选中
     connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF,bool)>(&MarkGraphicsScene::itemSelectState),this,&MainWidget::itemSelectState);
 
 
@@ -596,7 +591,6 @@ void MainWidget::on_adaptWindowButton_clicked()
 
 void MainWidget::on_saveButton_clicked()
 {
-    qDebug() << ">>>>>>>>>>>" << ui->left_file_listView->height();
     qDebug()<< "保存按钮被点击......";
     if (markInfoCollection.keys().size() == 0) return ;
     QString currentFilePath =  currentImgItem->data().toString();
@@ -795,6 +789,26 @@ void MainWidget::resizeEvent(QResizeEvent *event){
     }else{
         ui->custom_window_btn->setIcon(style->standardIcon(QStyle::SP_TitleBarMaxButton));
     }
+}
+
+void MainWidget::showEvent(QShowEvent *event)
+{
+    qDebug() << "MainWidget showEvent() 执行";
+//   如果没有得到当前项目的文件路径,就不再进行下去
+    if (CURRENT_PROJECT_FILE_PATH.isEmpty()) return;
+
+//  下面这些操作,原来是在构造函数中完成的,但是后来发现在构造函数中获取尺寸,跟构造函数完成之后获取的尺寸不一致,因为构造函数有默认尺寸,
+//  因此需要在界面展示之后,再进行下面操作但是showEvent方法,是在显示前触发的,因此加上定时器
+
+    QTimer::singleShot(10,this,[=]{
+//          加载图片
+            loadImage();
+//          设置标注进度信息
+            setMarkProgressInfo();
+//          展示图片
+            displayImg();
+    });
+
 }
 
 void MainWidget::setSizeProportionText()

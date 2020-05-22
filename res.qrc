@@ -1,2 +1,41 @@
-<!DOCTYPE RCC>
-<RCC version="1.0"/>
+<RCC>
+    <qresource prefix="/">
+        <file>res/font/fontawesome-webfont.ttf</file>
+        <file>res/icons/after.png</file>
+        <file>res/icons/arrow_down.png</file>
+        <file>res/icons/arrow_up.png</file>
+        <file>res/icons/close.png</file>
+        <file>res/icons/export.png</file>
+        <file>res/icons/export_btn.png</file>
+        <file>res/icons/export_mode_checked.png</file>
+        <file>res/icons/font.png</file>
+        <file>res/icons/funny.png</file>
+        <file>res/icons/import.png</file>
+        <file>res/icons/kanyun.png</file>
+        <file>res/icons/more.png</file>
+        <file>res/icons/move.png</file>
+        <file>res/icons/new_project.png</file>
+        <file>res/icons/open.png</file>
+        <file>res/icons/rect.png</file>
+        <file>res/icons/setting.png</file>
+        <file>res/icons/导出到本地.png</file>
+        <file>res/icons/上传数据源.png</file>
+        <file>res/style/annotation_frame_style.qss</file>
+        <file>res/style/create_project_dialog_style.qss</file>
+        <file>res/style/export_dialog_style.qss</file>
+        <file>res/style/export_message_box_style.qss</file>
+        <file>res/style/file_frame_style.qss</file>
+        <file>res/style/head_frame_style.qss</file>
+        <file>res/style/import_dialog_style.qss</file>
+        <file>res/style/index_widget_style.qss</file>
+        <file>res/style/main_frame_style.qss</file>
+        <file>res/style/menu_frame_style.qss</file>
+        <file>res/style/menubutton_style.qss</file>
+        <file>res/style/progressbar_style.qss</file>
+        <file>res/style/project_preview_style.qss</file>
+        <file>res/style/review_dialog_style.qss</file>
+        <file>res/style/scrollbar_style.qss</file>
+        <file>res/style/setting_dialog_style.qss</file>
+        <file>res/style/slider_style.qss</file>
+    </qresource>
+</RCC>

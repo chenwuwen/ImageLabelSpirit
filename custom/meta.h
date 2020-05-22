@@ -65,7 +65,9 @@ inline QDataStream &operator<<(QDataStream &output , const ProjectInfo &pj)
 inline QDataStream &operator>>(QDataStream &input , ProjectInfo &pj)
 {
 
-    input >> pj.projectName >> pj.imgPath >> pj.annotationMeta >> pj.createTime ;
+//    这里反序列化的时候不能直接反序列化QMap,编译不会通过
+//    input >> pj.projectName >> pj.imgPath >> pj.annotationMeta >> pj.createTime >> pj.markCollectin;
+    input >> pj.projectName >> pj.imgPath >> pj.annotationMeta >> pj.createTime;
     return input ;
 }
 

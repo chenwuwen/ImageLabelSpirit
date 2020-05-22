@@ -21,7 +21,7 @@ ProjectPreview::ProjectPreview(ProjectInfo project,QString projectFilePath,QWidg
     ui->project_create_date->setText(time.toString("yyyy-MM-dd HH:mm:ss"));
     this->projectFilePath = projectFilePath;
 
-    ui->img_label->setPixmap(QPixmap(":/res/icons/滑稽.png"));
+    ui->img_label->setPixmap(QPixmap(":/res/icons/funny.png"));
 //    创建一个菜单
     QMenu *operationMenu = new QMenu(this);
 //    添加Action及对应槽函数,注意槽函数的写法
