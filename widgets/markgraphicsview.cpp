@@ -7,6 +7,11 @@ MarkGraphicsView::MarkGraphicsView(QWidget *parent):QGraphicsView(parent)
       setAcceptDrops(true);
 //      缺省鼠标样式
       setCursor(QCursor(Qt::ArrowCursor));
+//      隐藏水平/竖直滚动条
+      setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+      setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//      反锯齿
+      setRenderHint(QPainter::Antialiasing);
 }
 
 

@@ -24,7 +24,7 @@ void FileListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     } else {
         QPixmap pixmap(path);
         QRect rect = option.rect;
-        qDebug() << "rect:::(" << rect.x() << " " << rect.y() << "   " << rect.width() << "  " << rect.height() ;
+//        qDebug() << "文件列表自定义委托,各个Item展示的信息：(" << rect.x() << " " << rect.y() << "   " << rect.width() << "  " << rect.height() << ")";
         painter->save();
 //		绘图抗锯齿
         painter->setRenderHint(QPainter::Antialiasing);

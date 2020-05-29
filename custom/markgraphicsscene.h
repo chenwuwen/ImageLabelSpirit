@@ -62,8 +62,8 @@ private:
     bool isMoving = false;
 //    操作阈值
     static const int OPERATION_THRESHOLD_VALUE = 20;
-//    开始点位置,结束点位置
-    QPointF startPoint,endPoint;
+//    开始场景点位置,结束场景点位置,当鼠标按下时RectItem的位置
+    QPointF startScenePoint,endScenePoint,startRectItemPoint;
 //    矩形框item
     QGraphicsRectItem *rectItem;
 

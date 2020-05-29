@@ -681,7 +681,8 @@ void MainWidget::initMarkInfo()
         item->setText(rectMeta.text);
         markInfoItemModel->appendRow(item);
     }
-    AnnotationDelegate *delegate = new AnnotationDelegate;
+//    自定义委托[传入标注元数据信息]
+    AnnotationDelegate *delegate = new AnnotationDelegate(metaMarkInfoList);
     ui->annotation_list_view->setModel(markInfoItemModel);
 //    设置委托(MVVM视图到模型)
     ui->annotation_list_view->setItemDelegate(delegate);
@@ -706,11 +707,11 @@ void MainWidget::configAnnotationDisplay(QStandardItem *item)
 //        设置listview中的控件为QComboBox
           QComboBox *cmb =new QComboBox;
 //          设置QComboBox是否可编辑
-          cmb->setEditable(true);
+          cmb->setEditable(false);
           cmb->setModel(metaMarkInfoItemModel);
           cmb->setEditText(item->text());
 //          setIndexWidget要生效，必须setModel(model)的后面
-          ui->annotation_list_view->setIndexWidget(index, cmb);
+//          ui->annotation_list_view->setIndexWidget(index, cmb);
 
 }
 
@@ -793,10 +794,11 @@ void MainWidget::resizeEvent(QResizeEvent *event){
 
 void MainWidget::showEvent(QShowEvent *event)
 {
-    qDebug() << "MainWidget showEvent() 执行";
+    qDebug() << "MainWidget showEvent() 执行,需要注意的是,如果最小化窗口,再显示也会触发该方法";
 //   如果没有得到当前项目的文件路径,就不再进行下去
     if (CURRENT_PROJECT_FILE_PATH.isEmpty()) return;
-
+//   如果imgCount不为0,说明是已经初始化过的,将不再进行下面的操作
+    if (imgCount != 0) return;
 //  下面这些操作,原来是在构造函数中完成的,但是后来发现在构造函数中获取尺寸,跟构造函数完成之后获取的尺寸不一致,因为构造函数有默认尺寸,
 //  因此需要在界面展示之后,再进行下面操作但是showEvent方法,是在显示前触发的,因此加上定时器
 

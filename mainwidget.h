@@ -65,7 +65,7 @@ public:
     void initProjectInfo();
 //    从本地磁盘系统加载图片
     void loadImage();
-//    初始化标注信息列表
+//    初始化标注信息列表(一个是在底图上画框,一个是初始化标注信息[展示列表])
     void initMarkInfo();
 //    配置标注信息展示
     void configAnnotationDisplay(QStandardItem *);
@@ -95,9 +95,13 @@ private slots:
     void on_reviewButton_clicked();
 //    点击保存按钮时,才会保存到总集合中(markInfoCollection),也就是其他操作都时保存在model中,也就是说任何修改操作都需要点击保存按钮,否则仅在数据仅在当前有效,之后无效.
     void on_saveButton_clicked();
+//    状态栏最小化按钮被点击
     void on_minimizeWindowButton_clicked();
+//    状态栏自定义窗口/最大化窗口按钮被点击
     void on_customWindowButton_clicked();
+//    状态栏关闭窗口按钮被点击
     void on_closeWindowButton_clicked();
+//    引入标注信息
     void on_import_function(QString);
 //    新的标注
     void addRectMarkInfo(QRectF);
@@ -107,6 +111,8 @@ private slots:
     void updateRectMarkInfo(QRectF oldRectF,QRectF newRectF);
 //    item被选中
     void itemSelectState(QRectF,bool);
+
+
 signals:
 //    自定义信号,发送图片路径和标注信息集合给导出窗口
     void sendExportLocalPathAndCollection(QString,QMap<QString,QList<RectMetaInfo>>);
