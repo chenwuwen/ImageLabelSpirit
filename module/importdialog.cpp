@@ -1,5 +1,4 @@
-﻿
-#include "importdialog.h"
+﻿#include "importdialog.h"
 #include "ui_importdialog.h"
 
 

@@ -1,5 +1,4 @@
 ﻿#include "indexwidget.h"
-
 #include "ui_indexwidget.h"
 
 

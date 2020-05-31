@@ -1,19 +1,7 @@
 ﻿#include "exportdialog.h"
 #include "ui_exportdialog.h"
 
-#include <common/commonutil.h>
 
-#include <common/fontawesomeicons.h>
-
-
-#include <widgets/filebutton.h>
-
-#include <mainwidget.h>
-#include <QDebug>
-#include <QStandardPaths>
-#include <QFileDialog>
-#include <QStyle>
-#include <QMetaEnum>
 
 
 ExportDialog::ExportDialog(QWidget *parent) :

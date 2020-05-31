@@ -724,12 +724,10 @@ void MainWidget::addRectMarkInfo(QRectF rectf)
     rectMeta.h = rectf.height();
 //    如果之前没有标记过,则使用下拉框中的第一个文字信息,否则使用上次输入的信息
     if (lastMarkInfo.isEmpty()){
-       rectMeta.text  = lastMarkInfo;
-    }else{
-        lastMarkInfo = metaMarkInfoItemModel->stringList().at(0);
-        rectMeta.text  = lastMarkInfo;
+      lastMarkInfo = metaMarkInfoItemModel->stringList().at(0);
+      qDebug() << "由于找不到上一次的标注文字信息,因此使用默认文字代替：" << lastMarkInfo;
     }
-
+    rectMeta.text  = lastMarkInfo;
     qDebug() << "接收到一个标注信息：" << rectMeta;
 
     QStandardItem *item = new QStandardItem;

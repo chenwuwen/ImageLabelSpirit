@@ -1,9 +1,7 @@
-#include "settingdialog.h"
+﻿#include "settingdialog.h"
 #include "ui_settingdialog.h"
 
-#include <common/commonutil.h>
-#include <common/fontawesomeicons.h>
-#include <QStyle>
+
 
 SettingDialog::SettingDialog(QWidget *parent) :
     QDialog(parent),

@@ -2,7 +2,12 @@
 #ifndef SETTINGDIALOG_H
 #define SETTINGDIALOG_H
 
+#include <QStyle>
 #include <QDialog>
+
+#include <common/commonutil.h>
+#include <common/fontawesomeicons.h>
+
 
 namespace Ui {
 class SettingDialog;

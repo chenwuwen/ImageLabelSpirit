@@ -33,12 +33,13 @@ public:
 //    在paint()中,通过QApplication::style()->drawControl()来自定义数据显示方式,比如绘制按钮
 //    重写委托类的editorEvent成员函数
 //    在editorEvent中处理交互事件,比如判断鼠标是否双击,以及更改模型数据等
-    void paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
+//    void paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
 
     bool editorEvent ( QEvent * event, QAbstractItemModel * model, const QStyleOptionViewItem & option, const QModelIndex & index );
 
 private:
     QStringList metaDataList;
+    QComboBox *m_box;
 };
 
 #endif // ANNOTATIONDELEGATE_H

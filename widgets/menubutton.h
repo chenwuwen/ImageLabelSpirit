@@ -16,6 +16,8 @@
 #include <QFile>
 #include <QLayout>
 
+#include <common/commonutil.h>
+
 class MenuButton : public QPushButton
 {
      Q_OBJECT

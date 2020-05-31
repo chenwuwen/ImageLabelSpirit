@@ -3,10 +3,20 @@
 #define EXPORTDIALOG_H
 
 #include <QDialog>
+#include <QDebug>
+#include <QStandardPaths>
+#include <QFileDialog>
+#include <QStyle>
+#include <QMetaEnum>
+#include <QList>
 
 #include <widgets/filebutton.h>
-#include <QList>
 #include <custom/meta.h>
+#include <common/commonutil.h>
+#include <common/fontawesomeicons.h>
+#include <widgets/filebutton.h>
+#include <mainwidget.h>
+
 
 namespace Ui {
 class ExportDialog;
