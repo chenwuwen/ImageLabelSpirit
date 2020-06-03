@@ -297,10 +297,10 @@ void MainWidget::initProjectInfo()
 //    图片文件夹路径
     dirPath = currentProject.imgPath;
 //    已标注过的信息
-    QMap<QString,QVariant> storgeCollection = currentProject.markCollection;
-    foreach(const QString key,storgeCollection.keys()){
-       markInfoCollection[key] = storgeCollection[key].value<QList<RectMeta>>();
-    }
+    markInfoCollection = currentProject.markCollection;
+//    foreach(const QString key,storgeCollection.keys()){
+//       markInfoCollection[key] = storgeCollection[key].value<QList<RectMeta>>();
+//    }
 }
 
 MainWidget::~MainWidget()
@@ -608,21 +608,21 @@ void MainWidget::on_saveButton_clicked()
         RectMeta rectMeta = variant.value<RectMeta>();
         rectMetas << rectMeta;
     }
-
+    qDebug() << "当前图片信息标注信息：" << rectMetas;
     markInfoCollection[currentFilePath] = rectMetas;
 
     qDebug() << "总集合的数量" << markInfoCollection[currentImgItem->data().toString()].size();
 //    设置标注进度信息
     setMarkProgressInfo();
 //    保存到项目文件中去
-    QMap<QString,QVariant> saveCollection;
-    foreach(const QString key,markInfoCollection.keys()){
-       QVariant v = QVariant::fromValue(markInfoCollection[key]);
-       saveCollection[key] = v;
-    }
-    currentProject.markCollection = saveCollection;
+//    QMap<QString,QList<RectMeta>> saveCollection;
+//    foreach(const QString key,markInfoCollection.keys()){
+//       QVariant v = QVariant::fromValue(markInfoCollection[key]);
+//       saveCollection[key] = v;
+//    }
+    currentProject.markCollection = markInfoCollection;
 //    currentProject.lastLabelTime = QString(QDateTime::currentDateTime().toTime_t());
-    CommonUtil::saveProjectInfo(currentProject);
+//    CommonUtil::saveProjectInfo(currentProject);
 //    弹出吐司
     QToast::ShowText("已保存");
 }
@@ -683,6 +683,8 @@ void MainWidget::initMarkInfo()
     }
 //    自定义委托[传入标注元数据信息]
     AnnotationDelegate *delegate = new AnnotationDelegate(metaMarkInfoList);
+//    设置自定义委托信号连接
+    connect(delegate,reinterpret_cast<void (AnnotationDelegate::*)(QString,QModelIndex)>(&AnnotationDelegate::markTextInfoUpdate),this,&MainWidget::markInfoTextChange);
     ui->annotation_list_view->setModel(markInfoItemModel);
 //    设置委托(MVVM视图到模型)
     ui->annotation_list_view->setItemDelegate(delegate);
@@ -704,6 +706,8 @@ void MainWidget::configAnnotationDisplay(QStandardItem *item)
 //          设置每个Item的尺寸,这里控制的是QComboBox的宽度和高度。
           item->setSizeHint(QSize(80,50));
           QModelIndex index = markInfoItemModel->indexFromItem(item);
+//          打开持久编辑器
+          ui->annotation_list_view->openPersistentEditor(index);
 //        设置listview中的控件为QComboBox
           QComboBox *cmb =new QComboBox;
 //          设置QComboBox是否可编辑
@@ -872,4 +876,14 @@ void  MainWidget::itemSelectState(QRectF rectf ,bool state)
 //         ui->annotation_list_view.
        }
    }
+}
+
+void MainWidget::markInfoTextChange(QString newText, QModelIndex index)
+{
+   QStandardItem *item =  markInfoItemModel->itemFromIndex(index);
+   QVariant va = item->data();
+   RectMeta rectMeta = va.value<RectMeta>();
+   qDebug() << "接收到标注信息改变信号：标注信息从 " << rectMeta.text << " 变为： " << newText;
+   rectMeta.text = newText;
+   lastMarkInfo = newText;
 }

@@ -46,7 +46,8 @@ SOURCES += \
     common/exportworker.cpp \
     indexwidget.cpp \
     module/createprojectdialog.cpp \
-    widgets/projectpreview.cpp
+    widgets/projectpreview.cpp \
+    widgets/annotationcombobox.cpp
 
 HEADERS += \
         mainwidget.h \
@@ -70,7 +71,8 @@ HEADERS += \
     common/exportworker.h \
     indexwidget.h \
     module/createprojectdialog.h \
-    widgets/projectpreview.h
+    widgets/projectpreview.h \
+    widgets/annotationcombobox.h
 
 
 

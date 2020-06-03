@@ -111,6 +111,8 @@ private slots:
     void updateRectMarkInfo(QRectF oldRectF,QRectF newRectF);
 //    item被选中
     void itemSelectState(QRectF,bool);
+//    标注的文件信息被更改
+    void markInfoTextChange(QString newText,QModelIndex index);
 
 
 signals:

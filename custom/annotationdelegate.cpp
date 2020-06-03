@@ -1,8 +1,9 @@
 ﻿#include "annotationdelegate.h"
-#include "meta.h"
 
 
-AnnotationDelegate::AnnotationDelegate(QStringList metaDataList,QObject *parent):QStyledItemDelegate(parent),m_box(new QComboBox)
+
+
+AnnotationDelegate::AnnotationDelegate(QStringList metaDataList,QObject *parent):QStyledItemDelegate(parent)
 {
     qDebug() << "AnnotationDelegate自定义委托构造函数执行";
     this->metaDataList = metaDataList;
@@ -13,7 +14,7 @@ QWidget *AnnotationDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 {
     qDebug() << "AnnotationDelegate自定义委托createEditor函数执行";
 //    这里创建Widget时,注意传入parent,否则会弹出一个新窗口来展示创建的Widget
-    QComboBox *cmb = new QComboBox(parent);
+    AnnotationComboBox *cmb = new AnnotationComboBox(parent);
 //    往QComboBox中添加项
     cmb->addItems(metaDataList);
     cmb->setEditable(true);
@@ -22,15 +23,15 @@ QWidget *AnnotationDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 
 
 
-void AnnotationDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
-{
-    qDebug() << "AnnotationDelegate自定义委托setEditorData函数执行";
-    QString text = index.model()->data(index, Qt::EditRole).toString();
-//    将*editor转换为QComboBox,转换成什么类型,要看createEditor方法中创建的是什么类型
-    QComboBox *cmb = static_cast<QComboBox *>(editor);
-    int tindex = cmb->findText(text);
-    cmb->setCurrentIndex(tindex);
-}
+//void AnnotationDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+//{
+//    qDebug() << "AnnotationDelegate自定义委托setEditorData函数执行";
+//    QString text = index.model()->data(index, Qt::EditRole).toString();
+////    将*editor转换为QComboBox,转换成什么类型,要看createEditor方法中创建的是什么类型
+//    QComboBox *cmb = static_cast<QComboBox *>(editor);
+//    int tindex = cmb->findText(text);
+//    cmb->setCurrentIndex(tindex);
+//}
 
 
 void AnnotationDelegate::setModelData(QWidget *editor,
@@ -39,15 +40,23 @@ void AnnotationDelegate::setModelData(QWidget *editor,
 {
      qDebug() << "AnnotationDelegate自定义委托setModelData函数执行";
 
-     QComboBox *cmb = static_cast<QComboBox *>(editor);
+     AnnotationComboBox *cmb = static_cast<AnnotationComboBox *>(editor);
      QString currentText = cmb->currentText();
-     qDebug() << "当前信息为：" << currentText;
-//     设置模型值
-     QVariant va = model->data(index);
-     RectMetaInfo rectMeta = va.value<RectMetaInfo>();
-     rectMeta.text = currentText;
+
+
+//     此处的model的data()值返回的是QStandardItem类的setText()的值
+     QString srcStr = model->data(index).toString();
+
+
 //     第二个参数应为基本类型,否则无法显示
      model->setData(index, currentText,Qt::EditRole);
+
+
+     if (srcStr != currentText){
+         qDebug() << "当前信息为：" << currentText  << "原值：" <<  srcStr  << " 发送改变信息号";
+         emit markTextInfoUpdate(currentText,index);
+     }
+
 }
 
 
@@ -57,33 +66,50 @@ void AnnotationDelegate::updateEditorGeometry(QWidget * editor, const QStyleOpti
     editor->setGeometry(option.rect);
 }
 
-//void AnnotationDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
-//{
-//    int radio = 4;
-//    int top = option.rect.top() + radio;
-//    int left = option.rect.left() + radio;
-//    int width = option.rect.width() - 2 * radio;
-//    int height = option.rect.height() - 2 * radio;
+void AnnotationDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    int radio = 4;
+    int top = option.rect.top() + radio;
+    int left = option.rect.left() + radio;
+    int width = option.rect.width() - 2 * radio;
+    int height = option.rect.height() - 2 * radio;
 
 
-//    QStyleOptionComboBox box;
-//    box.rect.setRect(left,top,width,height);
-//    box.state  = QStyle::State_Enabled;
-//    box.editable = false;
-////    设置画上的QCombobox的展示信息
-//    box.currentText = index.data().value<RectMeta>().text;
-//    qDebug() << "设置显示的值" << index.data();
-////  参数说明：https://www.cnblogs.com/lifexy/p/9186565.html
-//    QApplication::style()->drawControl(QStyle::CE_ComboBoxLabel,
-//                                        &box,
-//                                        painter,m_box);
-//}
+    QStyleOptionComboBox box;
+    box.rect.setRect(left,top,width,height);
+    box.state = option.state;
+    box.state |= QStyle::State_Enabled;
+    box.editable = false;
+//    设置画上的QCombobox的展示信息
+    box.currentText = index.data().toString();
+//  参数说明：https://www.cnblogs.com/lifexy/p/9186565.html
+//    注意：下面两个draw*方法都要写,第一个draw方法是画下拉框的,第二个draw方法是画下拉框中当前显示的文字的
+    QApplication::style()->drawComplexControl(QStyle::CC_ComboBox,
+                                        &box,
+                                        painter);
+    QApplication::style()->drawControl(QStyle::CE_ComboBoxLabel, &box, painter);
+
+}
 
 bool AnnotationDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
-    if(event->type() == QEvent::MouseButtonDblClick){
-//             禁止双击编辑
-               return true;
+
+//    还原鼠标样式
+//    QApplication::restoreOverrideCursor();
+    switch (event->type()) {
+        case QEvent::MouseMove:{
+//              设置鼠标样式为手型
+                QApplication::setOverrideCursor(Qt::PointingHandCursor);
+                return true;
+          }
+
+        case QEvent::MouseButtonPress:{
+//           鼠标按下
+             return false;
+          }
+
+        default:
+            return QStyledItemDelegate::editorEvent(event,model,option,index);
     }
-    return QStyledItemDelegate::editorEvent(event,model,option,index);
+
 }
