@@ -15,7 +15,7 @@
 #include <common/commonutil.h>
 #include <common/fontawesomeicons.h>
 #include <widgets/filebutton.h>
-#include <mainwidget.h>
+#include <maininterface.h>
 
 
 namespace Ui {

@@ -1,6 +1,5 @@
-﻿#include "indexwidget.h"
-#include "splashwidget.h"
-
+﻿#include "splashwidget.h"
+#include "ui_splashwidget.h"
 
 
 
@@ -27,12 +26,12 @@ SplashWidget::SplashWidget(QWidget *parent) :
 
 //    这是重复执行
 //    QTimer *timer = new QTimer(this);
-//    connect(timer,&QTimer::timeout,this,&SplashWidget::startMainWidget);
+//    connect(timer,&QTimer::timeout,this,&SplashWidget::startMainInterface);
 //    timer->start(3000);
 
 //    QTimer的时间单位是毫秒
 //      这是单次执行
-    QTimer::singleShot(1000,this,&SplashWidget::startMainWidget);
+    QTimer::singleShot(1000,this,&SplashWidget::startMainInterface);
 
 
 //    QMovie *movie = new QMovie("C:\\Users\\HLWK-06\\Desktop\\splash.gif");
@@ -56,7 +55,7 @@ SplashWidget::SplashWidget(QWidget *parent) :
 //    QMovie是循环播放的,这里也可以设置为值播放一次。通过QMovie的frameCount得到gif帧数，连接frameChanged信号，槽函数判断如果是最后1帧或者第2次播放第1帧时调用stop就行了。
 //    frameCount = movie->frameCount();
 //    qDebug()<<"当前Movie总帧数："<< frameCount;
-//    connect(movie,static_cast<void (QMovie::*)(int)>(&QMovie::frameChanged),this,&SplashWidget::stopMovieAndStartMainWidget);
+//    connect(movie,static_cast<void (QMovie::*)(int)>(&QMovie::frameChanged),this,&SplashWidget::stopMovieAndStartMainInterface);
 
 }
 
@@ -66,25 +65,25 @@ SplashWidget::~SplashWidget()
     delete ui;
 }
 
-void SplashWidget::startMainWidget()
+void SplashWidget::startMainInterface()
 {
     qDebug()<<"跳转到主界面";
-//    MainWidget *w = new MainWidget;
+//    MainInterface *w = new MainInterface;
 //    w->show();
-//    这里的IndexWidget一定要使用new才可以,不能直接定义IndexWidget w,如果直接定义,则show()方法不能显示IndexWidget
-    IndexWidget *index = new IndexWidget;
+//    这里的IndexInterface一定要使用new才可以,不能直接定义IndexInterface w,如果直接定义,则show()方法不能显示IndexInterface
+    IndexInterface *index = new IndexInterface;
     index->show();
     this->close();
 
 }
 
-void SplashWidget::stopMovieAndStartMainWidget(int i)
+void SplashWidget::stopMovieAndStartMainInterface(int i)
 {
     qDebug()<<"当前Movie帧数："<< i;
 
 //    只播放一次,如果要播放多次,那么就需要引入一个计数器,通过计数器与总帧数的计算得到播放次数
     if(i == 0){
-        MainWidget *w = new MainWidget;
+        MainInterface *w = new MainInterface;
         w->show();
         movie->stop();
         this->close();

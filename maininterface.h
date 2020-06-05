@@ -1,6 +1,6 @@
 ﻿#pragma execution_character_set("utf-8")
-#ifndef MAINWIDGET_H
-#define MAINWIDGET_H
+#ifndef MAININTERFACE_H
+#define MAININTERFACE_H
 
 #include <QGraphicsScene>
 #include <QStandardItemModel>
@@ -23,6 +23,11 @@
 #include <QThread>
 #include <QDateTime>
 #include <QShowEvent>
+#include <QMainWindow>
+#include <QApplication>
+#include <QDockWidget>
+
+
 
 #include <common/commonutil.h>
 #include <common/fontawesomeicons.h>
@@ -33,8 +38,11 @@
 #include <module/settingdialog.h>
 #include <module/reviewdialog.h>
 #include <module/exportmessagebox.h>
+#include <module/progresswidget.h>
+#include <module/sizescalewidget.h>
 #include <widgets/qtoast.h>
 #include <widgets/menubutton.h>
+
 
 #include <custom/annotationdelegate.h>
 #include <custom/filelistdelegate.h>
@@ -45,16 +53,16 @@
 
 
 namespace Ui {
-class MainWidget;
+class MainInterface;
 }
 
-class MainWidget : public QWidget
+class MainInterface : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWidget(QWidget *parent = nullptr);
-    ~MainWidget();
+    explicit MainInterface(QWidget *parent = nullptr);
+    ~MainInterface();
 //    全局变量,即dialog弹出时父窗口蒙版指针
     static QWidget *g_masking ;
 //    在主界面展示图片
@@ -71,10 +79,14 @@ public:
     void configAnnotationDisplay(QStandardItem *);
 //    设置标注进度文字信息
     void setMarkProgressInfo();
+    void createDockDockWidget();
+    void createProgressWidget();
+    void createSizeScaleWidget();
 
 public slots:
 //    设置缩放比例的文字信息
     void setSizeProportionText();
+
 
 private slots:
 //    导入按钮点击
@@ -130,7 +142,7 @@ protected:
 
 
 private:
-    Ui::MainWidget *ui;
+    Ui::MainInterface *ui;
 //   尚未浏览的图片 model对象
     QStandardItemModel *notReviewImgFilesItemModel;
 //    已经浏览的图片 model对象
@@ -156,6 +168,8 @@ private:
     ImportDialog *importDialog;
 //    查看窗口
     ReviewDialog *reviewDialog;
+    ProgressWidget *progressWidget;
+    SizeScaleWidget *sizeScaleWidget;
 //    标注信息集合,key为图片名称,value为自定义的结构体
     QMap<QString,QList<RectMeta>> markInfoCollection;
 //    上次标注的内容
@@ -170,4 +184,4 @@ private:
     Project currentProject ;
 };
 
-#endif // MAINWIDGET_H
+#endif // MAININTERFACE_H

@@ -6,8 +6,11 @@
 #include <QTimer>
 #include <QDebug>
 #include <QMovie>
-#include "mainwidget.h"
-#include "ui_splashwidget.h"
+
+#include "maininterface.h"
+#include "indexinterface.h"
+
+
 
 namespace Ui {
 class SplashWidget;
@@ -29,8 +32,8 @@ private:
 
 protected slots:
 //    启动到主界面
-    void startMainWidget();
-    void stopMovieAndStartMainWidget(int);
+    void startMainInterface();
+    void stopMovieAndStartMainInterface(int);
 };
 
 #endif // SPLASHWIDGET_H

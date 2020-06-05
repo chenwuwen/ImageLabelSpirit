@@ -17,7 +17,6 @@ QWidget *AnnotationDelegate::createEditor(QWidget *parent, const QStyleOptionVie
     AnnotationComboBox *cmb = new AnnotationComboBox(parent);
 //    往QComboBox中添加项
     cmb->addItems(metaDataList);
-    cmb->setEditable(true);
     return cmb;
 }
 

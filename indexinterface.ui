@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>IndexWidget</class>
- <widget class="QWidget" name="IndexWidget">
+ <class>IndexInterface</class>
+ <widget class="QWidget" name="IndexInterface">
   <property name="geometry">
    <rect>
     <x>0</x>

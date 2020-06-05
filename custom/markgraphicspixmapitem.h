@@ -8,7 +8,7 @@
 #include <QStyle>
 #include <QCursor>
 #include <QGraphicsSceneMouseEvent>
-
+#include <QDrag>
 
 class MarkGraphicsPixmapItem:public QObject,public QGraphicsPixmapItem
 {

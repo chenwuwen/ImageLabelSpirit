@@ -37,5 +37,7 @@
         <file>res/style/scrollbar_style.qss</file>
         <file>res/style/setting_dialog_style.qss</file>
         <file>res/style/slider_style.qss</file>
+        <file>res/icons/edit.png</file>
+        <file>res/style/size_scale_widget_style.qss</file>
     </qresource>
 </RCC>

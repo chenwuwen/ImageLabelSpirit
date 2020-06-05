@@ -1,6 +1,6 @@
 ﻿#include "markgraphicspixmapitem.h"
 
-#include <QDrag>
+
 
 //QGraphicsItem的mouseMoveEvent()函数必须鼠标按下的情况下进行move才会触发。
 //QWidget的mouseMoveEvent()函数可以通过设置setMouseTracking(true)在鼠标不需要按下的情况下，触发鼠标move事件。

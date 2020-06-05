@@ -1,0 +1,14 @@
+/*缩放比例区域*/
+QWidget#SizeScaleWidget{
+    background-color: rgb(195,195,195);
+}
+
+QWidget#SizeScaleWidget QPushButton{
+   background: transparent;
+   color:rgb(112,112,112);
+}
+
+QWidget#SizeScaleWidget QPushButton:hover{
+   background: transparent;
+   color:rgb(64,64,64);
+}

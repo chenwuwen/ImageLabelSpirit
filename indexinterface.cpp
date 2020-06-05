@@ -1,5 +1,5 @@
-﻿#include "indexwidget.h"
-#include "ui_indexwidget.h"
+﻿#include "indexinterface.h"
+#include "ui_indexinterface.h"
 
 
 
@@ -8,9 +8,9 @@
 //声明一个全局变量,用来表示当前项目的文件地址,其他cpp文件可以引用它,不能使用extern/static修饰
 QString CURRENT_PROJECT_FILE_PATH;
 
-IndexWidget::IndexWidget(QWidget *parent) :
+IndexInterface::IndexInterface(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::IndexWidget)
+    ui(new Ui::IndexInterface)
 {
     ui->setupUi(this);
     resize(1280,720);
@@ -38,12 +38,12 @@ IndexWidget::IndexWidget(QWidget *parent) :
 
 }
 
-IndexWidget::~IndexWidget()
+IndexInterface::~IndexInterface()
 {
     delete ui;
 }
 
-void IndexWidget::loadAllProject()
+void IndexInterface::loadAllProject()
 {
     QFileInfoList projects = CommonUtil::getProjectInfoList();
     int projectCount = projects.size();
@@ -62,16 +62,16 @@ void IndexWidget::loadAllProject()
 //        设置item的内容是自定义的widget
         ui->project_preview_list_widget->setItemWidget(item,projectPreview);
 //        双击Item时,触发双击信号,打开项目槽函数处理
-        connect(projectPreview,static_cast<void (ProjectPreview::*) (QString)>(&ProjectPreview::openCurrentProject),this,&IndexWidget::openProject);
+        connect(projectPreview,static_cast<void (ProjectPreview::*) (QString)>(&ProjectPreview::openCurrentProject),this,&IndexInterface::openProject);
 //        处理删除项目
-        connect(projectPreview,&ProjectPreview::deleteProjectItem,this,&IndexWidget::removeProjectItem);
+        connect(projectPreview,&ProjectPreview::deleteProjectItem,this,&IndexInterface::removeProjectItem);
 //        重命名项目
-        connect(projectPreview,static_cast<void (ProjectPreview::*) (QString)>(&ProjectPreview::projectNameModify),this,&IndexWidget::renameProject);
+        connect(projectPreview,static_cast<void (ProjectPreview::*) (QString)>(&ProjectPreview::projectNameModify),this,&IndexInterface::renameProject);
 
     }
 }
 
-void IndexWidget::renameProject(QString newProjectName)
+void IndexInterface::renameProject(QString newProjectName)
 {
       QListWidgetItem *currentItem=ui->project_preview_list_widget->currentItem();
       QVariant variant = currentItem->data(Qt::UserRole);
@@ -82,10 +82,10 @@ void IndexWidget::renameProject(QString newProjectName)
 
 
 
-void IndexWidget::on_create_project_btn_clicked()
+void IndexInterface::on_create_project_btn_clicked()
 {
     createProjectDialog = new CreateProjectDialog(this);
-    connect(createProjectDialog,&CreateProjectDialog::createProject,this,&IndexWidget::compileCreateProject);
+    connect(createProjectDialog,&CreateProjectDialog::createProject,this,&IndexInterface::compileCreateProject);
     int code = createProjectDialog->exec();
     if (code == QDialog::Accepted){
         loadAllProject();
@@ -93,7 +93,7 @@ void IndexWidget::on_create_project_btn_clicked()
 
 }
 
-void IndexWidget::compileCreateProject(QString projectName, QString imgPath, QString annotationMeta)
+void IndexInterface::compileCreateProject(QString projectName, QString imgPath, QString annotationMeta)
 {
 //    获取当前时间
     QDateTime time = QDateTime::currentDateTime();
@@ -110,22 +110,22 @@ void IndexWidget::compileCreateProject(QString projectName, QString imgPath, QSt
     CommonUtil::saveProjectInfo(project);
 }
 
-void IndexWidget::on_close_index_widget_btn_clicked()
+void IndexInterface::on_close_index_widget_btn_clicked()
 {
     this->close();
 }
 
-void IndexWidget::openProject(QString project_file_path)
+void IndexInterface::openProject(QString project_file_path)
 {
 
     CURRENT_PROJECT_FILE_PATH = project_file_path;
     qDebug() << "双击项目概览,打开项目：" << CURRENT_PROJECT_FILE_PATH;
-    MainWidget *mw = new MainWidget;
+    MainInterface *mw = new MainInterface;
     mw->show();
     this->close();
 }
 
-void IndexWidget::removeProjectItem()
+void IndexInterface::removeProjectItem()
 {
     QListWidgetItem *currentItem=ui->project_preview_list_widget->currentItem();
     ui->project_preview_list_widget->removeItemWidget(currentItem);

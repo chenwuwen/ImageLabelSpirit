@@ -1,29 +1,29 @@
 ﻿#pragma execution_character_set("utf-8")
-#ifndef INDEXWIDGET_H
-#define INDEXWIDGET_H
+#ifndef INDEXINTERFACE_H
+#define INDEXINTERFACE_H
 
 #include <QWidget>
-#include<QFileInfoList>
+#include <QFileInfoList>
 #include <QFileInfo>
 #include <QDebug>
 #include <QApplication>
 #include <QDesktopWidget>
 
-#include "mainwidget.h"
+#include "maininterface.h"
 #include <widgets/projectpreview.h>
 #include <module/createprojectdialog.h>
 #include <common/commonutil.h>
 namespace Ui {
-class IndexWidget;
+class IndexInterface;
 }
 
-class IndexWidget : public QWidget
+class IndexInterface : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit IndexWidget(QWidget *parent = nullptr);
-    ~IndexWidget();
+    explicit IndexInterface(QWidget *parent = nullptr);
+    ~IndexInterface();
 //    从特定目录(文档目录下的.imagelabelspirit目录下)加载全部项目
     void loadAllProject();
 
@@ -41,8 +41,8 @@ private slots:
 //    项目重命名
     void renameProject(QString newProjectName);
 private:
-    Ui::IndexWidget *ui;
+    Ui::IndexInterface *ui;
     CreateProjectDialog *createProjectDialog;
 };
 
-#endif // INDEXWIDGET_H
+#endif // INDEXINTERFACE_H

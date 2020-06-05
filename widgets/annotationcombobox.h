@@ -2,7 +2,7 @@
 #define ANNOTATIONCOMBOBOX_H
 
 #include <QComboBox>
-
+#include <QDebug>
 
 /**
  * 自定义QComboBox,目的是禁用鼠标滚轮
@@ -15,9 +15,17 @@ class AnnotationComboBox : public QComboBox
 
 public:
     explicit AnnotationComboBox(QWidget *parent = nullptr);
+//    重写QComboBox添加Items方法
+    void addItems(const QStringList &texts);
 
 private:
     void wheelEvent(QWheelEvent *event);
+
+
+protected:
+//    添加鼠标点击事件
+//    virtual void mousePressEvent(QMouseEvent *e);
+
 signals:
 
 public slots:

@@ -1,14 +1,16 @@
-﻿#include "mainwidget.h"
-#include "ui_mainwidget.h"
+﻿#include "maininterface.h"
+#include "ui_maininterface.h"
+
 
 
 //蒙版全局变量初始化
-QWidget *MainWidget::g_masking = NULL;
+QWidget *MainInterface::g_masking = NULL;
 //引用IndexWidget的全局变量
 extern QString CURRENT_PROJECT_FILE_PATH;
-MainWidget::MainWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::MainWidget)
+
+MainInterface::MainInterface(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainInterface)
 {
     ui->setupUi(this);
     CommonUtil::setQssStyle(":/res/style/scrollbar_style.qss",this);
@@ -19,6 +21,8 @@ MainWidget::MainWidget(QWidget *parent) :
 //    如果没有得到当前项目的文件路径,就不再进行下去
     if (CURRENT_PROJECT_FILE_PATH.isEmpty()) return;
 
+    ui->progress_area->hide();
+
 //    实例化QStandardItemModel
     notReviewImgFilesItemModel = new QStandardItemModel;
     hasReviewImgFilesItemModel = new QStandardItemModel;
@@ -26,18 +30,22 @@ MainWidget::MainWidget(QWidget *parent) :
     metaMarkInfoItemModel = new QStringListModel;
 //    初始化项目信息,包括图片文件夹的路径/标注的预设信息/已经标注过的信息
     initProjectInfo();
+//    createDockDockWidget();
 
-    connect(ui->main_graphics_view,&MarkGraphicsView::scaleChange,this,&MainWidget::setSizeProportionText);
+
+    connect(ui->main_graphics_view,&MarkGraphicsView::scaleChange,this,&MainInterface::setSizeProportionText);
 
 }
 
 
-void MainWidget::initCustomUI()
+void MainInterface::initCustomUI()
 {
 //    设置图标( 窗口图标,(操作系统)状态栏图标)
     qDebug()<<"重新设置窗体标题/图标";
     setWindowIcon(QIcon(":/res/icons/kanyun.png"));
     setWindowTitle("看云图片标注精灵");
+//    去掉标题栏
+    setWindowFlags(Qt::FramelessWindowHint);
 
     //     获取桌面信息
     //     QDesktopWidget* desktopWidget = QApplication::desktop();
@@ -60,7 +68,7 @@ void MainWidget::initCustomUI()
 //    最大化显示函数(相当于点了最大化按钮,单独设置这个可能不会生效,参考：https://blog.csdn.net/KayChanGEEK/article/details/77923848)
     showMaximized();
 //    辅助窗口最大化的同时,也去掉窗口外边框
-    QWidget::setWindowFlags(Qt::FramelessWindowHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
+//    QMainWindow::setWindowFlags(Qt::FramelessWindowHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
 
 
 
@@ -179,19 +187,6 @@ void MainWidget::initCustomUI()
 //    得到FontAwesome字体
     QFont font = FontAwesomeIcons::Instance().getFont();
 
-//    放大/缩小/全屏按钮
-    ui->narrow_btn->setFlat(true);
-    ui->adapt_window_btn->setFlat(true);
-    ui->enlarge_btn->setFlat(true);
-    ui->adapt_window_btn->setFont(font);
-    ui->narrow_btn->setFont(font);
-    ui->enlarge_btn->setFont(font);
-    ui->adapt_window_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_fullscreen));
-    ui->narrow_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_search_minus));
-    ui->enlarge_btn->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_search_plus));
-
-
-
 //    保存/查看 按钮
     ui->review_btn->setFlat(true);
     ui->save_btn->setFlat(true);
@@ -215,21 +210,18 @@ void MainWidget::initCustomUI()
     qDebug()<< ui->menu_frame->width()<<ui->file_frame->height();
 
 //    定义连接函数
-    connect(settingButton,&MenuButton::clicked,this,&MainWidget::on_settingButton_clicked);
-    connect(moveButton,&MenuButton::clicked,this,&MainWidget::on_moveButton_clicked);
-    connect(importButton,&MenuButton::clicked,this,&MainWidget::on_importButton_clicked);
-    connect(exportButton,&MenuButton::clicked,this,&MainWidget::on_exportButton_clicked);
+    connect(settingButton,&MenuButton::clicked,this,&MainInterface::on_settingButton_clicked);
+    connect(moveButton,&MenuButton::clicked,this,&MainInterface::on_moveButton_clicked);
+    connect(importButton,&MenuButton::clicked,this,&MainInterface::on_importButton_clicked);
+    connect(exportButton,&MenuButton::clicked,this,&MainInterface::on_exportButton_clicked);
 
-    connect(ui->narrow_btn,&QPushButton::clicked,this,&MainWidget::on_narrowButton_clicked);
-    connect(ui->enlarge_btn,&QPushButton::clicked,this,&MainWidget::on_enlargeButton_clicked);
-    connect(ui->adapt_window_btn,&QPushButton::clicked,this,&MainWidget::on_adaptWindowButton_clicked);
 
-    connect(ui->save_btn,&QPushButton::clicked,this,&MainWidget::on_saveButton_clicked);
-    connect(ui->review_btn,&QPushButton::clicked,this,&MainWidget::on_reviewButton_clicked);
+    connect(ui->save_btn,&QPushButton::clicked,this,&MainInterface::on_saveButton_clicked);
+    connect(ui->review_btn,&QPushButton::clicked,this,&MainInterface::on_reviewButton_clicked);
 
-    connect(ui->minimize_window_btn,&QPushButton::clicked,this,&MainWidget::on_minimizeWindowButton_clicked);
-    connect(ui->custom_window_btn,&QPushButton::clicked,this,&MainWidget::on_customWindowButton_clicked);
-    connect(ui->close_window_btn,&QPushButton::clicked,this,&MainWidget::on_closeWindowButton_clicked);
+    connect(ui->minimize_window_btn,&QPushButton::clicked,this,&MainInterface::on_minimizeWindowButton_clicked);
+    connect(ui->custom_window_btn,&QPushButton::clicked,this,&MainInterface::on_customWindowButton_clicked);
+    connect(ui->close_window_btn,&QPushButton::clicked,this,&MainInterface::on_closeWindowButton_clicked);
 
 //    下面两个连接函数使用了lambda表达式
     connect(fontButton,&MenuButton::clicked,this,[=]{
@@ -272,13 +264,9 @@ void MainWidget::initCustomUI()
     ui->left_file_listView->setLayoutDirection(Qt::LayoutDirection::RightToLeft);
     ui->right_file_listView->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
 
-//      设置不显示进度条文字
-    ui->progress_bar->setTextVisible(false);
-//    设置进度条高度
-    ui->progress_bar->setFixedHeight(2);
 
 //    父窗口蒙版
-    g_masking=new QWidget(this,Qt::FramelessWindowHint);
+    g_masking = new QWidget(this,Qt::FramelessWindowHint);
     g_masking->resize(maximumSize());
     g_masking->setObjectName("g_masking");
     g_masking->setStyleSheet("#g_masking{background-color:rgb(10,10,10,100)}");
@@ -286,7 +274,7 @@ void MainWidget::initCustomUI()
 
 }
 
-void MainWidget::initProjectInfo()
+void MainInterface::initProjectInfo()
 {
 
     currentProject = CommonUtil::readProjectInfo(CURRENT_PROJECT_FILE_PATH);
@@ -303,14 +291,14 @@ void MainWidget::initProjectInfo()
 //    }
 }
 
-MainWidget::~MainWidget()
+MainInterface::~MainInterface()
 {
     delete ui;
 }
 
 
 
-void MainWidget::loadImage()
+void MainInterface::loadImage()
 {
     if(dirPath.isEmpty()) return;
     QFileInfoList imgInfoFiles = CommonUtil::getImageFileInfoList(dirPath);
@@ -421,7 +409,7 @@ void MainWidget::loadImage()
 }
 
 
-void MainWidget::displayImg(){
+void MainInterface::displayImg(){
     qDebug() << "主界面展示图片";
 
     qDebug() << "获取的Item:"<< currentImgItem;
@@ -450,13 +438,13 @@ void MainWidget::displayImg(){
     setSizeProportionText();
 
 //    槽函数:添加标注信息
-    connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF)>(&MarkGraphicsScene::addMarkItem),this,&MainWidget::addRectMarkInfo);
+    connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF)>(&MarkGraphicsScene::addMarkItem),this,&MainInterface::addRectMarkInfo);
 //    槽函数:删除标注信息
-    connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF)>(&MarkGraphicsScene::deleteMarkItem),this,&MainWidget::removeRectMarkInfo);
+    connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF)>(&MarkGraphicsScene::deleteMarkItem),this,&MainInterface::removeRectMarkInfo);
 //    槽函数：修改标注信息(主要是item的坐标产生变化)
-    connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF,QRectF)>(&MarkGraphicsScene::updateMarkItem),this,&MainWidget::updateRectMarkInfo);
+    connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF,QRectF)>(&MarkGraphicsScene::updateMarkItem),this,&MainInterface::updateRectMarkInfo);
 //    槽函数：图片上的item被选中
-    connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF,bool)>(&MarkGraphicsScene::itemSelectState),this,&MainWidget::itemSelectState);
+    connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF,bool)>(&MarkGraphicsScene::itemSelectState),this,&MainInterface::itemSelectState);
 
 
 //    清空标注信息的model
@@ -465,25 +453,25 @@ void MainWidget::displayImg(){
     initMarkInfo();
 }
 
-void MainWidget::on_settingButton_clicked()
+void MainInterface::on_settingButton_clicked()
 {
     SettingDialog *settingDialog = new SettingDialog(this);
 //    设置dialog为模态框
     settingDialog->setModal(true);
-    connect(this,static_cast<void (MainWidget::*)(QString)>(&MainWidget::sendImageLocalPath),settingDialog,&SettingDialog::setImageLocalPath);
+    connect(this,static_cast<void (MainInterface::*)(QString)>(&MainInterface::sendImageLocalPath),settingDialog,&SettingDialog::setImageLocalPath);
     emit sendImageLocalPath(dirPath);
-    MainWidget::g_masking->show();
+    MainInterface::g_masking->show();
     settingDialog->exec();
-    MainWidget::g_masking->hide();
+    MainInterface::g_masking->hide();
 }
-void MainWidget::on_exportButton_clicked()
+void MainInterface::on_exportButton_clicked()
 {
     ExportDialog *exportDialog = new ExportDialog(this);
 //    设置dialog为模态框
     exportDialog->setModal(true);
-    connect(this,static_cast<void (MainWidget::*)(QString,QMap<QString,QList<RectMetaInfo>>)>(&MainWidget::sendExportLocalPathAndCollection),exportDialog,&ExportDialog::setExportLocalPathAndMarkInfoCollection);
+    connect(this,static_cast<void (MainInterface::*)(QString,QMap<QString,QList<RectMetaInfo>>)>(&MainInterface::sendExportLocalPathAndCollection),exportDialog,&ExportDialog::setExportLocalPathAndMarkInfoCollection);
     emit sendExportLocalPathAndCollection(dirPath,markInfoCollection);
-    MainWidget::g_masking->show();
+    MainInterface::g_masking->show();
 //    注意connect()函数的位置
     connect(exportDialog,static_cast<void (ExportDialog::*)(QString,export_type)>(&ExportDialog::sendExportPathAndExportId),this,[=](QString exportPath,export_type exportType){
             this->export_dir_path = exportPath;
@@ -492,7 +480,7 @@ void MainWidget::on_exportButton_clicked()
     });
 
     exportDialog->exec();
-    MainWidget::g_masking->hide();
+    MainInterface::g_masking->hide();
 
     ExportMessageBox *ex = new ExportMessageBox(export_dir_path);
     ex->show();
@@ -518,23 +506,23 @@ void MainWidget::on_exportButton_clicked()
 
 
 }
-void MainWidget::on_moveButton_clicked()
+void MainInterface::on_moveButton_clicked()
 {
     qDebug() << "移动操作";
 }
-void MainWidget::on_importButton_clicked()
+void MainInterface::on_importButton_clicked()
 {
     importDialog = new ImportDialog(this);
 //    设置dialog为模态框
     importDialog->setModal(true);
 //  Qt5信号槽：  https://www.bbsmax.com/A/Gkz1RVnJR6/
-    connect(importDialog,static_cast<void (ImportDialog::*)(QString)>(&ImportDialog::sendData),this,&MainWidget::on_import_function);
-    MainWidget::g_masking->show();
+    connect(importDialog,static_cast<void (ImportDialog::*)(QString)>(&ImportDialog::sendData),this,&MainInterface::on_import_function);
+    MainInterface::g_masking->show();
     importDialog->exec();
-    MainWidget::g_masking->hide();
+    MainInterface::g_masking->hide();
 }
 
-void MainWidget::on_import_function(QString path)
+void MainInterface::on_import_function(QString path)
 {
     qDebug()<< "接收到importDialog窗口返回值："<<path;
 //    清空标注信息集合
@@ -568,28 +556,28 @@ void MainWidget::on_import_function(QString path)
 
 }
 
-void MainWidget::on_narrowButton_clicked()
+void MainInterface::on_narrowButton_clicked()
 {
     qDebug()<< "图片缩小...";
     ui->main_graphics_view->narrow();
     setSizeProportionText();
 }
 
-void MainWidget::on_enlargeButton_clicked()
+void MainInterface::on_enlargeButton_clicked()
 {
     qDebug()<< "图片放大.......";
     ui->main_graphics_view->enlarge();
     setSizeProportionText();
 }
 
-void MainWidget::on_adaptWindowButton_clicked()
+void MainInterface::on_adaptWindowButton_clicked()
 {
     qDebug()<< "图片回归初始展示......";
     ui->main_graphics_view->adapt();
     setSizeProportionText();
 }
 
-void MainWidget::on_saveButton_clicked()
+void MainInterface::on_saveButton_clicked()
 {
     qDebug()<< "保存按钮被点击......";
     if (markInfoCollection.keys().size() == 0) return ;
@@ -627,18 +615,18 @@ void MainWidget::on_saveButton_clicked()
     QToast::ShowText("已保存");
 }
 
-void MainWidget::on_reviewButton_clicked()
+void MainInterface::on_reviewButton_clicked()
 {
     qDebug()<< "查看按钮被点击......";
     reviewDialog = new ReviewDialog(this);
 //    设置dialog为模态框
     reviewDialog->setModal(true);
     reviewDialog->setMarkInfoTable(markInfoCollection);
-    connect(this,static_cast<void (MainWidget::*)(QString,QMap<QString,QList<RectMetaInfo>>)>(&MainWidget::sendExportLocalPathAndCollection),reviewDialog,&ReviewDialog::setExportLocalPath);
+    connect(this,static_cast<void (MainInterface::*)(QString,QMap<QString,QList<RectMetaInfo>>)>(&MainInterface::sendExportLocalPathAndCollection),reviewDialog,&ReviewDialog::setExportLocalPath);
     emit sendExportLocalPathAndCollection(dirPath,markInfoCollection);
-    MainWidget::g_masking->show();
+    MainInterface::g_masking->show();
     int return_code = reviewDialog->exec();
-    MainWidget::g_masking->hide();
+    MainInterface::g_masking->hide();
     if (return_code == QDialog::Accepted){
         qDebug() << "说明点击的是导出按钮";
         on_exportButton_clicked();
@@ -649,11 +637,11 @@ void MainWidget::on_reviewButton_clicked()
 
 }
 
-void MainWidget::on_closeWindowButton_clicked()
+void MainInterface::on_closeWindowButton_clicked()
 {
    this->close();
 }
-void MainWidget::on_customWindowButton_clicked()
+void MainInterface::on_customWindowButton_clicked()
 {
     if(isMaximized()){
 //        如果已经是最大化窗口,那么就缩小,否则就设置为最大化窗口
@@ -663,12 +651,12 @@ void MainWidget::on_customWindowButton_clicked()
         showMaximized();
     }
 }
-void MainWidget::on_minimizeWindowButton_clicked()
+void MainInterface::on_minimizeWindowButton_clicked()
 {
     this->showMinimized();
 }
 
-void MainWidget::initMarkInfo()
+void MainInterface::initMarkInfo()
 {
 //    从标注集合中获取当前图片的标注集合,然后放到model中
     QList<RectMeta> rectMetas =  markInfoCollection[currentImgItem->data().toString()];
@@ -684,7 +672,7 @@ void MainWidget::initMarkInfo()
 //    自定义委托[传入标注元数据信息]
     AnnotationDelegate *delegate = new AnnotationDelegate(metaMarkInfoList);
 //    设置自定义委托信号连接
-    connect(delegate,reinterpret_cast<void (AnnotationDelegate::*)(QString,QModelIndex)>(&AnnotationDelegate::markTextInfoUpdate),this,&MainWidget::markInfoTextChange);
+    connect(delegate,reinterpret_cast<void (AnnotationDelegate::*)(QString,QModelIndex)>(&AnnotationDelegate::markTextInfoUpdate),this,&MainInterface::markInfoTextChange);
     ui->annotation_list_view->setModel(markInfoItemModel);
 //    设置委托(MVVM视图到模型)
     ui->annotation_list_view->setItemDelegate(delegate);
@@ -701,7 +689,7 @@ void MainWidget::initMarkInfo()
 
 }
 
-void MainWidget::configAnnotationDisplay(QStandardItem *item)
+void MainInterface::configAnnotationDisplay(QStandardItem *item)
 {
 //          设置每个Item的尺寸,这里控制的是QComboBox的宽度和高度。
           item->setSizeHint(QSize(80,50));
@@ -719,7 +707,7 @@ void MainWidget::configAnnotationDisplay(QStandardItem *item)
 
 }
 
-void MainWidget::addRectMarkInfo(QRectF rectf)
+void MainInterface::addRectMarkInfo(QRectF rectf)
 {
     RectMeta rectMeta;
     rectMeta.x = rectf.x();
@@ -742,7 +730,7 @@ void MainWidget::addRectMarkInfo(QRectF rectf)
     configAnnotationDisplay(item);
 }
 
-void MainWidget::removeRectMarkInfo(QRectF rectf)
+void MainInterface::removeRectMarkInfo(QRectF rectf)
 {
    qDebug() << "删除标注信息";
 
@@ -762,7 +750,7 @@ void MainWidget::removeRectMarkInfo(QRectF rectf)
 }
 
 
-void MainWidget::updateRectMarkInfo(QRectF oldRectF,QRectF newRectF)
+void MainInterface::updateRectMarkInfo(QRectF oldRectF,QRectF newRectF)
 {
     qDebug() << "修改标注信息";
     int rowCount = markInfoItemModel->rowCount();
@@ -783,7 +771,7 @@ void MainWidget::updateRectMarkInfo(QRectF oldRectF,QRectF newRectF)
 
 
 
-void MainWidget::resizeEvent(QResizeEvent *event){
+void MainInterface::resizeEvent(QResizeEvent *event){
 //    使用Qt内置的图标
     QStyle* style = QApplication::style();
     if(isMaximized()){
@@ -794,9 +782,9 @@ void MainWidget::resizeEvent(QResizeEvent *event){
     }
 }
 
-void MainWidget::showEvent(QShowEvent *event)
+void MainInterface::showEvent(QShowEvent *event)
 {
-    qDebug() << "MainWidget showEvent() 执行,需要注意的是,如果最小化窗口,再显示也会触发该方法";
+    qDebug() << "MainInterface showEvent() 执行,需要注意的是,如果最小化窗口,再显示也会触发该方法";
 //   如果没有得到当前项目的文件路径,就不再进行下去
     if (CURRENT_PROJECT_FILE_PATH.isEmpty()) return;
 //   如果imgCount不为0,说明是已经初始化过的,将不再进行下面的操作
@@ -805,6 +793,9 @@ void MainWidget::showEvent(QShowEvent *event)
 //  因此需要在界面展示之后,再进行下面操作但是showEvent方法,是在显示前触发的,因此加上定时器
 
     QTimer::singleShot(10,this,[=]{
+
+            createProgressWidget();
+            createSizeScaleWidget();
 //          加载图片
             loadImage();
 //          设置标注进度信息
@@ -815,7 +806,7 @@ void MainWidget::showEvent(QShowEvent *event)
 
 }
 
-void MainWidget::setSizeProportionText()
+void MainInterface::setSizeProportionText()
 {
 //        得到存储在item中的data数据
         QVariant variant = currentImgItem->data();
@@ -834,12 +825,12 @@ void MainWidget::setSizeProportionText()
 //        当前缩放比例
         qreal proportion = ui->main_graphics_view->matrix().m11();
 //        得到的比例是qreal类型,先乘以100,再保留两位小数
-        ui->scale->setText(QString("%1%").arg(QString::number(proportion*100,'f',2)));
+        sizeScaleWidget->setSizeScale(QString("%1%").arg(QString::number(proportion*100,'f',2)));
 
 }
 
 
-void  MainWidget::setMarkProgressInfo()
+void  MainInterface::setMarkProgressInfo()
 {
     int hasMarkCount = 0;
     foreach(const QString key,markInfoCollection.keys()){
@@ -849,14 +840,59 @@ void  MainWidget::setMarkProgressInfo()
     }
 
     QString info = QString("已标注%1/ 总%2   当前位置：%3").arg(hasMarkCount).arg(imgCount).arg(currentImgIndex+1);
-    ui->progress_info->setText(info);
-//    设置进度条最大值
-    ui->progress_bar->setMaximum(imgCount);
-//    设置进度条当前的运行值
-    ui->progress_bar->setValue(hasMarkCount);
+    progressWidget->setProgressInfo(info,imgCount,hasMarkCount);
 }
 
-void  MainWidget::itemSelectState(QRectF rectf ,bool state)
+void MainInterface::createDockDockWidget()
+{
+//    定义一个空Widget
+    QWidget* emptyTitleBar = new QWidget();
+//    定义一个QPalette
+    QPalette pal;
+    QDockWidget *progressDock = new QDockWidget;
+
+    QWidget* progressDockTitleBar = progressDock->titleBarWidget();
+    progressDock->setTitleBarWidget(emptyTitleBar);
+//    去掉QDockWidget的标题栏
+    delete progressDockTitleBar;
+
+    ProgressWidget *progressWidget = new ProgressWidget();
+//    QDockWidget中添加元素
+    progressDock->setWidget(progressWidget);
+//    设置停靠窗口特性，可移动，可关闭,不可停靠
+    progressDock->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetClosable | QDockWidget::NoDockWidgetFeatures);
+//    设置可停靠区域为主窗口左边和右边
+    progressDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::BottomDockWidgetArea);
+    progressDock->setMaximumHeight(100);
+//    加这句，下面设置颜色时，可以设置标题和控件主体的颜色，否则只能设置标题栏的颜色
+    progressDock->setAutoFillBackground(true);
+    progressDock->setPalette(pal);
+    pal.setColor(QPalette::Background,Qt::blue);
+
+//    添加DockWidget到界面指定位置,此方法只有QMainWindow及其子类拥有
+//    addDockWidget(Qt::LeftDockWidgetArea, progressDock);
+
+}
+
+void MainInterface::createProgressWidget()
+{
+
+    progressWidget = new ProgressWidget(ui->file_frame);
+    progressWidget->setObjectName("progressWidget");
+    progressWidget->show();
+}
+
+void MainInterface::createSizeScaleWidget()
+{
+    sizeScaleWidget = new SizeScaleWidget(ui->file_frame);
+    connect(sizeScaleWidget,&SizeScaleWidget::narrow,this,&MainInterface::on_narrowButton_clicked);
+    connect(sizeScaleWidget,&SizeScaleWidget::adaptWindow,this,&MainInterface::on_adaptWindowButton_clicked);
+    connect(sizeScaleWidget,&SizeScaleWidget::enlarge,this,&MainInterface::on_enlargeButton_clicked);
+
+    sizeScaleWidget->show();
+}
+
+void  MainInterface::itemSelectState(QRectF rectf ,bool state)
 {
    int rowCout =  markInfoItemModel->rowCount();
    for(int i = 0; i < rowCout ; i++){
@@ -878,7 +914,7 @@ void  MainWidget::itemSelectState(QRectF rectf ,bool state)
    }
 }
 
-void MainWidget::markInfoTextChange(QString newText, QModelIndex index)
+void MainInterface::markInfoTextChange(QString newText, QModelIndex index)
 {
    QStandardItem *item =  markInfoItemModel->itemFromIndex(index);
    QVariant va = item->data();

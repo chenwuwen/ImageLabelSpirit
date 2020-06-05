@@ -26,7 +26,7 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwidget.cpp \
+        maininterface.cpp \
         widgets/menubutton.cpp \
         widgets/filebutton.cpp \
     common/commonutil.cpp \
@@ -44,13 +44,15 @@ SOURCES += \
     custom/filelistdelegate.cpp \
     module/exportmessagebox.cpp \
     common/exportworker.cpp \
-    indexwidget.cpp \
+    indexinterface.cpp \
     module/createprojectdialog.cpp \
     widgets/projectpreview.cpp \
-    widgets/annotationcombobox.cpp
+    widgets/annotationcombobox.cpp \
+    module/progresswidget.cpp \
+    module/sizescalewidget.cpp
 
 HEADERS += \
-        mainwidget.h \
+        maininterface.h \
         widgets/menubutton.h \
         widgets/filebutton.h \
      common/commonutil.h \
@@ -69,24 +71,28 @@ HEADERS += \
     custom/filelistdelegate.h \
     module/exportmessagebox.h \
     common/exportworker.h \
-    indexwidget.h \
+    indexinterface.h \
     module/createprojectdialog.h \
     widgets/projectpreview.h \
-    widgets/annotationcombobox.h
+    widgets/annotationcombobox.h \
+    module/progresswidget.h \
+    module/sizescalewidget.h
 
 
 
 FORMS += \
-        mainwidget.ui \
+        maininterface.ui \
      module/importdialog.ui \
     module/exportdialog.ui \
     module/settingdialog.ui \
     splashwidget.ui \
     module/reviewdialog.ui \
     module/exportmessagebox.ui \
-    indexwidget.ui \
+    indexinterface.ui \
     module/createprojectdialog.ui \
-    widgets/projectpreview.ui
+    widgets/projectpreview.ui \
+    module/progresswidget.ui \
+    module/sizescalewidget.ui
 
 
 # Default rules for deployment.

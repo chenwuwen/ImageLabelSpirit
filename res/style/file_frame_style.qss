@@ -7,21 +7,6 @@ QWidget#progress_area{
     background-color: rgb(195,195,195);
 }
 
-/*缩放比例区域*/
-QWidget#size_area{
-    background-color: rgb(195,195,195);
-}
-
-QWidget#size_area QPushButton{
-   background: transparent;
-   color:rgb(112,112,112);
-}
-
-QWidget#size_area QPushButton:hover{
-   background: transparent;
-   color:rgb(64,64,64);
-}
-
 
 QPushButton#review_btn{
    border:1px solid rgb(112,112,112);
