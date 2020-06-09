@@ -9,14 +9,14 @@ ExportDialog::ExportDialog(QWidget *parent) :
     ui(new Ui::ExportDialog)
 {
     ui->setupUi(this);
+
+    resize(parent->width() * 0.4,parent->height() * 0.4);
+
 //    配置无边框
     setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
     setWindowTitle("导入文件");
     CommonUtil::setQssStyle(":/res/style/export_dialog_style.qss",this);
-    ui->close_export_dialog_btn->setFlat(true);
-//    使用Qt内置的图标
-    QStyle* style = QApplication::style();
-    ui->close_export_dialog_btn->setIcon(style->standardIcon(QStyle::SP_TitleBarCloseButton));
+
 
 //    去掉QPushButton阴影
     ui->determine_export_button->setFlat(true);
@@ -32,6 +32,8 @@ ExportDialog::ExportDialog(QWidget *parent) :
     ui->xml_btn->setCheckable(true);
     ui->mongo_btn->setCheckable(true);
 
+//    禁用Mongo导出方式,主要是未实现Mongo导出方式
+    ui->mongo_btn->setEnabled(false);
 
 //    默认json为选中状态
     ui->json_btn->setChecked(true);
@@ -40,6 +42,22 @@ ExportDialog::ExportDialog(QWidget *parent) :
     ui->export_type_button_group->setId(ui->json_btn,export_type::JSON);
     ui->export_type_button_group->setId(ui->xml_btn,export_type::XML);
     ui->export_type_button_group->setId(ui->mongo_btn,export_type::MONGO);
+
+//    创建关闭窗口按钮
+    QPushButton *close_export_dialog_btn = new QPushButton(ui->head_widget);
+    close_export_dialog_btn->setObjectName("close_export_dialog_btn");
+    close_export_dialog_btn->setFlat(true);
+
+    close_export_dialog_btn->setFixedSize(QSize(ui->head_widget->height(),ui->head_widget->height()));
+//    使用Qt内置的图标
+    QStyle* style = QApplication::style();
+    close_export_dialog_btn->setIcon(style->standardIcon(QStyle::SP_TitleBarCloseButton));
+    close_export_dialog_btn->setText("");
+    close_export_dialog_btn->show();
+    close_export_dialog_btn->move(this->width() - close_export_dialog_btn->width(),0);
+    close_export_dialog_btn->stackUnder(this);
+//    创建关闭窗口按钮信号与槽函数的连接
+    connect(close_export_dialog_btn,&QPushButton::clicked,this,&ExportDialog::on_close_export_dialog_btn_clicked);
 
 }
 
@@ -50,6 +68,7 @@ ExportDialog::~ExportDialog()
 
 void ExportDialog::on_close_export_dialog_btn_clicked()
 {
+//   直接关闭窗口
     this->close();
 }
 
@@ -88,6 +107,7 @@ void ExportDialog::on_determine_export_button_clicked()
 //    发射信号
     emit sendExportPathAndExportId(savePath,type);
 
-    this->close();
+//    使用QDialog::Accepted的返回值关闭窗口
+    this->accept();
 
 }

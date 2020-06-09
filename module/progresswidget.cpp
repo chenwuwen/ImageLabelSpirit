@@ -7,20 +7,25 @@ ProgressWidget::ProgressWidget(QWidget *parent) :
     ui(new Ui::ProgressWidget)
 {
     ui->setupUi(this);
-    setAutoFillBackground(true);
-    setStyleSheet(QString::fromUtf8("background-color: rgb(195,195,195);"));
-    CommonUtil::setQssStyle(QString(":/res/style/progressbar_style.qss"),ui->progress_bar);
+//    这句必须加,否则该子widget将会是透明的
+    setAttribute(Qt::WA_StyledBackground);
+//    因为widget的颜色是半透明的,所以将QLabel的背景颜色设置为透明,这样QLabel就与widget的颜色一样了
+    ui->progress_info->setAttribute(Qt::WA_TranslucentBackground, true);
+    setStyleSheet(QString::fromUtf8("background-color: rgba(195,195,195,0.9);"));
+
 
 //    重设尺寸
-    resize(parent->width()*0.2,parent->height() * 0.8);
+    resize(parent->width()*0.2,parent->height() * 0.4);
 
 //    移动至垂直居中
-    move(0,parent->height() * 0.1);
+    move(0,parent->height() * 0.3);
 
 //    设置不显示进度条文字
     ui->progress_bar->setTextVisible(false);
 //    设置进度条高度
     ui->progress_bar->setFixedHeight(2);
+//    设置进度条样式
+    CommonUtil::setQssStyle(QString(":/res/style/progressbar_style.qss"),ui->progress_bar);
 
 //  进度条文本颜色
     QPalette palette;

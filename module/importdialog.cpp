@@ -9,6 +9,8 @@ ImportDialog::ImportDialog(QWidget *parent) :
     ui(new Ui::ImportDialog)
 {
     ui->setupUi(this);
+    resize(parent->width() * 0.3,parent->height() * 0.2);
+
 //    配置无边框
     setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
     setWindowTitle("导入文件");
@@ -24,7 +26,7 @@ ImportDialog::ImportDialog(QWidget *parent) :
 
     ui->close_label->setFont(FontAwesomeIcons::Instance().getFont());
     ui->close_label->setText(FontAwesomeIcons::Instance().getIconChar(FontAwesomeIcons::IconIdentity::icon_close));
-//    安装事件过滤器
+//    安装事件过滤器(因为我这里是把QLabel当做QPushButton来用的,因此需要安装事件过滤器,用以过滤点击事件,来处理)
     ui->close_label->installEventFilter(this);
 
 }

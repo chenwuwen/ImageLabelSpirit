@@ -21,8 +21,6 @@ MainInterface::MainInterface(QWidget *parent) :
 //    如果没有得到当前项目的文件路径,就不再进行下去
     if (CURRENT_PROJECT_FILE_PATH.isEmpty()) return;
 
-    ui->progress_area->hide();
-
 //    实例化QStandardItemModel
     notReviewImgFilesItemModel = new QStandardItemModel;
     hasReviewImgFilesItemModel = new QStandardItemModel;
@@ -123,11 +121,6 @@ void MainInterface::initCustomUI()
     CommonUtil::setQssStyle(QString(":/res/style/head_frame_style.qss"),ui->head_frame);
     CommonUtil::setQssStyle(QString(":/res/style/main_frame_style.qss"),ui->main_frame);
 
-    CommonUtil::setQssStyle(QString(":/res/style/progressbar_style.qss"),ui->progress_bar);
-//    进度条文本颜色
-    QPalette palette;
-    palette.setColor(QPalette::Text,Qt::green);
-    ui->progress_bar->setPalette(palette);
 
     QVBoxLayout *menuVerticalLayout = new QVBoxLayout(ui->menu_frame);
     menuVerticalLayout->setSpacing(6);
@@ -258,8 +251,8 @@ void MainInterface::initCustomUI()
 
     ui->head_frame->setFrameShape(QListView::NoFrame);
 //    去掉listview边框
-//    ui->left_file_listView->setFrameShape(QListView::NoFrame);
-//    ui->right_file_listView->setFrameShape(QListView::NoFrame);
+    ui->left_file_listView->setFrameShape(QListView::NoFrame);
+    ui->right_file_listView->setFrameShape(QListView::NoFrame);
 //    左边的listview展现是从右向左
     ui->left_file_listView->setLayoutDirection(Qt::LayoutDirection::RightToLeft);
     ui->right_file_listView->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
@@ -458,8 +451,9 @@ void MainInterface::on_settingButton_clicked()
     SettingDialog *settingDialog = new SettingDialog(this);
 //    设置dialog为模态框
     settingDialog->setModal(true);
-    connect(this,static_cast<void (MainInterface::*)(QString)>(&MainInterface::sendImageLocalPath),settingDialog,&SettingDialog::setImageLocalPath);
-    emit sendImageLocalPath(dirPath);
+    settingDialog->setImageLocalPath(dirPath);
+    settingDialog->setAnnotationMeta(metaMarkInfoList);
+    connect(settingDialog,static_cast<void (SettingDialog::*)(QString)>(&SettingDialog::settingChanged),this,&MainInterface::saveSettingChange);
     MainInterface::g_masking->show();
     settingDialog->exec();
     MainInterface::g_masking->hide();
@@ -479,8 +473,11 @@ void MainInterface::on_exportButton_clicked()
             qDebug() << "lambda表达式接收到参数：" << exportPath << exportType;
     });
 
-    exportDialog->exec();
+    int result_code = exportDialog->exec();
     MainInterface::g_masking->hide();
+
+//    如果不是点击的确认导出按钮,则返回
+    if (result_code != QDialog::Accepted) return;
 
     ExportMessageBox *ex = new ExportMessageBox(export_dir_path);
     ex->show();
@@ -922,4 +919,12 @@ void MainInterface::markInfoTextChange(QString newText, QModelIndex index)
    qDebug() << "接收到标注信息改变信号：标注信息从 " << rectMeta.text << " 变为： " << newText;
    rectMeta.text = newText;
    lastMarkInfo = newText;
+}
+
+void MainInterface::saveSettingChange(QString annotationMetaInfo)
+{
+   metaMarkInfoList =  annotationMetaInfo.split(",");
+   metaMarkInfoItemModel->setStringList(metaMarkInfoList);
+   currentProject.annotationMeta = annotationMetaInfo;
+   CommonUtil::saveProjectInfo(currentProject);
 }

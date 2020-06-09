@@ -14,12 +14,25 @@ ReviewDialog::ReviewDialog(QWidget *parent) :
     setWindowTitle("查看标注结果");
     CommonUtil::setQssStyle(":/res/style/review_dialog_style.qss",this);
 
-    ui->review_dialog_close_btn->setFlat(true);
     ui->review_dialog_export_btn->setFlat(true);
 
+
+//    创建关闭窗口按钮
+    QPushButton *review_dialog_close_btn = new QPushButton(ui->widget);
+    review_dialog_close_btn->setObjectName("review_dialog_close_btn");
+    review_dialog_close_btn->setFlat(true);
+
+    review_dialog_close_btn->setFixedSize(QSize(ui->widget->height(),ui->widget->height()));
 //    使用Qt内置的图标
     QStyle* style = QApplication::style();
-    ui->review_dialog_close_btn->setIcon(style->standardIcon(QStyle::SP_TitleBarCloseButton));
+    review_dialog_close_btn->setIcon(style->standardIcon(QStyle::SP_TitleBarCloseButton));
+    review_dialog_close_btn->setText("");
+    review_dialog_close_btn->show();
+    review_dialog_close_btn->move(this->width() - review_dialog_close_btn->width(),0);
+    review_dialog_close_btn->stackUnder(this);
+//    创建关闭窗口按钮信号与槽函数的连接
+    connect(review_dialog_close_btn,&QPushButton::clicked,this,&ReviewDialog::on_review_dialog_close_btn_clicked);
+
 
     tableItemModel = new QStandardItemModel;
 //    默认显示行头，如果你觉得不美观的话，我们可以将隐藏

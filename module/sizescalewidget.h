@@ -16,7 +16,7 @@ class SizeScaleWidget : public QWidget
 public:
     explicit SizeScaleWidget(QWidget *parent = nullptr);
     ~SizeScaleWidget();
-    void initUI();
+    void initButton();
 //    设置当前缩放比例文字信息
     void setSizeScale(QString scale);
 
@@ -29,8 +29,11 @@ private slots:
 
 
 signals:
+//    图片放大信号
     void enlarge();
+//    图片缩小信号
     void narrow();
+//    图片适配窗口信号
     void adaptWindow();
 
 private:

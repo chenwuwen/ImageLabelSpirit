@@ -125,12 +125,13 @@ private slots:
     void itemSelectState(QRectF,bool);
 //    标注的文件信息被更改
     void markInfoTextChange(QString newText,QModelIndex index);
-
+//    保存设置改变槽函数
+    void saveSettingChange(QString annotationMetaInfo);
 
 signals:
 //    自定义信号,发送图片路径和标注信息集合给导出窗口
     void sendExportLocalPathAndCollection(QString,QMap<QString,QList<RectMetaInfo>>);
-//    自定义信号,发送图片路径给设置窗口
+//    自定义信号,发送图片路径
     void sendImageLocalPath(QString);
 
 protected:

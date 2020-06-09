@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" rowstretch="2,1,1,4" rowminimumheight="0,0,0,0">
+  <layout class="QGridLayout" name="gridLayout" rowstretch="1,1,2,4" rowminimumheight="0,0,0,0">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -95,6 +95,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="determine_import_button">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
        <property name="styleSheet">
         <string notr="true"/>
        </property>

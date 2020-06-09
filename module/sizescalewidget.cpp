@@ -8,11 +8,16 @@ SizeScaleWidget::SizeScaleWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    CommonUtil::setQssStyle(QString(":/res/style/size_scale_widget_style.qss"),this);
-    resize(parent->width() * 0.2,parent->height() * 0.8);
-    move(parent->width() * 0.7,parent->height() * 0.1);
+    resize(parent->width() * 0.16,parent->height() * 0.4);
+    move(parent->width() * 0.8,parent->height() * 0.3);
 
-    initUI();
+//    这句必须加,否则该子widget将会是透明的
+    setAttribute(Qt::WA_StyledBackground);
+
+    CommonUtil::setQssStyle(QString(":/res/style/size_scale_widget_style.qss"),this);
+
+    initButton();
+
 }
 
 SizeScaleWidget::~SizeScaleWidget()
@@ -20,7 +25,7 @@ SizeScaleWidget::~SizeScaleWidget()
     delete ui;
 }
 
-void SizeScaleWidget::initUI()
+void SizeScaleWidget::initButton()
 {
 //      得到FontAwesome字体
         QFont font = FontAwesomeIcons::Instance().getFont();
@@ -44,15 +49,18 @@ void SizeScaleWidget::setSizeScale(QString scale)
 
 void SizeScaleWidget::on_enlarge_btn_clicked()
 {
+//    发送放大图片信号到MainInterface.cpp
     emit enlarge();
 }
 
 void SizeScaleWidget::on_narrow_btn_clicked()
 {
+//    发送缩小图片信号到MainInterface.cpp
     emit narrow();
 }
 
 void SizeScaleWidget::on_adapt_window_btn_clicked()
 {
+//    发送适配窗口尺寸图片信号到MainInterface.cpp
     emit adaptWindow();
 }
