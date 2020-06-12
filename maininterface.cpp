@@ -1,6 +1,6 @@
 ﻿#include "maininterface.h"
 #include "ui_maininterface.h"
-
+#define cout qDebug() << "[" <<__FILE__<< " : "<<__LINE__<<"]"
 
 
 //蒙版全局变量初始化
@@ -21,13 +21,6 @@ MainInterface::MainInterface(QWidget *parent) :
 //    如果没有得到当前项目的文件路径,就不再进行下去
     if (CURRENT_PROJECT_FILE_PATH.isEmpty()) return;
 
-//    实例化QStandardItemModel
-    notReviewImgFilesItemModel = new QStandardItemModel;
-    hasReviewImgFilesItemModel = new QStandardItemModel;
-    markInfoItemModel = new QStandardItemModel;
-    metaMarkInfoItemModel = new QStringListModel;
-//    初始化项目信息,包括图片文件夹的路径/标注的预设信息/已经标注过的信息
-    initProjectInfo();
 //    createDockDockWidget();
 
 
@@ -218,7 +211,7 @@ void MainInterface::initCustomUI()
 
 //    下面两个连接函数使用了lambda表达式
     connect(fontButton,&MenuButton::clicked,this,[=]{
-        qDebug() << "前一个按钮被点击";
+        cout << "前一个按钮被点击,展示上一张图片";
         if(imgCount == 0) return ;
         if(currentImgIndex > 0){
             notReviewImgFilesItemModel->insertRow(0,currentImgItem);
@@ -233,9 +226,9 @@ void MainInterface::initCustomUI()
         displayImg();
     });
     connect(afterButton,&MenuButton::clicked,this,[=]{
-        qDebug() << "后一个按钮被点击";
+        cout << "后一个按钮被点击,展示下一张图片";
         if(imgCount == 0) return ;
-        if(currentImgIndex<imgCount-1){
+        if(currentImgIndex < imgCount - 1){
 //            hasReviewImgFilesItemModel之所以使用insert是因为,hasReviewImgFilesItemModel是从右向左展示顺序,因此倒排,最远的靠近中央
             hasReviewImgFilesItemModel->insertRow(0,currentImgItem);
             currentImgItem = notReviewImgFilesItemModel->item(0);
@@ -267,11 +260,17 @@ void MainInterface::initCustomUI()
 
 }
 
-void MainInterface::initProjectInfo()
+void MainInterface::loadProjectInfo()
 {
 
+//   实例化QStandardItemModel
+    notReviewImgFilesItemModel = new QStandardItemModel;
+    hasReviewImgFilesItemModel = new QStandardItemModel;
+    markInfoItemModel = new QStandardItemModel;
+    metaMarkInfoItemModel = new QStringListModel;
+
     currentProject = CommonUtil::readProjectInfo(CURRENT_PROJECT_FILE_PATH);
-    qDebug() << QString("初始化项目信息：[项目路径：%1 图片文件夹路径：%2]").arg(CURRENT_PROJECT_FILE_PATH).arg(currentProject.imgPath);
+    qDebug() << QString("初始化项目信息：[项目路径：%1").arg(CURRENT_PROJECT_FILE_PATH);
 //    标注内容预定义信息
     metaMarkInfoList = currentProject.annotationMeta.split(",");
     metaMarkInfoItemModel->setStringList(metaMarkInfoList);
@@ -279,9 +278,10 @@ void MainInterface::initProjectInfo()
     dirPath = currentProject.imgPath;
 //    已标注过的信息
     markInfoCollection = currentProject.markCollection;
-//    foreach(const QString key,storgeCollection.keys()){
-//       markInfoCollection[key] = storgeCollection[key].value<QList<RectMeta>>();
-//    }
+//    当前图片索引
+    currentImgIndex = currentProject.currentImgIndex;
+    cout << markInfoCollection;
+    cout << "加载项目配置：" << QString("图片文件夹路径：%1 当前图片索引：%2 已标注%3张图片").arg(dirPath).arg(currentImgIndex).arg(markInfoCollection.size());
 }
 
 MainInterface::~MainInterface()
@@ -296,7 +296,7 @@ void MainInterface::loadImage()
     if(dirPath.isEmpty()) return;
     QFileInfoList imgInfoFiles = CommonUtil::getImageFileInfoList(dirPath);
     imgCount =  imgInfoFiles.size();
-    qDebug()<< "选择的路径是：" << dirPath << "  共找到" << imgCount << "张图片";
+    cout << "选择的路径是：" << dirPath << "  共找到" << imgCount << "张图片";
     if(imgCount == 0) return;
 //    设置数据之前,先清空旧数据
     notReviewImgFilesItemModel->clear();
@@ -306,7 +306,7 @@ void MainInterface::loadImage()
 
     int list_view_height = ui->left_file_listView->height();
     int list_view_width = ui->left_file_listView->width();
-    qDebug() << "QListView的高度：" << list_view_height << "  宽度：" << list_view_width;
+    cout << "QListView的高度：" << list_view_height << "  宽度：" << list_view_width;
     for(auto info : imgInfoFiles){
 //       定义QStandardItem对象 , 构造方法参数1.行数,2.列数 有默认值
         QStandardItem *imageItem = new QStandardItem(1);
@@ -329,7 +329,7 @@ void MainInterface::loadImage()
 //        添加到未查看的model中
         notReviewImgFilesItemModel->appendRow(imageItem);
 
-//       以文件路径为Key,放进总集合中。
+//       以文件路径为Key,如果markInfoCollection中不包含该路径的话,这里添加判断是因为在序列化的时候不序列化没有标注信息的图片,放进总集合中
         if (!markInfoCollection.contains(info.absoluteFilePath())){
             markInfoCollection[info.absoluteFilePath()];
         }
@@ -391,13 +391,24 @@ void MainInterface::loadImage()
 
     ui->left_file_listView->setResizeMode(QListView::Adjust);
     ui->right_file_listView->setDragEnabled(QListView::Adjust);
-//    设置当前图片索引为0
-    currentImgIndex = 0;
-//    取得当前图片Item
-    currentImgItem = notReviewImgFilesItemModel->item(currentImgIndex);
-    qDebug() << "获取的Item11:"<< currentImgItem;
-//    从未查看Model中弹出当前图片Item,因为该方法体在初始化时只执行一次,因此takeRow()方法的参数恒为0,也就是取出第一个Item
-    notReviewImgFilesItemModel->takeRow(currentImgIndex);
+
+//    takeRow()与takeItem()区别：takeRow()会是Model中的Item数量减少,takeItem()不会使Model中的Item数量发生变化,被take出去的Item变为NULL
+
+//    从未查看Model中弹出Item，然后将弹出来的插入到已经查看过的Model中
+    for( int i = 0; i < currentImgIndex; i++){
+      cout << "加载上一次保存时浏览的图片位置";
+//      1.先从notReviewImgFilesItemModel中得到第一个Item,takeRow()方法将第一个去除,原来的第二个将变成第一个,因此永远取第一个
+      QStandardItem *hasViewImgItem = notReviewImgFilesItemModel->takeItem(0);
+//      2.将得到的Item放到hasReviewImgFilesItemModel中
+      hasReviewImgFilesItemModel->insertRow(0,hasViewImgItem);
+//      3.将notReviewImgFilesItemModel中的第一个Item移除
+      notReviewImgFilesItemModel->takeRow(0);
+    }
+
+//    4.取得当前图片Item(前3步已经把浏览过的移除掉了并且插入到了hasReviewImgFilesItemModel,因此notReviewImgFilesItemModel中的第一个Item即是当前浏览Item)
+    currentImgItem = notReviewImgFilesItemModel->item(0);
+//    5.将当前图片Item从notReviewImgFilesItemModel中移除,此时currentImgItem既不属于notReviewImgFilesItemModel也不属于hasReviewImgFilesItemModel
+    notReviewImgFilesItemModel->takeRow(0);
 
 }
 
@@ -405,13 +416,12 @@ void MainInterface::loadImage()
 void MainInterface::displayImg(){
     qDebug() << "主界面展示图片";
 
-    qDebug() << "获取的Item:"<< currentImgItem;
-
 //    得到存储在item中的data数据
     QVariant variant = currentImgItem->data();
 //    当前图片文件路径
     QString currentFilePath = variant.toString();
-    qDebug()<<"当前展示的图片路径是："<<currentFilePath;
+
+    cout << "当前展示的图片路径是："<< currentFilePath;
 
 //    设置图元在容器中的展示位置
     ui->main_graphics_view->setAlignment(Qt::AlignCenter);
@@ -428,7 +438,6 @@ void MainInterface::displayImg(){
     ui->main_graphics_view->adapt();
 //    ui->main_graphics_view->clearMask();
     ui->main_graphics_view->show();
-    setSizeProportionText();
 
 //    槽函数:添加标注信息
     connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF)>(&MarkGraphicsScene::addMarkItem),this,&MainInterface::addRectMarkInfo);
@@ -439,11 +448,12 @@ void MainInterface::displayImg(){
 //    槽函数：图片上的item被选中
     connect(scene,static_cast<void (MarkGraphicsScene::*)(QRectF,bool)>(&MarkGraphicsScene::itemSelectState),this,&MainInterface::itemSelectState);
 
-
 //    清空标注信息的model
     markInfoItemModel->clear();
-//    初始化当前图片标注信息
-    initMarkInfo();
+//    加载当前图片标注信息
+    loadMarkInfo();
+//    设置显示比例文字
+    setSizeProportionText();
 }
 
 void MainInterface::on_settingButton_clicked()
@@ -536,6 +546,7 @@ void MainInterface::on_import_function(QString path)
     }
 
     qDebug() << "导入数据完毕,数据量：" << markInfoCollection.size();
+//    导入数据,将currentImgIndex重置为0
     currentImgIndex = 0;
     imgCount = markInfoCollection.keys().size();
     notReviewImgFilesItemModel->clear();
@@ -577,10 +588,11 @@ void MainInterface::on_adaptWindowButton_clicked()
 void MainInterface::on_saveButton_clicked()
 {
     qDebug()<< "保存按钮被点击......";
+//    如果markInfoCollection.keys().size()的值为0,说明是没有图片的,因为在加载全部图片时,就已经把所有图片放入集合中了
     if (markInfoCollection.keys().size() == 0) return ;
     QString currentFilePath =  currentImgItem->data().toString();
 
-    if(!markInfoCollection.contains(currentFilePath)){
+    if(markInfoCollection.contains(currentFilePath)){
         markInfoCollection[currentFilePath].clear();
     }
 
@@ -593,21 +605,20 @@ void MainInterface::on_saveButton_clicked()
         RectMeta rectMeta = variant.value<RectMeta>();
         rectMetas << rectMeta;
     }
-    qDebug() << "当前图片信息标注信息：" << rectMetas;
+    cout << "当前图片信息标注信息：" << rectMetas;
     markInfoCollection[currentFilePath] = rectMetas;
-
-    qDebug() << "总集合的数量" << markInfoCollection[currentImgItem->data().toString()].size();
+    currentProject.currentImgIndex = currentImgIndex;
+    cout << "当前图片标注量" << markInfoCollection[currentImgItem->data().toString()].size();
 //    设置标注进度信息
     setMarkProgressInfo();
-//    保存到项目文件中去
-//    QMap<QString,QList<RectMeta>> saveCollection;
-//    foreach(const QString key,markInfoCollection.keys()){
-//       QVariant v = QVariant::fromValue(markInfoCollection[key]);
-//       saveCollection[key] = v;
-//    }
+
     currentProject.markCollection = markInfoCollection;
 //    currentProject.lastLabelTime = QString(QDateTime::currentDateTime().toTime_t());
-//    CommonUtil::saveProjectInfo(currentProject);
+
+    cout << "保存项目配置：" << QString("图片文件夹路径：%1 当前图片索引：%2 已标注%3张图片").arg(dirPath).arg(currentImgIndex).arg(markInfoCollection.size());
+
+//    保存到项目文件中去
+    CommonUtil::saveProjectInfo(currentProject);
 //    弹出吐司
     QToast::ShowText("已保存");
 }
@@ -653,17 +664,19 @@ void MainInterface::on_minimizeWindowButton_clicked()
     this->showMinimized();
 }
 
-void MainInterface::initMarkInfo()
+void MainInterface::loadMarkInfo()
 {
-//    从标注集合中获取当前图片的标注集合,然后放到model中
-    QList<RectMeta> rectMetas =  markInfoCollection[currentImgItem->data().toString()];
+//    从当前Item中取出数据(图片的路径)做为key 从QMap集合中找到标注信息的集合,然后再把标注内容放入QStandardItemModel中
+    QString currentImgPath = currentImgItem->data().toString();
+    QList<RectMeta> rectMetas =  markInfoCollection[currentImgPath];
     for(RectMeta rectMeta : rectMetas){
-
+        cout << "加载标注信息";
+//        这一步是在图片上画标注图
         scene->addItemFromStorage(QRectF(rectMeta.x,rectMeta.y,rectMeta.w,rectMeta.h));
-
         QStandardItem *item = new QStandardItem;
         item->setData(QVariant::fromValue(rectMeta));
         item->setText(rectMeta.text);
+//        将标注信息放入QStandardItemModel中,用于界面右侧标注列表展示
         markInfoItemModel->appendRow(item);
     }
 //    自定义委托[传入标注元数据信息]
@@ -786,12 +799,17 @@ void MainInterface::showEvent(QShowEvent *event)
     if (CURRENT_PROJECT_FILE_PATH.isEmpty()) return;
 //   如果imgCount不为0,说明是已经初始化过的,将不再进行下面的操作
     if (imgCount != 0) return;
+
+//   初始化项目信息,包括图片文件夹的路径/标注的预设信息/已经标注过的信息
+    loadProjectInfo();
+
 //  下面这些操作,原来是在构造函数中完成的,但是后来发现在构造函数中获取尺寸,跟构造函数完成之后获取的尺寸不一致,因为构造函数有默认尺寸,
 //  因此需要在界面展示之后,再进行下面操作但是showEvent方法,是在显示前触发的,因此加上定时器
 
     QTimer::singleShot(10,this,[=]{
-
+//          创建标注进度条widget
             createProgressWidget();
+//          创建尺寸控制widget
             createSizeScaleWidget();
 //          加载图片
             loadImage();

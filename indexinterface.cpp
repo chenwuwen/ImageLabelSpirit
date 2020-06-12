@@ -63,6 +63,9 @@ void IndexInterface::loadAllProject()
         ui->project_preview_list_widget->setItemWidget(item,projectPreview);
 //        双击Item时,触发双击信号,打开项目槽函数处理
         connect(projectPreview,static_cast<void (ProjectPreview::*) (QString)>(&ProjectPreview::openCurrentProject),this,&IndexInterface::openProject);
+//        双击Item时,触发双击信号,找不到图片文件夹槽函数处理
+        connect(projectPreview,static_cast<void (ProjectPreview::*) (QString)>(&ProjectPreview::imgPathNotFound),this,&IndexInterface::imagePathNonExistent);
+
 //        处理删除项目
         connect(projectPreview,&ProjectPreview::deleteProjectItem,this,&IndexInterface::removeProjectItem);
 //        重命名项目
@@ -104,9 +107,10 @@ void IndexInterface::compileCreateProject(QString projectName, QString imgPath, 
     Project project;
 
     project.imgPath = imgPath;
-    project.projectName=projectName;
+    project.projectName = projectName;
     project.annotationMeta = annotationMeta;
-    project.createTime=QString::number(second);
+    project.createTime = QString::number(second);
+    project.currentImgIndex = 0;
     CommonUtil::saveProjectInfo(project);
 }
 
@@ -123,6 +127,13 @@ void IndexInterface::openProject(QString project_file_path)
     MainInterface *mw = new MainInterface;
     mw->show();
     this->close();
+}
+
+void IndexInterface::imagePathNonExistent(QString project_file_path)
+{
+    Project project = CommonUtil::readProjectInfo(project_file_path);
+    QString message = QString("找不到文件夹%1").arg(project.imgPath);
+    QMessageBox::warning(this,"警告",message);
 }
 
 void IndexInterface::removeProjectItem()

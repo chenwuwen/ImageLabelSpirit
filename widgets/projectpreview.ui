@@ -66,7 +66,7 @@
       <item>
        <widget class="QLabel" name="project_name">
         <property name="text">
-         <string>TextLabel</string>
+         <string>项目名称</string>
         </property>
        </widget>
       </item>
@@ -80,7 +80,7 @@
       <item>
        <widget class="QLabel" name="project_img_path">
         <property name="text">
-         <string>TextLabel</string>
+         <string>图片路径</string>
         </property>
        </widget>
       </item>

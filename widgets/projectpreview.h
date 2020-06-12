@@ -46,11 +46,14 @@ signals:
     void deleteProjectItem();
 //    项目名称更改信息
     void projectNameModify(QString newProjectName);
+//    图片文件夹找不到
+    void imgPathNotFound(QString project_file_path);
 
 private:
     Ui::ProjectPreview *ui;
     QString projectFilePath;
     ProjectInfo currentProject;
+    bool imgPathExist = true;
 };
 
 #endif // PROJECTPREVIEW_H

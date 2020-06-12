@@ -36,6 +36,8 @@ private slots:
     void on_close_index_widget_btn_clicked();
 //    打开项目
     void openProject(QString project_file_path);
+//    图片文件夹不存在
+    void imagePathNonExistent(QString project_file_path);
 //    移除项目
     void removeProjectItem();
 //    项目重命名

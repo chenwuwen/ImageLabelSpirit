@@ -84,7 +84,7 @@ void CommonUtil::saveProjectInfo(Project project)
     file.open(QFile::WriteOnly|QFile::Truncate);
     QDataStream out(&file);
 //    设置Qt序列化版本
-//    in.setVersion(QDataStream::Qt_5_12);
+//    out.setVersion(QDataStream::Qt_5_12);
 //    将project 序列化到文件中
     out << project;
 }
@@ -96,9 +96,9 @@ Project CommonUtil::readProjectInfo(QString projectFilePath)
     QDataStream in(&file);
 //    设置Qt序列化版本
 //    in.setVersion(QDataStream::Qt_5_12);
-    Project pj;
-    in >> pj;
-    return pj;
+    Project project;
+    in >> project;
+    return project;
 }
 
 /**

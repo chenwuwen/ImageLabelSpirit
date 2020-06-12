@@ -69,18 +69,20 @@ public:
     void displayImg();
 //    初始化界面内容
     void initCustomUI();
-//    初始化项目信息
-    void initProjectInfo();
+//    加载项目信息
+    void loadProjectInfo();
 //    从本地磁盘系统加载图片
     void loadImage();
-//    初始化标注信息列表(一个是在底图上画框,一个是初始化标注信息[展示列表])
-    void initMarkInfo();
+//    加载标注信息列表(一个是在底图上画框,一个是初始化标注信息[展示列表])
+    void loadMarkInfo();
 //    配置标注信息展示
     void configAnnotationDisplay(QStandardItem *);
 //    设置标注进度文字信息
     void setMarkProgressInfo();
     void createDockDockWidget();
+//    创建进度区域widget
     void createProgressWidget();
+//    创建尺寸区域widget
     void createSizeScaleWidget();
 
 public slots:

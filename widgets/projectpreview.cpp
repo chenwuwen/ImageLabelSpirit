@@ -14,8 +14,25 @@ ProjectPreview::ProjectPreview(ProjectInfo project,QString projectFilePath,QWidg
     ui->delete_project_btn->setFlat(true);
 //    设置项目名称
     ui->project_name->setText(project.projectName);
-//    设置项目图片路径
-    ui->project_img_path->setText(project.imgPath);
+//    设置项目图片文件夹路径
+//    先判断路径是否存在
+    QDir dir(project.imgPath);
+    if (!dir.exists()){
+        qDebug() << "图片文件夹路径不存在";
+//        如果图片文件夹路径不存在,则设置QLabel文字颜色为红色
+//        但是在这里使用QPalette这种方式不生效。因为该类是作为QListViewWidget的子元素使用的,因此改用Html方式设置
+//        见：http://www.qtcn.org/bbs/simple/?t46376.html
+//           https://www.cnblogs.com/azbane/p/12609611.html
+        QPalette pe;
+        pe.setColor(QPalette::WindowText,Qt::red);
+        ui->project_img_path->setPalette(pe);
+        imgPathExist = false;
+        ui->project_img_path->setText("<font  color= red>"+project.imgPath+"</font>");
+    }else{
+        ui->project_img_path->setText(project.imgPath);
+    }
+
+
     QDateTime time = QDateTime::fromTime_t(project.createTime.toUInt());
 //    设置项目日期(日期格式化)
     ui->project_create_date->setText(time.toString("yyyy-MM-dd HH:mm:ss"));
@@ -100,9 +117,14 @@ void ProjectPreview::renameProject()
 void ProjectPreview::mouseDoubleClickEvent(QMouseEvent *event)
 {
 
-    if (event->button() == Qt::LeftButton){
+    if (event->button() == Qt::LeftButton && imgPathExist){
 //        此信号连接到 indexwidget.cpp中的openProject槽函数
         emit openCurrentProject(projectFilePath);
+    }
+
+    if (event->button() == Qt::LeftButton && !imgPathExist){
+//        此信号连接到 indexwidget.cpp中的openProject槽函数
+        emit imgPathNotFound(projectFilePath);
     }
 
 }

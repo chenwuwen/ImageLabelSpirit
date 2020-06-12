@@ -18,7 +18,7 @@ void FileListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     QString path = v.toString();
 //    qDebug() << "得到数据：" << path;
     if(path.isEmpty()) {
-        qDebug() << "调用了默认委托" ;
+//        qDebug() << "调用了默认委托" ;
 //		调用默认委托(即调用父类方法)
         QStyledItemDelegate::paint(painter,option,index);
     } else {
