@@ -1,6 +1,6 @@
 ﻿#include "markgraphicsscene.h"
 
-
+#define cout qDebug() << "[" <<__FILE__<< " : "<<__LINE__<<"]"
 
 MarkGraphicsScene::MarkGraphicsScene(QObject *parent):QGraphicsScene(parent)
 {
@@ -11,30 +11,26 @@ MarkGraphicsScene::MarkGraphicsScene(QObject *parent):QGraphicsScene(parent)
 void MarkGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     qDebug() << "MarkGraphicsScene类的 mousePressEvent()方法执行";
-//    QGraphicsScene::mousePressEvent(event);
+
     if (!event->isAccepted()) {
-        if(event->pos() == event->scenePos()){
-            qDebug() << "两只一致" << event->pos() ;
-        }else{
-             qDebug() << "两只bu一致" << event->pos() << event->scenePos();
-        }
+
+//        event->pos() / event->scenePos() 结果是不一致的,event->pos() 的结果是(0,0)
+
 //        检测光标下是否有 item,如果存在则赋值给oldQGraphicsRectItem
         foreach (QGraphicsItem *item, items(event->scenePos())) {
             if (item->type() == QGraphicsRectItem::Type){
                 oldQGraphicsRectItem = dynamic_cast<QGraphicsRectItem *>(item);
-                qDebug() << "当前区域存在标注: " << oldQGraphicsRectItem->rect() ;
+                cout << "当前区域存在标注: " << oldQGraphicsRectItem->rect() ;
 //                这里直接跳出循环了,如果有两个标注有一部分是重合的,那么只会移动一个
                 break;
             }
         }
 
 
-
         if (event->button() == Qt::LeftButton) {
-
             QPointF point = event->scenePos();
             startScenePoint = point;
-            qDebug() << "startScenePoint:" << startScenePoint;
+            cout << "startScenePoint:" << startScenePoint;
 
 //            按下的是鼠标左键存在两种情况：1.当前存在item -> 此时应为移动 2不存在item -> 此时应为新增
             if(oldQGraphicsRectItem != NULL){
@@ -58,24 +54,26 @@ void MarkGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         if (event->button() == Qt::RightButton) {
             if(oldQGraphicsRectItem != NULL){
                 if(!oldQGraphicsRectItem->isSelected()){
-    //             设置为选中状态
+//                 设置为选中状态
                    oldQGraphicsRectItem->setSelected(true);
                    oldQGraphicsRectItem->setBrush(QBrush(QColor(255,215,0),Qt::Dense7Pattern));
-                   qDebug() << "item未选中,设置为选中状态,已选中item数量为：" << selectedItems().size();
-    //               发射item被选中信号
+                   cout << "item未选中,设置为选中状态,已选中item数量为：" << selectedItems().size();
+//                   发射item被选中信号
                    emit itemSelectState(oldQGraphicsRectItem->rect(),true);
                 }else{
-    //              取消选中状态
+//                  取消选中状态
                     oldQGraphicsRectItem->setSelected(false);
                     oldQGraphicsRectItem->setBrush(Qt::NoBrush);
                     qDebug() << "item已选中,取消其选中状态,已选中item数量为：" << selectedItems().size();
-    //                发射item取消选中信号
+//                    发射item取消选中信号
                    emit itemSelectState(oldQGraphicsRectItem->rect(),false);
                }
             }
         }
 
+       QGraphicsScene::mousePressEvent(event);
     }
+
 }
 
 void MarkGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -91,7 +89,7 @@ void MarkGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 //        qDebug() << "当前场景Item的数量为：" << items().size();
         QRectF rectf = rectItem->rect();
         emit addMarkItem(rectf);
-        qDebug() << "MarkGraphicsScene 标注结束,startScenePoint" << startScenePoint <<  "endScenePoint:" << endScenePoint << "标注的尺寸信息是：" << rectf << "item的pos()值：" << rectItem->pos()<< "item的scenePos()返回：" << rectItem->scenePos();
+        cout << "MarkGraphicsScene 标注结束,startScenePoint" << startScenePoint <<  "endScenePoint:" << endScenePoint << "标注的尺寸信息是：" << rectf << "item的pos()值：" << rectItem->pos()<< "item的scenePos()返回：" << rectItem->scenePos();
      }
 
 //    说明移动结束
@@ -121,8 +119,12 @@ void MarkGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void MarkGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 //    qDebug() << "MarkGraphicsScene类的 mouseMoveEvent()方法执行";
-    QGraphicsScene::mouseMoveEvent(event);
 
+    if (spaceActive) {
+//        如果此时空格键是按下状态,则事件直接传递到图元,不再在场景中做任何操作
+        QGraphicsScene::mouseMoveEvent(event);
+        return ;
+    }
     if(event->buttons() & Qt::LeftButton) {
 //        返回鼠标在场景中的位置
         QPointF point = event->scenePos();
@@ -161,7 +163,7 @@ void MarkGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         if ( isMoving ){
 //            qAbs()函数求绝对值,移动图元可能往右下角移动也有可能往左上角移动,有可能只水平移动,也有可能只垂直移动
             if(qAbs(xMoveLength) > OPERATION_THRESHOLD_VALUE || qAbs(yMoveLength) > OPERATION_THRESHOLD_VALUE){
-                qDebug() << "移动操作: 场景坐标" << endScenePoint << "item:" << event->pos();
+                cout << "移动标注图元操作: 场景坐标" << endScenePoint << "item:" << event->pos();
 //                计算偏移
                 qreal xInterval = endScenePoint.x() - startScenePoint.x();
                 qreal yInterval = endScenePoint.y() - startScenePoint.y();
@@ -179,39 +181,13 @@ void MarkGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 }
 
-void MarkGraphicsScene::leaveEvent(QGraphicsSceneMouseEvent *event)
-{
-     qDebug() << "MarkGraphicsScene类的 leaveEvent()方法执行";
-}
-
-void MarkGraphicsScene::enterEvent(QGraphicsSceneMouseEvent *event)
-{
-    qDebug() << "MarkGraphicsScene类的 enterEvent()方法执行";
-    if(spaceActive){
-//       QGraphicsScene中没有设置鼠标样式的方法,因此需要选获取view
-         QGraphicsView *view = this->views().at(0);
-//         当空格键是激活状态,鼠标在场景中时应该为手型
-         view->setCursor(QCursor(Qt::OpenHandCursor));
-    }
-
-}
 
 void MarkGraphicsScene::keyPressEvent(QKeyEvent *event)
 {
    qDebug() << "MarkGraphicsScene类的 keyPressEvent()方法执行";
    QGraphicsScene::keyPressEvent(event);
-   int key_code = event->key();
-//    如果是ctrl键
-   if(key_code == Qt::Key_Control){
-       ctrlActive = true;
-//     qDebug()<<"Ctrl被按下,当前ctrlActive："<<ctrlActive;
-   }
 
-//    如果是空格键
-   if(key_code == Qt::Key_Space){
-       spaceActive = true;
-//     qDebug()<<"Space被按下,当前spaceActive："<<spaceActive;
-   }
+   if (event->key() == Qt::Key_Space) spaceActive = true;
 
 //   如果是删除键
    if (event->key() == Qt::Key_Backspace || event->key() == Qt::Key_Delete) {
@@ -230,20 +206,8 @@ void MarkGraphicsScene::keyPressEvent(QKeyEvent *event)
 void MarkGraphicsScene::keyReleaseEvent(QKeyEvent *event)
 {
    qDebug() << "MarkGraphicsScene类的 keyReleaseEvent()方法执行";
+   if (event->key() == Qt::Key_Space) spaceActive = false;
    QGraphicsScene::keyReleaseEvent(event);
-
-   int key_code = event->key();
-//    如果是ctrl键
-   if(key_code == Qt::Key_Control){
-       ctrlActive = false;
-//     qDebug()<<"Ctrl被释放,当前ctrlActive："<<ctrlActive;
-   }
-
-//    如果是空格键
-   if(key_code == Qt::Key_Space){
-       spaceActive = false;
-//     qDebug()<<"Space被释放,当前spaceActive："<<spaceActive;
-   }
 }
 
 void MarkGraphicsScene::saveMarkItem()
@@ -289,4 +253,9 @@ void MarkGraphicsScene::drawRectMark(QGraphicsRectItem *rectItem)
 //    设置item 可选择/可移动 (不设置此flag item将无法移动和选中,当为选中状态时,会出现蚂蚁线)
     rectItem->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
 
+}
+
+void MarkGraphicsScene::setSpaceActive(bool state)
+{
+    spaceActive = state;
 }

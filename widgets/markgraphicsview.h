@@ -61,7 +61,6 @@ private:
 //    固定比例 https://www.zhihu.com/question/35614219
     constexpr const static double DEFAULT_PROPORTION = 1.2;
 
-    QPoint lastMousePos;
 
 
 };

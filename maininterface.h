@@ -26,6 +26,7 @@
 #include <QMainWindow>
 #include <QApplication>
 #include <QDockWidget>
+#include <QKeyEvent>
 
 
 
@@ -97,8 +98,7 @@ private slots:
     void on_settingButton_clicked();
 //    导出按钮点击
     void on_exportButton_clicked();
-//    移动按钮点击
-    void on_moveButton_clicked();
+
 //    缩小按钮被按下
     void on_narrowButton_clicked();
 //    放大按钮被按下
@@ -142,7 +142,10 @@ protected:
 //    窗口显示监听器
     void showEvent(QShowEvent *event);
 
-
+//    键盘按下事件
+    void keyPressEvent(QKeyEvent *event) ;
+//    键盘松开事件
+    void keyReleaseEvent(QKeyEvent *event) ;
 
 private:
     Ui::MainInterface *ui;

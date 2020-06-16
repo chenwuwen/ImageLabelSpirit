@@ -154,6 +154,7 @@ void MainInterface::initCustomUI()
     afterButton->setObjectName(QString::fromUtf8("afterButton"));
     settingButton->setObjectName(QString::fromUtf8("settingButton"));
     moveButton->setObjectName(QString::fromUtf8("moveButton"));
+    rectButton->setObjectName(QString::fromUtf8("rectButton"));
     importButton->setObjectName(QString::fromUtf8("importButton"));
     exportButton->setObjectName(QString::fromUtf8("exportButton"));
 
@@ -197,7 +198,14 @@ void MainInterface::initCustomUI()
 
 //    定义连接函数
     connect(settingButton,&MenuButton::clicked,this,&MainInterface::on_settingButton_clicked);
-    connect(moveButton,&MenuButton::clicked,this,&MainInterface::on_moveButton_clicked);
+    connect(moveButton,&MenuButton::clicked,this,[=](){
+        graphicsPixmapItem->setSpaceActive(true);
+        scene->setSpaceActive(true);
+    });
+    connect(rectButton,&MenuButton::clicked,this,[=](){
+        graphicsPixmapItem->setSpaceActive(false);
+        scene->setSpaceActive(false);
+    });
     connect(importButton,&MenuButton::clicked,this,&MainInterface::on_importButton_clicked);
     connect(exportButton,&MenuButton::clicked,this,&MainInterface::on_exportButton_clicked);
 
@@ -513,10 +521,7 @@ void MainInterface::on_exportButton_clicked()
 
 
 }
-void MainInterface::on_moveButton_clicked()
-{
-    qDebug() << "移动操作";
-}
+
 void MainInterface::on_importButton_clicked()
 {
     importDialog = new ImportDialog(this);
@@ -819,6 +824,29 @@ void MainInterface::showEvent(QShowEvent *event)
             displayImg();
     });
 
+}
+
+void MainInterface::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Space){
+//        查找子Widget,因为之前已经给该Widget设置过ObjectName了
+        MenuButton *moveBtn = ui->menu_frame->findChild<MenuButton*>("moveButton");
+        moveBtn->setChecked(true);
+        graphicsPixmapItem->setSpaceActive(true);
+        scene->setSpaceActive(true);
+    }
+
+}
+
+void MainInterface::keyReleaseEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Space){
+//        查找子Widget,因为之前已经给该Widget设置过ObjectName了
+        MenuButton *rectButton = ui->menu_frame->findChild<MenuButton*>("rectButton");
+        rectButton->setChecked(true);
+        graphicsPixmapItem->setSpaceActive(false);
+        scene->setSpaceActive(false);
+    }
 }
 
 void MainInterface::setSizeProportionText()

@@ -111,3 +111,15 @@ void ExportDialog::on_determine_export_button_clicked()
     this->accept();
 
 }
+
+void ExportDialog::on_push_btn_clicked()
+{
+    QMessageBox::information(this,"提示","这个具体上传到哪里我还不确定,"
+                                       "作为开源的软件希望可以上传到公共空间,不需要注册什么的。"
+                                       "理想化的状态是,上传完成之后。返回取数据的连接+提取码。"
+                                       "一方面降低使用成本,另一方面又能保证数据安全。其次上传的文件,我认为应该是"
+                                       ".ils 格式的文件,下载完成后放到用户家目录下的.imagelablespirit文件中。"
+                                       "所以下载数据的操作是否应该由软件本身提供？(当然也要支持浏览器下载,因为需要考虑弱网无网环境),"
+                                       "这样就不必担心使用者再创建目录,并复制数据了。所以,找到一个合适公共存储是一个值得深思的问题！"
+                                       );
+}

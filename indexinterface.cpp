@@ -1,8 +1,6 @@
 ﻿#include "indexinterface.h"
 #include "ui_indexinterface.h"
-
-
-
+#define cout qDebug() << "[" << __FILE__ << " : " << __LINE__ << "]"
 
 
 //声明一个全局变量,用来表示当前项目的文件地址,其他cpp文件可以引用它,不能使用extern/static修饰
@@ -47,7 +45,9 @@ void IndexInterface::loadAllProject()
 {
     QFileInfoList projects = CommonUtil::getProjectInfoList();
     int projectCount = projects.size();
-    qDebug() << QString("查找到[%1]个项目").arg(projectCount);
+    cout << QString("查找到[%1]个项目").arg(projectCount);
+//    先清除所有Item
+    ui->project_preview_list_widget->clear();
     for(int i = 0 ; i < projectCount ; i++){
         QFileInfo pjFile = projects.at(i);
         Project project = CommonUtil::readProjectInfo(pjFile.absoluteFilePath());
@@ -91,7 +91,12 @@ void IndexInterface::on_create_project_btn_clicked()
     connect(createProjectDialog,&CreateProjectDialog::createProject,this,&IndexInterface::compileCreateProject);
     int code = createProjectDialog->exec();
     if (code == QDialog::Accepted){
+//        再重新加载所有Item
         loadAllProject();
+//        刷新
+//        ui->project_preview_list_widget->hide();
+//        ui->project_preview_list_widget->show();
+        ui->project_preview_list_widget->update(ui->project_preview_list_widget->rect());
     }
 
 }
@@ -138,6 +143,10 @@ void IndexInterface::imagePathNonExistent(QString project_file_path)
 
 void IndexInterface::removeProjectItem()
 {
-    QListWidgetItem *currentItem=ui->project_preview_list_widget->currentItem();
-    ui->project_preview_list_widget->removeItemWidget(currentItem);
+//    removeitemwidet只是删除该item对应的widget，不会删除该item,如果这个item有Qstring，该qstring会保留下来；
+//    takeitem直接删除该item；删除Item需要使用函数takeItem而不是removeItemWidget
+//    clear函数清除所有的item。
+    QListWidgetItem *currentItem = ui->project_preview_list_widget->takeItem(ui->project_preview_list_widget->currentRow());
+//    不写这一句,界面不会产生变化,除非关闭再进入
+    delete currentItem;
 }

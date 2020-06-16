@@ -110,7 +110,7 @@ void FileButton::draw_path(QString path){
  }
 
  void FileButton::enterEvent(QEvent *){
-        lineColor = Qt::green;
+        lineColor = QColor(94,97,109);
         qDebug()<<"鼠标移入事件";
         update();
  }

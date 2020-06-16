@@ -49,7 +49,7 @@ public slots:
 private:
    int lineWidth=2;
     QString pathInfo;
-    QColor defaultLineColor=Qt::gray;
+    QColor defaultLineColor = Qt::gray;
     QColor lineColor = defaultLineColor;
 };
 

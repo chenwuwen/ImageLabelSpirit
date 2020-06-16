@@ -28,13 +28,13 @@ void AnnotationComboBox::wheelEvent(QWheelEvent *event)
 
 void AnnotationComboBox::addItems(const QStringList &texts)
 {
-    QComboBox::addItem("自定义输入");
+    QComboBox::addItem(QIcon(":/res/icons/edit.png"),"自定义输入");
     QComboBox::addItem("预定义分类");
     QComboBox::addItems(texts);
 //    禁用第2个item
     QVariant disableV(0);
     setItemData(1, disableV, Qt::UserRole - 1);
-    setItemIcon(0,QIcon(":/res/icons/edit.png"));
+
 
 }
 

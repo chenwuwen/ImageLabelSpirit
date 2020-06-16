@@ -26,6 +26,9 @@ public:
 //    画标注[矩形标注]
     void drawRectMark(QGraphicsRectItem *rectItem);
 
+//    设置空格键按下状态,MainInterface.cpp调用
+    void setSpaceActive(bool state);
+
 public slots:
 //    保存标注的Item信息
     void saveMarkItem();
@@ -35,8 +38,7 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void leaveEvent(QGraphicsSceneMouseEvent *event);
-    void enterEvent(QGraphicsSceneMouseEvent *event);
+
     void keyPressEvent(QKeyEvent  *event);
     void keyReleaseEvent(QKeyEvent  *event);
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
@@ -56,8 +58,6 @@ signals:
     void itemSelectState(QRectF,bool);
 
 private:
-    bool ctrlActive = false;
-    bool spaceActive = false;
     bool isDrawing = false;
     bool isMoving = false;
 //    操作阈值
@@ -66,7 +66,8 @@ private:
     QPointF startScenePoint,endScenePoint,startRectItemPoint;
 //    矩形框item
     QGraphicsRectItem *rectItem;
-
+//    空格键状态默认是未按下状态
+    bool spaceActive = false;
 //    旧的标注
     QGraphicsRectItem *oldQGraphicsRectItem = NULL;
 //    旧标注的信息

@@ -19,14 +19,11 @@ void MarkGraphicsView::mousePressEvent(QMouseEvent *event)
 {
     QGraphicsView::mousePressEvent(event);
     qDebug() << "MarkGraphicsView类 mousePressEvent方法执行";
-    if (event->button()!=Qt::LeftButton) return;
-    lastMousePos = event->pos();
-    qDebug() << "点击了鼠标左键,同时设定了lastMousePos";
 }
 
 void MarkGraphicsView::mouseMoveEvent(QMouseEvent *event)
 {
-    qDebug() << "MarkGraphicsView类 mouseMoveEvent方法执行";
+//    qDebug() << "MarkGraphicsView类 mouseMoveEvent方法执行";
 //    如果重构了事件函数,并且需要事件传递,需要添加次方法。
     QGraphicsView::mouseMoveEvent(event);
 }
@@ -118,6 +115,7 @@ void MarkGraphicsView::keyReleaseEvent(QKeyEvent *event)
 
 void MarkGraphicsView::enterEvent(QEvent *event)
 {
+//    事件可以被触发
 //    在QGraphicsView子类中使用viewport()->setCursor()，才可以真正的改变鼠标的形状。同时，update()也是如此，需要调用viewport()->update()。
 //    viewport()->setCursor(QCursor(Qt::OpenHandCursor));
     QGraphicsView::enterEvent(event);
@@ -126,6 +124,7 @@ void MarkGraphicsView::enterEvent(QEvent *event)
 
 void MarkGraphicsView::leaveEvent(QEvent *event)
 {
+//    事件可以被触发
 //    在QGraphicsView子类中使用viewport()->setCursor()，才可以真正的改变鼠标的形状。同时，update()也是如此，需要调用viewport()->update()。
 //    viewport()->setCursor(QCursor(Qt::ArrowCursor));
     QGraphicsView::leaveEvent(event);

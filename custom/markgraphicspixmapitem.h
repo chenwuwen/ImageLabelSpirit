@@ -9,6 +9,9 @@
 #include <QCursor>
 #include <QGraphicsSceneMouseEvent>
 #include <QDrag>
+#include <QKeyEvent>
+#include <QPointF>
+#include <QGraphicsSceneMouseEvent>
 
 class MarkGraphicsPixmapItem:public QObject,public QGraphicsPixmapItem
 {
@@ -25,31 +28,33 @@ public:
 //    图片原始尺寸
     QSize getOriginalSize();
 
-protected:
-     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-     void mousePressEvent(QGraphicsSceneMouseEvent *event);
-     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+//    设置空格键按下状态,MainInterface.cpp调用
+    void setSpaceActive(bool state);
 
-//    鼠标移入事件
-    void enterEvent(QEvent *);
-//    鼠标移出事件
-    void leaveEvent(QEvent *);
+public slots:
+
+
+
+protected:
+     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
 //    键盘按下事件
-    void keyPressEvent(QKeyEvent *event) ;
+    void keyPressEvent(QKeyEvent *event) override;
 //    键盘松开事件
-    void keyReleaseEvent(QKeyEvent *event) ;
-
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
-    void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
+    void keyReleaseEvent(QKeyEvent *event) override;
+//    鼠标悬停事件(想要该事件生效需要设置setAcceptHoverEvents(true))
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
 
 
 private:
     QPixmap currentPixmap;
 //    空格键是否处于按下状态
     bool spaceActive = false;
-    QPointF startPoint;
+    QPointF startPixmapItemPoint , startScenePoint , endScenePoint ;
 };
 
 #endif // MARKGRAPHICSPIXMAPITEM_H
