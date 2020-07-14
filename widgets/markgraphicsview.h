@@ -9,6 +9,8 @@
 #include <QScrollBar>
 #include <QList>
 #include <QDrag>
+#include <QPaintEvent>
+#include <QPainter>
 
 #include <custom/markgraphicspixmapitem.h>
 
@@ -30,6 +32,7 @@ public:
 //   适应窗口大小
    void adapt();
 
+   void drawCrossLine();
 
 signals:
 //   自定义信号,缩放比例改变。信号
@@ -50,6 +53,7 @@ protected:
     void leaveEvent(QEvent *);
 //    拖拽首先进入QGraphicsView触发其dragEnterEvent事件
     void dragEnterEvent(QDragEnterEvent *event);
+    void paintEvent(QPaintEvent *event);
 
 private:
 
@@ -57,11 +61,12 @@ private:
     bool ctrlActive = false;
 //     空格键是否是按下状态
     bool spaceActive = false;
-
+//    当前鼠标移动到的点的坐标
+    QPoint currentMovePoint;
 //    固定比例 https://www.zhihu.com/question/35614219
     constexpr const static double DEFAULT_PROPORTION = 1.2;
-
-
+    QPainter *painter;
+    QPixmap *pix;
 
 };
 

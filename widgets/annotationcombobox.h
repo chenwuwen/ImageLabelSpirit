@@ -4,6 +4,7 @@
 
 #include <QComboBox>
 #include <QDebug>
+#include <QTimer>
 
 /**
  * 自定义QComboBox,目的是禁用鼠标滚轮
@@ -23,10 +24,11 @@ private:
     void wheelEvent(QWheelEvent *event);
 
 
+
 protected:
 //    添加鼠标点击事件
-//    virtual void mousePressEvent(QMouseEvent *e);
-
+    virtual void mousePressEvent(QMouseEvent *e);
+    void showEvent(QShowEvent *e);
 signals:
 
 public slots:

@@ -693,6 +693,7 @@ void MainInterface::loadMarkInfo()
     ui->annotation_list_view->setItemDelegate(delegate);
 //    QListView默认是可以编辑的，可以用setEditTrigers设置QListView的条目是否可以编辑，以及如何进入编辑状态，比如表示在双击，或者选择并单击列表项目,也可以设置不可编辑QAbstractItemView::NoEditTriggers
     ui->annotation_list_view->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::SelectedClicked);
+//    ui->annotation_list_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->annotation_list_view->setSpacing(5);
     ui->annotation_list_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     int rowCount = markInfoItemModel->rowCount();
@@ -732,10 +733,10 @@ void MainInterface::addRectMarkInfo(QRectF rectf)
 //    如果之前没有标记过,则使用下拉框中的第一个文字信息,否则使用上次输入的信息
     if (lastMarkInfo.isEmpty()){
       lastMarkInfo = metaMarkInfoItemModel->stringList().at(0);
-      qDebug() << "由于找不到上一次的标注文字信息,因此使用默认文字代替：" << lastMarkInfo;
+      cout << "由于找不到上一次的标注文字信息,因此使用默认文字代替：" << lastMarkInfo;
     }
     rectMeta.text  = lastMarkInfo;
-    qDebug() << "接收到一个标注信息：" << rectMeta;
+    cout << "接收到一个标注信息：" << rectMeta;
 
     QStandardItem *item = new QStandardItem;
 //    将结构体变成QVariant
@@ -747,8 +748,7 @@ void MainInterface::addRectMarkInfo(QRectF rectf)
 
 void MainInterface::removeRectMarkInfo(QRectF rectf)
 {
-   qDebug() << "删除标注信息";
-
+   cout << "准备删除标注信息,先找到对应数据。再进行移除！";
    int rowCount = markInfoItemModel->rowCount();
    for(int i = 0; i < rowCount; i++){
        QStandardItem *item =  markInfoItemModel->item(i);
@@ -756,7 +756,7 @@ void MainInterface::removeRectMarkInfo(QRectF rectf)
 //     将QVariant变成结构体
        RectMeta rectMeta = variant.value<RectMeta>();
        if(rectMeta.w == rectf.width() && rectMeta.h == rectf.height() && rectMeta.x == rectf.x() && rectMeta.y == rectf.y()){
-           qDebug() << "Model中找到了对应数据";
+           cout << "Model中找到了对应数据,进行移除";
            markInfoItemModel->removeRow(i);
            break;
        }
@@ -855,14 +855,14 @@ void MainInterface::setSizeProportionText()
         QVariant variant = currentImgItem->data();
 //        当前图片文件路径
         QString currentFilePath = variant.toString();
-        qDebug() << "当前展示的图片路径是：" << currentFilePath;
+        cout << "当前展示的图片路径是：" << currentFilePath;
         QPixmap srcPixmap(currentFilePath);
         QSize srcSize = srcPixmap.size();
         qDebug() << "原图尺寸：" << srcSize;
 
         QSize currentSize(ui->main_graphics_view->scene()->width(),ui->main_graphics_view->scene()->height());
-        qDebug() << "场景尺寸：" << srcSize;
-        qDebug() << "视图尺寸：" << ui->main_graphics_view->size();
+        cout << "场景尺寸：" << srcSize;
+        cout << "视图尺寸：" << ui->main_graphics_view->size();
 
 
 //        当前缩放比例
@@ -962,7 +962,7 @@ void MainInterface::markInfoTextChange(QString newText, QModelIndex index)
    QStandardItem *item =  markInfoItemModel->itemFromIndex(index);
    QVariant va = item->data();
    RectMeta rectMeta = va.value<RectMeta>();
-   qDebug() << "接收到标注信息改变信号：标注信息从 " << rectMeta.text << " 变为： " << newText;
+   cout << "接收到标注信息改变信号：标注信息从 " << rectMeta.text << " 变为： " << newText;
    rectMeta.text = newText;
    lastMarkInfo = newText;
 }

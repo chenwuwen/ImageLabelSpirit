@@ -1,7 +1,7 @@
 ﻿#include "importdialog.h"
 #include "ui_importdialog.h"
 
-
+#define cout qDebug() << "[" << __FILE__ << " : " << __LINE__ << "]"
 
 
 ImportDialog::ImportDialog(QWidget *parent) :

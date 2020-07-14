@@ -32,7 +32,7 @@ public:
 //    使用模型中的数据填充编辑器(此处注释掉是因为,需要QCombobox可以进行编辑,如果重写了该方法,那么在双击编辑时,如果文字不包含在在QCombobox的option中,文字会消失掉)
 //    void setEditorData(QWidget *editor, const QModelIndex &index) const;
 
-//    将数据写入到模型中,编辑完成，保存数据到data中
+//    将数据写入到模型中,编辑完成，保存数据到data中(当QCombobox被点击时会被触发)
     void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
 
 //    设置编辑控件的位置和大小。样式等

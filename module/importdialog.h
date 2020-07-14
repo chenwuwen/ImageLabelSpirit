@@ -23,6 +23,11 @@ public:
     explicit ImportDialog(QWidget *parent = nullptr);
     ~ImportDialog();
     void on_importFileButton_clicked();
+
+//    事件过滤器:watched:代表被监控的组件  event:代表要转发的事件
+//    返回true,表示该事件也被过滤掉(处理),无需再转发了
+//    返回false,则正常转发给watched
+//    https://www.cnblogs.com/lifexy/p/8996425.html
     bool eventFilter(QObject *obj, QEvent *event);
 
     void closeEvent(QCloseEvent *event);
